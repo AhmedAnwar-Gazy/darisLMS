@@ -265,4 +265,253 @@ class GradeController extends BaseController
             return $this->sendError('Error retrieving grade categories', ['error' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Bulk create grades for multiple students.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkStore(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'itemid' => 'required|integer|exists:grade_items,id',
+                'grades' => 'required|array',
+                'grades.*.userid' => 'required|integer|exists:users,id',
+                'grades.*.rawgrade' => 'nullable|numeric',
+                'grades.*.finalgrade' => 'nullable|numeric',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->errors()->toArray());
+            }
+
+            $gradeItem = DB::table($this->gradeItemsTable)->where('id', $request->itemid)->first();
+            $created = 0;
+            $skipped = 0;
+
+            foreach ($request->grades as $gradeData) {
+                // Check if grade already exists
+                $existing = DB::table($this->gradeGradesTable)
+                    ->where('itemid', $request->itemid)
+                    ->where('userid', $gradeData['userid'])
+                    ->first();
+
+                if ($existing) {
+                    $skipped++;
+                    continue;
+                }
+
+                $data = [
+                    'itemid' => $request->itemid,
+                    'userid' => $gradeData['userid'],
+                    'rawgrade' => $gradeData['rawgrade'] ?? null,
+                    'finalgrade' => $gradeData['finalgrade'] ?? null,
+                    'rawgrademax' => $gradeItem->grademax,
+                    'rawgrademin' => $gradeItem->grademin,
+                    'feedback' => $gradeData['feedback'] ?? '',
+                    'feedbackformat' => 1,
+                    'timecreated' => time(),
+                    'timemodified' => time(),
+                    'usermodified' => $request->input('modifier_id', 0),
+                ];
+
+                DB::table($this->gradeGradesTable)->insert($data);
+                $created++;
+            }
+
+            return $this->sendResponse([
+                'created' => $created,
+                'skipped' => $skipped,
+                'total' => count($request->grades)
+            ], "Bulk grades created: {$created} created, {$skipped} skipped");
+        } catch (\Exception $e) {
+            return $this->sendError('Error bulk creating grades', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Bulk update grades.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkUpdate(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'grade_ids' => 'required|array',
+                'grade_ids.*' => 'integer|exists:grade_grades,id',
+                'data' => 'required|array',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->errors()->toArray());
+            }
+
+            $data = $request->input('data');
+            $data['timemodified'] = time();
+            $data['usermodified'] = $request->input('modifier_id', 0);
+
+            $updated = DB::table($this->gradeGradesTable)
+                ->whereIn('id', $request->grade_ids)
+                ->update($data);
+
+            return $this->sendResponse(['updated_count' => $updated], 'Grades updated successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error bulk updating grades', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get grade statistics for a course.
+     *
+     * @param int $courseId
+     * @return JsonResponse
+     */
+    public function courseStats(int $courseId): JsonResponse
+    {
+        try {
+            $stats = DB::table($this->gradeItemsTable . ' as gi')
+                ->leftJoin($this->gradeGradesTable . ' as gg', 'gi.id', '=', 'gg.itemid')
+                ->where('gi.courseid', $courseId)
+                ->select(
+                    'gi.id',
+                    'gi.itemname',
+                    'gi.itemtype',
+                    'gi.grademax',
+                    'gi.grademin',
+                    DB::raw('COUNT(gg.id) as total_grades'),
+                    DB::raw('AVG(gg.finalgrade) as average'),
+                    DB::raw('MAX(gg.finalgrade) as highest'),
+                    DB::raw('MIN(gg.finalgrade) as lowest'),
+                    DB::raw('STDDEV(gg.finalgrade) as std_deviation')
+                )
+                ->groupBy('gi.id', 'gi.itemname', 'gi.itemtype', 'gi.grademax', 'gi.grademin')
+                ->orderBy('gi.sortorder', 'asc')
+                ->get();
+
+            return $this->sendResponse($stats, 'Course grade statistics retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error retrieving course grade statistics', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get user grade report.
+     *
+     * @param int $userId
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function userReport(int $userId, Request $request): JsonResponse
+    {
+        try {
+            $courseId = $request->input('course_id');
+
+            $query = DB::table($this->gradeGradesTable . ' as gg')
+                ->join($this->gradeItemsTable . ' as gi', 'gg.itemid', '=', 'gi.id')
+                ->join('course as c', 'gi.courseid', '=', 'c.id')
+                ->where('gg.userid', $userId)
+                ->select(
+                    'c.id as course_id',
+                    'c.fullname as course_name',
+                    'gi.id as item_id',
+                    'gi.itemname',
+                    'gi.itemtype',
+                    'gi.grademax',
+                    'gi.grademin',
+                    'gi.gradepass',
+                    'gg.finalgrade',
+                    'gg.feedback',
+                    'gg.timemodified',
+                    DB::raw('CASE WHEN gg.finalgrade >= gi.gradepass THEN 1 ELSE 0 END as passed')
+                );
+
+            if ($courseId) {
+                $query->where('gi.courseid', $courseId);
+            }
+
+            $grades = $query->orderBy('c.fullname', 'asc')
+                          ->orderBy('gi.sortorder', 'asc')
+                          ->get();
+
+            // Group by course
+            $grouped = [];
+            foreach ($grades as $grade) {
+                $courseId = $grade->course_id;
+                if (!isset($grouped[$courseId])) {
+                    $grouped[$courseId] = [
+                        'course_id' => $grade->course_id,
+                        'course_name' => $grade->course_name,
+                        'grades' => []
+                    ];
+                }
+                $grouped[$courseId]['grades'][] = $grade;
+            }
+
+            return $this->sendResponse(array_values($grouped), 'User grade report retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error retrieving user grade report', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Export course grades to CSV.
+     *
+     * @param int $courseId
+     * @return JsonResponse
+     */
+    public function exportCourseCsv(int $courseId): JsonResponse
+    {
+        try {
+            $grades = DB::table($this->gradeItemsTable . ' as gi')
+                ->leftJoin($this->gradeGradesTable . ' as gg', 'gi.id', '=', 'gg.itemid')
+                ->leftJoin('users as u', 'gg.userid', '=', 'u.id')
+                ->where('gi.courseid', $courseId)
+                ->where(function($q) {
+                    $q->whereNull('u.deleted')
+                      ->orWhere('u.deleted', 0);
+                })
+                ->select(
+                    'gi.itemname',
+                    'u.firstname',
+                    'u.lastname',
+                    'u.email',
+                    'gg.finalgrade',
+                    'gi.grademax',
+                    'gg.feedback',
+                    'gg.timemodified'
+                )
+                ->orderBy('gi.sortorder', 'asc')
+                ->orderBy('u.lastname', 'asc')
+                ->get();
+
+            $filename = 'course_' . $courseId . '_grades_' . time() . '.csv';
+            $filepath = storage_path('app/public/exports/' . $filename);
+            
+            if (!file_exists(dirname($filepath))) {
+                mkdir(dirname($filepath), 0755, true);
+            }
+
+            $file = fopen($filepath, 'w');
+            fputcsv($file, ['Item', 'First Name', 'Last Name', 'Email', 'Grade', 'Max Grade', 'Feedback', 'Modified']);
+            
+            foreach ($grades as $grade) {
+                fputcsv($file, (array) $grade);
+            }
+            
+            fclose($file);
+
+            return $this->sendResponse([
+                'filename' => $filename,
+                'path' => 'storage/exports/' . $filename,
+                'url' => url('storage/exports/' . $filename),
+                'count' => count($grades)
+            ], 'Course grades exported to CSV successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error exporting course grades to CSV', ['error' => $e->getMessage()]);
+        }
+    }
 }

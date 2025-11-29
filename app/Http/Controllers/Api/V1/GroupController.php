@@ -254,21 +254,6 @@ class GroupController extends BaseController
             if (!$membership) {
                 return $this->sendNotFoundResponse('Membership not found');
             }
-
-            DB::table('groups_members')->where('id', $membershipId)->delete();
-
-            return $this->sendResponse([], 'Member removed from group successfully');
-        } catch (\Exception $e) {
-            return $this->sendError('Error removing member from group', ['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Get groupings for a course.
-     *
-     * @param int $courseId
-     * @return JsonResponse
-     */
     public function groupings(int $courseId): JsonResponse
     {
         try {

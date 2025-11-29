@@ -302,4 +302,149 @@ class QuizController extends BaseController
             return $this->sendError('Error retrieving quiz questions', ['error' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Get quiz statistics.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function stats(int $id): JsonResponse
+    {
+        try {
+            $quiz = DB::table($this->table)->where('id', $id)->first();
+
+            if (!$quiz) {
+                return $this->sendNotFoundResponse('Quiz not found');
+            }
+
+            // Attempt stats
+            $attemptStats = DB::table('quiz_attempts')
+                ->where('quiz', $id)
+                ->selectRaw('
+                    COUNT(*) as total_attempts,
+                    COUNT(DISTINCT userid) as unique_users,
+                    SUM(CASE WHEN state = "finished" THEN 1 ELSE 0 END) as finished_attempts,
+                    SUM(CASE WHEN state = "inprogress" THEN 1 ELSE 0 END) as in_progress_attempts
+                ')
+                ->first();
+
+            // Grade stats
+            $gradeStats = DB::table('quiz_grades')
+                ->where('quiz', $id)
+                ->selectRaw('
+                    AVG(grade) as average_grade,
+                    MAX(grade) as highest_grade,
+                    MIN(grade) as lowest_grade,
+                    STDDEV(grade) as std_deviation
+                ')
+                ->first();
+
+            return $this->sendResponse([
+                'quiz' => $quiz,
+                'attempts' => $attemptStats,
+                'grades' => $gradeStats
+            ], 'Quiz statistics retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error retrieving quiz statistics', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get user quiz report.
+     *
+     * @param int $id
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function report(int $id, Request $request): JsonResponse
+    {
+        try {
+            $perPage = $request->input('per_page', 20);
+            
+            $report = DB::table('quiz_attempts as qa')
+                ->join('users as u', 'qa.userid', '=', 'u.id')
+                ->leftJoin('quiz_grades as qg', function($join) {
+                    $join->on('qa.quiz', '=', 'qg.quiz')
+                         ->on('qa.userid', '=', 'qg.userid');
+                })
+                ->where('qa.quiz', $id)
+                ->where('u.deleted', 0)
+                ->select(
+                    'u.id as user_id',
+                    'u.firstname',
+                    'u.lastname',
+                    'u.email',
+                    'qa.attempt',
+                    'qa.state',
+                    'qa.timestart',
+                    'qa.timefinish',
+                    'qa.sumgrades',
+                    'qg.grade as final_grade'
+                )
+                ->orderBy('u.lastname', 'asc')
+                ->orderBy('qa.attempt', 'asc')
+                ->paginate($perPage);
+
+            return $this->sendPaginatedResponse($report, 'Quiz report retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error retrieving quiz report', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Regrade a quiz attempt (Simulation/Placeholder).
+     * Moodle regrading is complex and involves question engine. 
+     * This method serves as a placeholder or simplified version updating the grade directly if provided.
+     *
+     * @param int $attemptId
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function regradeAttempt(int $attemptId, Request $request): JsonResponse
+    {
+        try {
+            $attempt = DB::table('quiz_attempts')->where('id', $attemptId)->first();
+
+            if (!$attempt) {
+                return $this->sendNotFoundResponse('Attempt not found');
+            }
+
+            // In a real scenario, this would trigger Moodle's regrade process.
+            // Here we allow manual override of the sumgrades if provided, 
+            // which might be useful for manual grading corrections via API.
+            
+            $validator = Validator::make($request->all(), [
+                'sumgrades' => 'required|numeric',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->errors()->toArray());
+            }
+
+            DB::table('quiz_attempts')
+                ->where('id', $attemptId)
+                ->update([
+                    'sumgrades' => $request->sumgrades,
+                    'timemodified' => time(),
+                ]);
+
+            // Also update the final grade if this is the only/best attempt (simplified logic)
+            // This is a basic implementation. Moodle's actual logic for calculating final grade is more complex.
+            $quiz = DB::table('quiz')->where('id', $attempt->quiz)->first();
+            
+            // Simplified: Update quiz_grades table
+            DB::table('quiz_grades')->updateOrInsert(
+                ['quiz' => $attempt->quiz, 'userid' => $attempt->userid],
+                [
+                    'grade' => $request->sumgrades, // Assuming sumgrades maps to final grade for simplicity here
+                    'timemodified' => time()
+                ]
+            );
+
+            return $this->sendResponse([], 'Attempt regraded successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error regrading attempt', ['error' => $e->getMessage()]);
+        }
+    }
 }

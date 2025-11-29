@@ -276,4 +276,260 @@ class AssignmentController extends BaseController
             return $this->sendError('Error retrieving assignment grades', ['error' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Get assignment statistics.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function stats(int $id): JsonResponse
+    {
+        try {
+            $assignment = DB::table($this->table)->where('id', $id)->first();
+
+            if (!$assignment) {
+                return $this->sendNotFoundResponse('Assignment not found');
+            }
+
+            // Get submission stats
+            $submissionStats = DB::table('assign_submission as s')
+                ->where('s.assignment', $id)
+                ->where('s.latest', 1)
+                ->selectRaw('
+                    COUNT(*) as total_submissions,
+                    SUM(CASE WHEN s.status = "submitted" THEN 1 ELSE 0 END) as submitted,
+                    SUM(CASE WHEN s.status = "draft" THEN 1 ELSE 0 END) as drafts,
+                    SUM(CASE WHEN s.timemodified > ' . ($assignment->duedate ?: time()) . ' AND s.status = "submitted" THEN 1 ELSE 0 END) as late_submissions
+                ')
+                ->first();
+
+            // Get grading stats
+            $gradingStats = DB::table('assign_grades as g')
+                ->where('g.assignment', $id)
+                ->selectRaw('
+                    COUNT(*) as total_grades,
+                    SUM(CASE WHEN g.grade IS NOT NULL THEN 1 ELSE 0 END) as graded,
+                    AVG(g.grade) as average_grade,
+                    MAX(g.grade) as highest_grade,
+                    MIN(g.grade) as lowest_grade
+                ')
+                ->first();
+
+            return $this->sendResponse([
+                'assignment' => $assignment,
+                'submissions' => $submissionStats,
+                'grading' => $gradingStats
+            ], 'Assignment statistics retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error retrieving assignment statistics', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get late submissions.
+     *
+     * @param int $id
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function lateSubmissions(int $id, Request $request): JsonResponse
+    {
+        try {
+            $assignment = DB::table($this->table)->where('id', $id)->first();
+
+            if (!$assignment) {
+                return $this->sendNotFoundResponse('Assignment not found');
+            }
+
+            if (!$assignment->duedate) {
+                return $this->sendResponse([], 'Assignment has no due date');
+            }
+
+            $perPage = $request->input('per_page', 15);
+
+            $lateSubmissions = DB::table('assign_submission as s')
+                ->join('users as u', 's.userid', '=', 'u.id')
+                ->where('s.assignment', $id)
+                ->where('s.latest', 1)
+                ->where('s.status', 'submitted')
+                ->where('s.timemodified', '>', $assignment->duedate)
+                ->where('u.deleted', 0)
+                ->select(
+                    's.id',
+                    's.userid',
+                    'u.firstname',
+                    'u.lastname',
+                    'u.email',
+                    's.timemodified',
+                    DB::raw('(' . $assignment->duedate . ') as due_date'),
+                    DB::raw('(s.timemodified - ' . $assignment->duedate . ') as seconds_late')
+                )
+                ->orderBy('s.timemodified', 'desc')
+                ->paginate($perPage);
+
+            return $this->sendPaginatedResponse($lateSubmissions, 'Late submissions retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error retrieving late submissions', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get ungraded submissions.
+     *
+     * @param int $id
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function ungradedSubmissions(int $id, Request $request): JsonResponse
+    {
+        try {
+            $perPage = $request->input('per_page', 15);
+
+            $ungraded = DB::table('assign_submission as s')
+                ->join('users as u', 's.userid', '=', 'u.id')
+                ->leftJoin('assign_grades as g', function($join) {
+                    $join->on('s.assignment', '=', 'g.assignment')
+                         ->on('s.userid', '=', 'g.userid');
+                })
+                ->where('s.assignment', $id)
+                ->where('s.latest', 1)
+                ->where('s.status', 'submitted')
+                ->where(function($query) {
+                    $query->whereNull('g.grade')
+                          ->orWhere('g.grade', -1);
+                })
+                ->where('u.deleted', 0)
+                ->select(
+                    's.id',
+                    's.userid',
+                    'u.firstname',
+                    'u.lastname',
+                    'u.email',
+                    's.timemodified as submission_time'
+                )
+                ->orderBy('s.timemodified', 'asc')
+                ->paginate($perPage);
+
+            return $this->sendPaginatedResponse($ungraded, 'Ungraded submissions retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error retrieving ungraded submissions', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Bulk grade assignments.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkGrade(Request $request): JsonResponse
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'assignment_id' => 'required|integer|exists:assign,id',
+                'grades' => 'required|array',
+                'grades.*.userid' => 'required|integer|exists:users,id',
+                'grades.*.grade' => 'required|numeric',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendValidationError($validator->errors()->toArray());
+            }
+
+            $updated = 0;
+            $created = 0;
+
+            foreach ($request->grades as $gradeData) {
+                $existing = DB::table('assign_grades')
+                    ->where('assignment', $request->assignment_id)
+                    ->where('userid', $gradeData['userid'])
+                    ->first();
+
+                $data = [
+                    'assignment' => $request->assignment_id,
+                    'userid' => $gradeData['userid'],
+                    'grade' => $gradeData['grade'],
+                    'grader' => $request->input('grader_id', 0),
+                    'timemodified' => time(),
+                ];
+
+                if ($existing) {
+                    DB::table('assign_grades')
+                        ->where('id', $existing->id)
+                        ->update($data);
+                    $updated++;
+                } else {
+                    $data['timecreated'] = time();
+                    DB::table('assign_grades')->insert($data);
+                    $created++;
+                }
+            }
+
+            return $this->sendResponse([
+                'updated' => $updated,
+                'created' => $created,
+                'total' => count($request->grades)
+            ], "Bulk grading completed: {$created} created, {$updated} updated");
+        } catch (\Exception $e) {
+            return $this->sendError('Error bulk grading assignments', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Export assignment submissions to CSV.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function exportSubmissionsCsv(int $id): JsonResponse
+    {
+        try {
+            $submissions = DB::table('assign_submission as s')
+                ->join('users as u', 's.userid', '=', 'u.id')
+                ->leftJoin('assign_grades as g', function($join) {
+                    $join->on('s.assignment', '=', 'g.assignment')
+                         ->on('s.userid', '=', 'g.userid');
+                })
+                ->where('s.assignment', $id)
+                ->where('s.latest', 1)
+                ->where('u.deleted', 0)
+                ->select(
+                    'u.firstname',
+                    'u.lastname',
+                    'u.email',
+                    's.status',
+                    's.timemodified as submission_time',
+                    'g.grade',
+                    'g.timemodified as grade_time'
+                )
+                ->orderBy('u.lastname', 'asc')
+                ->get();
+
+            $filename = 'assignment_' . $id . '_submissions_' . time() . '.csv';
+            $filepath = storage_path('app/public/exports/' . $filename);
+            
+            if (!file_exists(dirname($filepath))) {
+                mkdir(dirname($filepath), 0755, true);
+            }
+
+            $file = fopen($filepath, 'w');
+            fputcsv($file, ['First Name', 'Last Name', 'Email', 'Status', 'Submission Time', 'Grade', 'Grade Time']);
+            
+            foreach ($submissions as $submission) {
+                fputcsv($file, (array) $submission);
+            }
+            
+            fclose($file);
+
+            return $this->sendResponse([
+                'filename' => $filename,
+                'path' => 'storage/exports/' . $filename,
+                'url' => url('storage/exports/' . $filename),
+                'count' => count($submissions)
+            ], 'Assignment submissions exported to CSV successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error exporting assignment submissions to CSV', ['error' => $e->getMessage()]);
+        }
+    }
 }
