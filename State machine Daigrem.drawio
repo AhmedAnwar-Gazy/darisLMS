@@ -1,0 +1,478 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="SMD-07" id="smd07diag">
+    <mxGraphModel dx="2574" dy="1147" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-2" value="" style="shape=line;strokeColor=#888888;dashed=1;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="710" height="720" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-3" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-130" y="770" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-4" value="Unregistered\n(User submits registration form)" style="rounded=1;whiteSpace=wrap;html=1;overflow=hidden;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="930" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-5" value="Pending Verification" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFF2CC;" vertex="1" parent="1">
+          <mxGeometry x="170" y="670" width="260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-6" value="Active" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#E8F8E8;" vertex="1" parent="1">
+          <mxGeometry x="300" y="830" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-7" value="Suspended / Banned\n(Blocked login)" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFECEC;" vertex="1" parent="1">
+          <mxGeometry x="760" y="700" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-8" value="Soft Deleted\n(Data retained for audit)" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FFF7E0;" vertex="1" parent="1">
+          <mxGeometry x="290" y="1020" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-9" value="Hard Deleted\n(Object Destroyed)" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#FDECEC;" vertex="1" parent="1">
+          <mxGeometry x="720" y="1030" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-10" value="" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="870" y="900" width="18" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-11" value="Register()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-3" target="UMAcsFPBnO9zktvzeYEz-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-130" y="960" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-12" value="Register()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-4" target="UMAcsFPBnO9zktvzeYEz-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-13" value="Click Email Link()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-5" target="UMAcsFPBnO9zktvzeYEz-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-14" value="Admin Bans User()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-6" target="UMAcsFPBnO9zktvzeYEz-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-15" value="Admin Unbans User()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-7" target="UMAcsFPBnO9zktvzeYEz-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-16" value="User Deletes Account()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-6" target="UMAcsFPBnO9zktvzeYEz-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-17" value="Admin Restores User()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-8" target="UMAcsFPBnO9zktvzeYEz-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-18" value="Retention Period Expires()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-8" target="UMAcsFPBnO9zktvzeYEz-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-19" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-9" target="UMAcsFPBnO9zktvzeYEz-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-20" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="1400" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-21" value="Draft" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1470" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-22" value="Review Required" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="244" y="1300" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-23" value="Published" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F8E8;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="580" y="1310" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-24" value="Hidden" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4CC;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="860" y="1390" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-25" value="Archived" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F0F0;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="370" y="1530" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-26" value="Deleted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFDDDD;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="320" y="1720" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-27" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="800" y="1500" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-28" value="Save Draft()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-20" target="UMAcsFPBnO9zktvzeYEz-21">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-33" y="1495" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-29" value="Request Publication()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-21" target="UMAcsFPBnO9zktvzeYEz-22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="1380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-30" value="Admin Approves()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-22" target="UMAcsFPBnO9zktvzeYEz-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-31" value="Admin Rejects()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-22" target="UMAcsFPBnO9zktvzeYEz-21">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="1410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-32" value="Instructor Hides()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-23">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="1392.3333333333335" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-33" value="Instructor Unhides()" edge="1" parent="1" target="UMAcsFPBnO9zktvzeYEz-23">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="880" y="1392.3333333333335" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-34" value="Term Ends()/Instructor Archives()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-23" target="UMAcsFPBnO9zktvzeYEz-25">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="470" y="1420" />
+              <mxPoint x="460" y="1450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-35" value="Re-open()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-25" target="UMAcsFPBnO9zktvzeYEz-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="1510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-36" value="Delete()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-21">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="396" y="1720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-37" value="Delete()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-25">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="424.60526315789457" y="1720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-38" edge="1" parent="1" target="UMAcsFPBnO9zktvzeYEz-27">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="1680" />
+              <mxPoint x="620" y="1650" />
+            </Array>
+            <mxPoint x="477.6923076923076" y="1720" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-39" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="46" y="1940" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-40" value="Pending" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-100" y="2150" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-41" value="Active" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F8E8;" vertex="1" parent="1">
+          <mxGeometry x="306" y="1920" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-42" value="Suspended" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4CC;" vertex="1" parent="1">
+          <mxGeometry x="586" y="2090" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-43" value="Expired" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="279" y="2110" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-44" value="Completed" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="126" y="2160" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-45" value="Unenrolled" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFDDDD;" vertex="1" parent="1">
+          <mxGeometry x="520" y="2410" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-46" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="786" y="2040" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-47" value="Request Access()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-39" target="UMAcsFPBnO9zktvzeYEz-40">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-48" value="Self Enroll (Public Course)" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-39" target="UMAcsFPBnO9zktvzeYEz-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-49" value="Instructor Approves()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-40" target="UMAcsFPBnO9zktvzeYEz-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-50" value="Admin Suspends()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-41" target="UMAcsFPBnO9zktvzeYEz-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-51" value="Admin Unsuspends()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-42" target="UMAcsFPBnO9zktvzeYEz-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-52" value="Time Limit Reached()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-41" target="UMAcsFPBnO9zktvzeYEz-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-53" value="Extend/Renew" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-43" target="UMAcsFPBnO9zktvzeYEz-41">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-54" value="Requirements Met()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-41" target="UMAcsFPBnO9zktvzeYEz-44">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-55" value="Drop Course()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-40" target="UMAcsFPBnO9zktvzeYEz-45">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="86" y="2240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-56" value="Drop Course()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-41" target="UMAcsFPBnO9zktvzeYEz-45">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-57" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-45" target="UMAcsFPBnO9zktvzeYEz-46">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="793" y="2270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-58" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-210" y="2740" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-59" value="New (Not Started)" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="2740" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-60" value="Draft" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="103" y="2930" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-61" value="Submitted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F8E8;" vertex="1" parent="1">
+          <mxGeometry x="410" y="3010" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-62" value="Late Submitted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4CC;" vertex="1" parent="1">
+          <mxGeometry x="100" y="3080" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-63" value="Grading in Progress" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="2750" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-64" value="Graded/Released" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="2780" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-65" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="750" y="2940" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-66" value="Start/Upload File" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-58" target="UMAcsFPBnO9zktvzeYEz-59">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-67" value="Upload File / Save Text" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-59" target="UMAcsFPBnO9zktvzeYEz-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-68" value="Update File" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-60" target="UMAcsFPBnO9zktvzeYEz-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-69" value="Click Submit " edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-60" target="UMAcsFPBnO9zktvzeYEz-61">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-70" value="Click Submit (Late)" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-60" target="UMAcsFPBnO9zktvzeYEz-62">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-71" value="Instructor Unlocks Submission" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-62" target="UMAcsFPBnO9zktvzeYEz-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-72" value="Instructor Opens Grading" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-61" target="UMAcsFPBnO9zktvzeYEz-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-73" value="Save Grade" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-63" target="UMAcsFPBnO9zktvzeYEz-64">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-74" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-64" target="UMAcsFPBnO9zktvzeYEz-65">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-76" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-550" y="4598" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-77" value="Not Attempted" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="-450" y="4828" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-78" value="Initialized" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="-410" y="4612" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-79" value="Incomplete/Running" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4CC;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="-140" y="4702" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-80" value="Suspended" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="4908" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-81" value="Completed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F8E8;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="117" y="4580" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-82" value="Passed" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="4580" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-83" value="Failed" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="270" y="4948" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-84" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="570" y="4798" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-85" value="User Clicks Launch" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-76" target="UMAcsFPBnO9zktvzeYEz-77">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-540" y="4853" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-86" value="User Clicks Launch" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-77" target="UMAcsFPBnO9zktvzeYEz-78">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-87" value="Content Loads" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-78" target="UMAcsFPBnO9zktvzeYEz-79">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-88" value="User Exits (Save Progress)" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-79" target="UMAcsFPBnO9zktvzeYEz-80">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-89" value="User Resumes" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-80" target="UMAcsFPBnO9zktvzeYEz-79">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-90" value="Criteria Met" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-79" target="UMAcsFPBnO9zktvzeYEz-81">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-91" value="Score &gt;= Mastery" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-81">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="610" y="4593.4038876889845" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-92" value="Score &lt; Mastery" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-81" target="UMAcsFPBnO9zktvzeYEz-83">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-93" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-83" target="UMAcsFPBnO9zktvzeYEz-84">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="250" y="4728" as="sourcePoint" />
+            <mxPoint x="300" y="4678" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="580" y="4938" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-94" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-330" y="3493" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-95" value="In Progress" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4F4;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="-160" y="3650" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-96" value="Submitted" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F8E8;" vertex="1" parent="1">
+          <mxGeometry y="3480" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-97" value="Overdue" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="210" y="3790" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-98" value="Abandoned" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFDDDD;" vertex="1" parent="1">
+          <mxGeometry x="520" y="3720" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-99" value="Finished" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="3590" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-100" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="700" y="3480" width="10" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-101" value="Start Quiz()" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-94" target="UMAcsFPBnO9zktvzeYEz-95">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-320" y="3670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-102" value="User Clicks Finish / Auto-submit" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-95" target="UMAcsFPBnO9zktvzeYEz-96">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-103" value="Time Expires (Grace)" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-95" target="UMAcsFPBnO9zktvzeYEz-97">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-104" value="User Clicks Submit" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-97" target="UMAcsFPBnO9zktvzeYEz-96">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-105" value="Grace Period Expires" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-97" target="UMAcsFPBnO9zktvzeYEz-98">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-106" value="System Calculates Score" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-96" target="UMAcsFPBnO9zktvzeYEz-99">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-107" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-99" target="UMAcsFPBnO9zktvzeYEz-100">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="3615" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-108" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-410" y="4070" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-109" value="Setup Phase" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-380" y="4220" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-110" value="Submission Phase" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-200" y="4060" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-111" value="Assessment Phase" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="54" y="4250" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-112" value="Grading Evaluation Phase" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="190" y="4050" width="240" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-113" value="Closed" style="rounded=1;fillColor=#F0F0F0;" vertex="1" parent="1">
+          <mxGeometry x="600" y="4190" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-114" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="810" y="4070" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-115" value="Start" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-108" target="UMAcsFPBnO9zktvzeYEz-109">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-116" value="Instructor Switches Phase" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-109" target="UMAcsFPBnO9zktvzeYEz-110">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-117" value="Instructor Switches Phase" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-110" target="UMAcsFPBnO9zktvzeYEz-111">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-118" value="Instructor Switches Phase" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-111" target="UMAcsFPBnO9zktvzeYEz-112">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-119" value="Instructor Switches Phase" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-112" target="UMAcsFPBnO9zktvzeYEz-113">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-120" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-113" target="UMAcsFPBnO9zktvzeYEz-114">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="4210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-121" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-520" y="5220" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-122" value="Draft" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-416" y="5270" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-123" value="Active" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F8E8;" vertex="1" parent="1">
+          <mxGeometry x="-350" y="5120" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-124" value="Archived/Deprecated" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0F0F0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="5270" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-125" value="" style="ellipse;fillColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="5180" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-126" value="(start)" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-121" target="UMAcsFPBnO9zktvzeYEz-122">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-510" y="5300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-127" value="Admin Saves Changes" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-122" target="UMAcsFPBnO9zktvzeYEz-122">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-128" value="Admin Publishes" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-122" target="UMAcsFPBnO9zktvzeYEz-123">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-129" value="New Version Published" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-123" target="UMAcsFPBnO9zktvzeYEz-124">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-130" value="Admin Manually Retires" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-123" target="UMAcsFPBnO9zktvzeYEz-124">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="UMAcsFPBnO9zktvzeYEz-131" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="UMAcsFPBnO9zktvzeYEz-124" target="UMAcsFPBnO9zktvzeYEz-125">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="90" y="5240" as="sourcePoint" />
+            <mxPoint x="140" y="5190" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="317" y="5295" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
