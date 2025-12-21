@@ -1,0 +1,38 @@
+@startuml FileRepositoriesStorage
+left to right direction
+
+actor "User" as user
+actor "System" as system
+actor "External Service" as external_service
+actor "Administrator" as admin
+
+rectangle "File Repositories & Storage" {
+  usecase "Use File Picker" as UC2301
+  usecase "Browse Repositories" as browse_repositories
+  usecase "Store Private Files" as UC2302
+  usecase "Check Quota" as check_quota
+  usecase "Link External File" as UC2303
+  usecase "Authenticate Service" as authenticate_service
+  usecase "Manage Storage" as UC2304
+  usecase "Retrieve File" as UC2305
+  usecase "Check Permissions" as check_file_permissions
+  usecase "Cleanup Temporary" as UC2306
+}
+
+' Actor Associations
+user --> UC2301 : **Association**
+user --> UC2302 : **Association**
+user --> UC2303 : **Association**
+admin --> UC2304 : **Association**
+system --> UC2305 : **Association**
+system --> UC2306 : **Association**
+external_service --> UC2303 : **Association**
+
+' Use Case Relationships
+UC2301 ..> browse_repositories : **<<include>>**
+UC2302 ..> check_quota : **<<include>>**
+UC2303 ..> authenticate_service : **<<include>>**
+UC2305 ..> check_file_permissions : **<<include>>**
+UC2306 ..> UC2304 : **<<extend>>**
+
+@enduml

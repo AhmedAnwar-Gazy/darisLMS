@@ -1,0 +1,63 @@
+@startuml
+title Workshop Peer Assessment Flow
+skinparam activityBackgroundColor #FFEBCC
+skinparam activityBorderColor #CC6600
+
+|Instructor|
+start
+:Create Workshop Activity;
+:Configure Phases & Settings;
+:Set Status = "Setup";
+
+:Change Status to "Submission";
+
+|Author|
+:Submit Work\n(File or Text);
+:Receive Submission Confirmation;
+
+|Instructor|
+:Change Status to "Assessment";
+
+|System|
+:Execute Allocation Algorithm;
+
+fork
+  |Author|
+  :Wait for Peer Reviews;
+  
+fork again
+  |Reviewer|
+  :Receive Assignment;
+  :Review Peer's Work;
+  :Complete Assessment Rubric;
+  :Submit Evaluation;
+end fork
+
+|System|
+:Collect All Assessments;
+:Calculate Preliminary Grades;
+
+|Instructor|
+:Change Status to "Grading Evaluation";
+:Review Assessment Quality;
+:Adjust Grades if Needed;
+:Publish Final Grades;
+
+|System|
+:Calculate Final Scores;
+
+fork
+  |Author|
+  :Receive Final Grade;
+  :View Peer Feedback;
+  
+fork again  
+  |Reviewer|
+  :Receive Assessment Grade\n(How well they reviewed);
+end fork
+
+|Instructor|
+:Change Status to "Closed";
+
+stop
+@enduml

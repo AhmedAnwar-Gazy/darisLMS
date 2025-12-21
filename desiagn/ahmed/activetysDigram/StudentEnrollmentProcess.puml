@@ -1,0 +1,62 @@
+@startuml
+title Student Enrollment Process
+skinparam activityBackgroundColor #F5FFFA
+skinparam activityBorderColor #2E8B57
+
+|Student|
+start
+:Browse Course Catalog;
+:Click "Enroll" Button;
+
+|Frontend|
+:Check Authentication;
+if (Authenticated?) then (no)
+  :Redirect to Login;
+  stop
+else (yes)
+  :Send POST /api/courses/{id}/enroll;
+endif
+
+|Backend|
+:Check Course Visibility;
+if (Course = Public?) then (no)
+  :Check for Invitation/Payment;
+  if (Has Access?) then (no)
+    :Return 403 Forbidden;
+    stop
+  endif
+endif
+
+:Check Existing Enrollment;
+
+|Database|
+:SELECT FROM user_enrolments\nWHERE user_id=? AND course_id=?;
+-back->
+
+|Backend|
+if (Already Enrolled?) then (yes)
+  :Return "Already Enrolled";
+  stop
+else (no)
+  :Create Enrollment Record;
+  :Assign Student Role;
+endif
+
+|Database|
+:INSERT INTO user_enrolments;
+:INSERT INTO role_assignments;
+:INSERT INTO notifications;
+-back->
+
+|Backend|
+:Trigger Welcome Notification;
+:Return 201 Created;
+
+|Frontend|
+:Update UI\n(Show "Go to Course");
+:Display Success Message;
+
+|Student|
+:Access Course Content;
+stop
+@enduml

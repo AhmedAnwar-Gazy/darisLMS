@@ -1,0 +1,159 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**lesson**" as lesson {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  practice : tinyint NOT NULL DEFAULT '0' 
+  modattempts : tinyint NOT NULL DEFAULT '0' 
+  usepassword : tinyint NOT NULL DEFAULT '0' 
+  password : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL 
+  dependency : int NOT NULL DEFAULT '0' 
+  conditions : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  grade : int NOT NULL DEFAULT '0' 
+  custom : tinyint NOT NULL DEFAULT '0' 
+  ongoing : tinyint NOT NULL DEFAULT '0' 
+  usemaxgrade : tinyint NOT NULL DEFAULT '0' 
+  maxanswers : tinyint NOT NULL DEFAULT '4' 
+  maxattempts : tinyint NOT NULL DEFAULT '5' 
+  review : tinyint NOT NULL DEFAULT '0' 
+  nextpagedefault : tinyint NOT NULL DEFAULT '0' 
+  feedback : tinyint NOT NULL DEFAULT '1' 
+  minquestions : tinyint NOT NULL DEFAULT '0' 
+  maxpages : tinyint NOT NULL DEFAULT '0' 
+  timelimit : int NOT NULL DEFAULT '0' 
+  retake : tinyint NOT NULL DEFAULT '1' 
+  activitylink : int NOT NULL DEFAULT '0' 
+  mediafile : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Local file path or full external URL' 
+  mediaheight : int NOT NULL DEFAULT '100' 
+  mediawidth : int NOT NULL DEFAULT '650' 
+  mediaclose : tinyint NOT NULL DEFAULT '0' 
+  slideshow : tinyint NOT NULL DEFAULT '0' 
+  width : int NOT NULL DEFAULT '640' 
+  height : int NOT NULL DEFAULT '480' 
+  bgcolor : varchar(7) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '#FFFFFF' 
+  displayleft : tinyint NOT NULL DEFAULT '0' 
+  displayleftif : tinyint NOT NULL DEFAULT '0' 
+  progressbar : tinyint NOT NULL DEFAULT '0' 
+  available : int NOT NULL DEFAULT '0' 
+  deadline : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  completionendreached : tinyint(1) DEFAULT '0' 
+  completiontimespent : bigint DEFAULT '0' 
+  allowofflineattempts : tinyint(1) DEFAULT '0' COMMENT 'Whether to allow the lesson to be attempted offline in the mobile app' 
+}
+
+entity "**lesson_answers**" as lesson_answers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  lessonid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  pageid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  jumpto : bigint NOT NULL DEFAULT '0' 
+  grade : smallint NOT NULL DEFAULT '0' 
+  score : int NOT NULL DEFAULT '0' 
+  flags : tinyint NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  answer : text COLLATE utf8mb4_unicode_ci 
+  answerformat : tinyint NOT NULL DEFAULT '0' 
+  response : text COLLATE utf8mb4_unicode_ci 
+  responseformat : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**lesson_attempts**" as lesson_attempts {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  lessonid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  pageid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  answerid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  retry : tinyint NOT NULL DEFAULT '0' 
+  correct : int NOT NULL DEFAULT '0' 
+  useranswer : text COLLATE utf8mb4_unicode_ci 
+  timeseen : int NOT NULL DEFAULT '0' 
+}
+
+entity "**lesson_branch**" as lesson_branch {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  lessonid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  pageid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  retry : int NOT NULL DEFAULT '0' 
+  flag : tinyint NOT NULL DEFAULT '0' 
+  timeseen : int NOT NULL DEFAULT '0' 
+  nextpageid : int NOT NULL DEFAULT '0' 
+}
+
+entity "**lesson_grades**" as lesson_grades {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  lessonid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  grade : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' 
+  late : tinyint NOT NULL DEFAULT '0' 
+  completed : int NOT NULL DEFAULT '0' 
+}
+
+entity "**lesson_overrides**" as lesson_overrides {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  lessonid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key references lesson.id' (FK)
+  groupid : bigint unsigned DEFAULT NULL COMMENT 'Foreign key references groups.id.  Can be null if this is a per-user override.' (FK)
+  userid : bigint unsigned DEFAULT NULL COMMENT 'Foreign key references user.id.  Can be null if this is a per-group override.' (FK)
+  available : int DEFAULT NULL COMMENT 'Time at which students may start attempting this lesson. Can be null 
+  deadline : int DEFAULT NULL COMMENT 'Time by which students must have completed their attempt.  Can be null 
+  timelimit : int DEFAULT NULL COMMENT 'Time limit in seconds.  Can be null 
+  review : tinyint DEFAULT NULL 
+  maxattempts : tinyint DEFAULT NULL 
+  retake : tinyint DEFAULT NULL 
+  password : varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Lesson password.  Can be null 
+}
+
+entity "**lesson_pages**" as lesson_pages {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  lessonid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  prevpageid : int NOT NULL DEFAULT '0' 
+  nextpageid : int NOT NULL DEFAULT '0' 
+  qtype : tinyint NOT NULL DEFAULT '0' 
+  qoption : tinyint NOT NULL DEFAULT '0' 
+  layout : tinyint NOT NULL DEFAULT '1' 
+  display : tinyint NOT NULL DEFAULT '1' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  title : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  contents : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  contentsformat : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**lesson_timer**" as lesson_timer {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  lessonid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  starttime : int NOT NULL DEFAULT '0' 
+  lessontime : int NOT NULL DEFAULT '0' 
+  completed : tinyint(1) DEFAULT '0' 
+  timemodifiedoffline : int NOT NULL DEFAULT '0' COMMENT 'Last modified time via web services (mobile app).' 
+}
+
+entity "**groups**" as groups <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+lesson_answers }|--|| lesson
+lesson_answers }|--|| lesson_pages
+lesson_attempts }|--|| lesson_answers
+lesson_attempts }|--|| lesson
+lesson_attempts }|--|| lesson_pages
+lesson_branch }|--|| lesson
+lesson_branch }|--|| lesson_pages
+lesson_grades }|--|| lesson
+lesson_overrides }|--|| groups
+lesson_overrides }|--|| lesson
+lesson_overrides }|--|| users
+lesson_pages }|--|| lesson
+lesson_timer }|--|| lesson
+@enduml

@@ -1,0 +1,76 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "chat" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +keepdays : Integer
+  +studentlogs : Integer
+  +chattime : Integer
+  +schedule : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "chat_messages" {
+  +id : Integer
+  +chatid : Integer
+  +userid : Integer
+  +groupid : Integer
+  +issystem : Integer
+  +message : String
+  +timestamp : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "chat_messages_current" {
+  +id : Integer
+  +chatid : Integer
+  +userid : Integer
+  +groupid : Integer
+  +issystem : Integer
+  +message : String
+  +timestamp : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "chat_users" {
+  +id : Integer
+  +chatid : Integer
+  +userid : Integer
+  +groupid : Integer
+  +version : String
+  +ip : String
+  +firstping : Integer
+  +lastping : Integer
+  +lastmessageping : Integer
+  +sid : String
+  +course : Integer
+  +lang : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course" <<External>> {
+}
+
+"chat_messages" "*" --> "1" "chat" : chatid
+"chat_messages_current" "*" --> "1" "chat" : chatid
+"chat_users" "*" --> "1" "chat" : chatid
+"chat_users" "*" --> "1" "course" : course
+@enduml

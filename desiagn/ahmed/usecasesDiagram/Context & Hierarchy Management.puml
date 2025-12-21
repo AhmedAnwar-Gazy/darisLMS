@@ -1,0 +1,30 @@
+@startuml ContextHierarchyManagement
+left to right direction
+
+actor "System" as system
+actor "Administrator" as admin
+actor "User" as user
+
+rectangle "Context & Hierarchy Management" {
+  usecase "Create Context" as UC1501
+  usecase "Inherit Permissions" as UC1502
+  usecase "Check Parent" as check_parent
+  usecase "Override Permissions" as UC1503
+  usecase "Validate Context" as UC1504
+  usecase "Evaluate Permissions" as evaluate_permissions
+  usecase "Operate in Context" as operate_context
+}
+
+' Actor Associations
+system --> UC1501 : **Association**
+system --> UC1502 : **Association**
+admin --> UC1503 : **Association**
+system --> UC1504 : **Association**
+user --> operate_context : **Association**
+
+' Use Case Relationships
+UC1502 ..> check_parent : **<<include>>**
+UC1503 ..> UC1502 : **<<extend>>**
+UC1504 ..> evaluate_permissions : **<<include>>**
+
+@enduml

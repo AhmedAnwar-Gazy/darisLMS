@@ -1,0 +1,43 @@
+@startuml
+autonumber
+    participant Admin
+    participant UserManagement
+    participant AdminUserController
+    participant SanctumService
+    participant Database
+    participant "Target User (Affected)" as TargetUser
+
+    Admin -> UserManagement: Click "Ban User" on Profile
+    
+    UserManagement -> UserManagement: Show Confirmation Dialog
+    Admin -> UserManagement: Confirm "Yes, Suspend Account"
+    
+    UserManagement -> AdminUserController: POST /api/admin/users/{id}/suspend {reason: "Violation"}
+    
+    AdminUserController -> Database: UPDATE users SET suspended=1, suspended_reason=? WHERE id=?
+    Database --> AdminUserController: User Suspended
+    
+    AdminUserController -> SanctumService: revokeAllTokens(user_id)
+    SanctumService -> Database: DELETE FROM personal_access_tokens WHERE tokenable_id=?
+    Database --> SanctumService: Tokens Revoked
+    
+    SanctumService --> AdminUserController: Tokens Cleared
+    
+    AdminUserController -> Database: INSERT INTO audit_logs (action, admin_id, target_user_id, ip)
+    Database --> AdminUserController: Log Created
+    
+    AdminUserController --> UserManagement: Return 200 OK {message: "User Suspended"}
+    
+    UserManagement -> UserManagement: Update UI: Show "Suspended" Badge
+    UserManagement --> Admin: Show Success Toast
+    
+    note over TargetUser,Database: Asynchronous Effect
+    
+    TargetUser -> TargetUser: Try to Access Protected Resource
+    TargetUser -> AdminUserController: Any API Request with Invalid Token
+    AdminUserController -> Database: SELECT suspended FROM users WHERE id=?
+    Database --> AdminUserController: Return suspended=1
+    
+    AdminUserController --> TargetUser: Return 401 Unauthorized {error: "Account Suspended"}
+    TargetUser -> TargetUser: Force Logout + Redirect to Login
+@enduml

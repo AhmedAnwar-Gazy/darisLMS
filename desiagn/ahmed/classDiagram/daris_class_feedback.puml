@@ -1,0 +1,136 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "feedback" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +anonymous : Integer
+  +email_notification : Integer
+  +multiple_submit : Integer
+  +autonumbering : Integer
+  +site_after_submit : String
+  +page_after_submit : String
+  +page_after_submitformat : Integer
+  +publish_stats : Integer
+  +timeopen : Integer
+  +timeclose : Integer
+  +timemodified : Integer
+  +completionsubmit : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "feedback_completed" {
+  +id : Integer
+  +feedback : Integer
+  +userid : Integer
+  +timemodified : Integer
+  +random_response : Integer
+  +anonymous_response : Integer
+  +courseid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "feedback_completedtmp" {
+  +id : Integer
+  +feedback : Integer
+  +userid : Integer
+  +guestid : String
+  +timemodified : Integer
+  +random_response : Integer
+  +anonymous_response : Integer
+  +courseid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "feedback_item" {
+  +id : Integer
+  +feedback : Integer
+  +template : Integer
+  +name : String
+  +label : String
+  +presentation : String
+  +typ : String
+  +hasvalue : Integer
+  +position : Integer
+  +required : Integer
+  +dependitem : Integer
+  +dependvalue : String
+  +options : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "feedback_sitecourse_map" {
+  +id : Integer
+  +feedbackid : Integer
+  +courseid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "feedback_template" {
+  +id : Integer
+  +course : Integer
+  +ispublic : Integer
+  +name : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "feedback_value" {
+  +id : Integer
+  +course_id : Integer
+  +item : Integer
+  +completed : Integer
+  +tmp_completed : Integer
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "feedback_valuetmp" {
+  +id : Integer
+  +course_id : Integer
+  +item : Integer
+  +completed : Integer
+  +tmp_completed : Integer
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course" <<External>> {
+}
+
+"feedback_completed" "*" --> "1" "course" : courseid
+"feedback_completed" "*" --> "1" "feedback" : feedback
+"feedback_completedtmp" "*" --> "1" "feedback" : feedback
+"feedback_item" "*" --> "1" "feedback" : feedback
+"feedback_item" "*" --> "1" "feedback_template" : template
+"feedback_sitecourse_map" "*" --> "1" "feedback" : feedbackid
+"feedback_value" "*" --> "1" "feedback_item" : item
+"feedback_valuetmp" "*" --> "1" "feedback_item" : item
+@enduml

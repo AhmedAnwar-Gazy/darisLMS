@@ -1,0 +1,401 @@
+Here are the detailed descriptions for the Level 2 Data Flow Diagrams (DFD) for the first two parent processes. These descriptions break down the sub-processes, inputs, outputs, and the specific database tables (Data Stores) involved.
+________________________________________
+1. Parent Process: Manage Users & Authentication
+This diagram details how the system handles identity, security, and profile management.
+DFD 1.1: Register New User
+•	Description: Handles the creation of a new account for a Guest.
+•	Inputs:
+o	Registration Data (Name, Email, Password) from Guest.
+•	Process Logic: Validates email format, checks if email is unique, hashes the password using Bcrypt, and assigns the default role (Student).
+•	Outputs:
+o	Success Message 
+o	        →\rightarrow→
+      
+to Guest.
+o	Verification Email Payload 
+o	        →\rightarrow→
+      
+to Email Service.
+o	New User Record 
+o	        →\rightarrow→
+      
+stored in D1: Users Table (user).
+DFD 1.2: Authenticate User (Login)
+•	Description: Verifies credentials and issues a secure API token.
+•	Inputs:
+o	Login Credentials (Email, Password) from User.
+o	Stored Password Hash from D1: Users Table.
+•	Process Logic: Compares input password with stored hash. If valid, generates a Sanctum Token. Updates "Last Login" timestamp.
+•	Outputs:
+o	Auth Token & User Role 
+o	        →\rightarrow→
+      
+to User.
+o	Login Timestamp Update 
+o	        →\rightarrow→
+      
+stored in D1: Users Table.
+DFD 1.3: Update User Profile
+•	Description: Allows users to change their personal details.
+•	Inputs:
+o	Edit Profile Data (Bio, Phone, Avatar Image) from User.
+•	Process Logic: Validates input types. If an image is uploaded, it sends the binary to storage and saves the path. Updates the user record.
+•	Outputs:
+o	Updated Profile View 
+o	        →\rightarrow→
+      
+to User.
+o	Updated User Record 
+o	        →\rightarrow→
+      
+stored in D1: Users Table.
+o	Profile Image 
+o	        →\rightarrow→
+      
+stored in Cloud Storage (if applicable).
+DFD 1.4: Reset Password via Email
+•	Description: Handles lost password recovery.
+•	Inputs:
+o	Email Address from User.
+•	Process Logic: Checks if the email exists. Generates a temporary, unique token with an expiry time.
+•	Outputs:
+o	Reset Link (containing token) 
+o	        →\rightarrow→
+      
+to Email Service.
+o	Token Record 
+o	        →\rightarrow→
+      
+stored in D1: Users Table (specifically the password_resets table).
+________________________________________
+2. Parent Process: Manage Courses & Content
+This diagram details how Instructors build the curriculum and structure of a course.
+DFD 2.1: Create/Update Course Metadata
+•	Description: Setting up the shell of a course (Title, Category, Settings).
+•	Inputs:
+o	Course Details (Full Name, Short Name, Summary, Category ID) from Instructor.
+•	Process Logic: Validates required fields. Creates a new unique ID for the course or updates existing details.
+•	Outputs:
+o	Course Editor Interface 
+o	        →\rightarrow→
+      
+to Instructor.
+o	Course Record 
+o	        →\rightarrow→
+      
+stored in D2: Courses Table (course).
+DFD 2.2: Manage Sections & Lessons
+•	Description: Organizing content into a hierarchy (Course 
+•	        →\rightarrow→
+      
+Section 
+        →\rightarrow→
+      
+Module).
+•	Inputs:
+o	Section Name/Order from Instructor.
+o	Lesson Content (Text, HTML) from Instructor.
+•	Process Logic: Creates section records. Creates module records linked to those sections. Handles re-ordering (drag and drop logic).
+•	Outputs:
+o	Updated Course Structure 
+o	        →\rightarrow→
+      
+to Instructor.
+o	Section Record 
+o	        →\rightarrow→
+      
+stored in D2: Courses Table (course_sections).
+o	Module Record 
+o	        →\rightarrow→
+      
+stored in D2: Courses Table (course_modules).
+DFD 2.3: Upload & Link Resources (File Management)
+•	Description: Handling binary files (PDFs, Videos) and attaching them to the course.
+•	Inputs:
+o	File Binary from Instructor.
+o	Resource Settings (Name, Description) from Instructor.
+•	Process Logic: Uploads physical file to storage provider. Generates a file hash/path. Creates a database entry for the file. Creates a resource module linking the file to the course.
+•	Outputs:
+o	File Object 
+o	        →\rightarrow→
+      
+to Cloud Storage.
+o	File Metadata 
+o	        →\rightarrow→
+      
+stored in D3: Files Table (files).
+o	Resource Link 
+o	        →\rightarrow→
+      
+stored in D2: Courses Table (resource).
+DFD 2.4: Publish Course (Validation & Visibility)
+•	Description: Making a draft course visible to students.
+•	Inputs:
+o	Publish Request from Instructor.
+o	Course Data (to check for empty sections) from D2: Courses Table.
+•	Process Logic: Checks business rules (e.g., "Course must have at least one module"). If pass, sets visible flag to 1. Triggers search indexing.
+•	Outputs:
+o	Success Notification 
+o	        →\rightarrow→
+      
+to Instructor.
+o	Visibility Status Update 
+o	        →\rightarrow→
+      
+stored in D2: Courses Table.
+o	Index Payload 
+o	        →\rightarrow→
+      
+to Process 6.0 (Search Indexing).
+
+
+
+
+
+
+
+
+
+
+
+
+
+Here are the detailed descriptions for the Level 2 Data Flow Diagrams (DFD) for the next two parent processes: Manage Enrollments and Assessments & Grading.
+________________________________________
+3. Parent Process: Manage Enrollments
+This diagram details the logic for linking users to courses and verifying their rights to access content.
+DFD 3.1: Process Student Self-Enrollment
+•	Description: Allows a student to join a "Public" or "Open" course without instructor intervention.
+•	Inputs:
+o	Enrollment Request (Course ID) from Student.
+o	Course Visibility/Method (Check if 'self' is enabled) from D4: Enrollments Table (enrol).
+•	Process Logic: Checks if the user is already enrolled. Verifies if the course allows self-enrollment. Creates the link between user and course.
+•	Outputs:
+o	Success/Welcome Message 
+o	        →\rightarrow→
+      
+to Student.
+o	New Enrollment Record 
+o	        →\rightarrow→
+      
+stored in D4: Enrollments Table (user_enrolments).
+o	Role Assignment (Student Role) 
+o	        →\rightarrow→
+      
+stored in D1: Users Table (role_assignments).
+DFD 3.2: Process Instructor Manual Enrollment
+•	Description: Allows an Instructor or Admin to add specific users to a course manually.
+•	Inputs:
+o	User Search Query (Email/Name) from Instructor.
+o	Selected User ID & Role from Instructor.
+•	Process Logic: Validates that the target user exists. Creates the enrollment record. Assigns the specific role (e.g., Student, Non-editing Teacher) within that course context.
+•	Outputs:
+o	Confirmation Notification 
+o	        →\rightarrow→
+      
+to Instructor.
+o	Enrollment Notification 
+o	        →\rightarrow→
+      
+to Student (via System/Email).
+o	New Enrollment Record 
+o	        →\rightarrow→
+      
+stored in D4: Enrollments Table (user_enrolments).
+DFD 3.3: Validate Course Access Permissions
+•	Description: The internal check performed whenever a user attempts to view course content (Middleware logic).
+•	Inputs:
+o	Access Request (URL/Resource) from User.
+o	Enrollment Status (Active/Suspended/Expired) from D4: Enrollments Table.
+o	Context/Role Data from D1: Users Table.
+•	Process Logic: Checks if the user has an active enrollment record for the requested course ID. Checks if the enrollment period (timeend) has expired.
+•	Outputs:
+o	Content Data (if valid) 
+o	        →\rightarrow→
+      
+to User.
+o	Access Denied Error (if invalid) 
+o	        →\rightarrow→
+      
+to User.
+________________________________________
+4. Parent Process: Assessments & Grading
+This diagram details the lifecycle of educational tasks, from creation to final grade calculation.
+DFD 4.1: Create Assessment Activity (Assignment/Quiz)
+•	Description: Instructor sets up a gradable activity.
+•	Inputs:
+o	Activity Settings (Name, Description, Due Date, Max Grade) from Instructor.
+•	Process Logic: Creates the module instance (e.g., a specific Assignment). Creates a corresponding column in the Gradebook automatically.
+•	Outputs:
+o	Activity View 
+o	        →\rightarrow→
+      
+to Instructor/Student.
+o	Activity Record 
+o	        →\rightarrow→
+      
+stored in D5: Activities Table (assign or quiz).
+o	Grade Item 
+o	        →\rightarrow→
+      
+stored in D6: Grades Table (grade_items).
+DFD 4.2: Process Student Submission
+•	Description: Handling the intake of student work (files or text).
+•	Inputs:
+o	Submission Payload (File/Answers) from Student.
+o	Time Constraints (Due Date) from D5: Activities Table.
+•	Process Logic: Checks if the submission is late. Uploads physical files to storage. Records the submission timestamp and status (e.g., "Submitted for Grading").
+•	Outputs:
+o	Submission Receipt 
+o	        →\rightarrow→
+      
+to Student.
+o	File Binary 
+o	        →\rightarrow→
+      
+to Cloud Storage.
+o	Submission Record 
+o	        →\rightarrow→
+      
+stored in D5: Activities Table (assign_submission or quiz_attempts).
+DFD 4.3: Grade Submission & Provide Feedback
+•	Description: Instructor reviewing work and entering scores.
+•	Inputs:
+o	Score & Comments from Instructor.
+o	Student Submission Data from D5: Activities Table.
+•	Process Logic: Validates score against the maximum grade. Updates the specific activity grade table and feedback table. Pushes the raw grade to the central gradebook table.
+•	Outputs:
+o	Feedback Notification 
+o	        →\rightarrow→
+      
+to Student.
+o	Activity Grade 
+o	        →\rightarrow→
+      
+stored in D5: Activities Table (assign_grades).
+o	Feedback Data 
+o	        →\rightarrow→
+      
+stored in D5: Activities Table (assignfeedback_comments).
+o	Raw Grade 
+o	        →\rightarrow→
+      
+stored in D6: Grades Table (grade_grades).
+DFD 4.4: Calculate Course Aggregates (Gradebook)
+•	Description: The system calculating the final course grade based on all activities.
+•	Inputs:
+o	Raw Grades from D6: Grades Table (grade_grades).
+o	Aggregation Settings (Weights, Drops) from D6: Grades Table (grade_categories).
+•	Process Logic: Iterates through all graded items for a student in a specific course. Applies weighting formulas. Calculates the final course total.
+•	Outputs:
+o	Gradebook Report 
+o	        →\rightarrow→
+      
+to Student/Instructor.
+o	Final Course Grade 
+o	        →\rightarrow→
+      
+stored/updated in D6: Grades Table (grade_grades for the Course Item).
+
+Here are the detailed descriptions for the Level 2 Data Flow Diagrams (DFD) for the final two parent processes: Communication & Notifications and Search & Discovery.
+________________________________________
+5. Parent Process: Communication & Notifications
+This diagram details how users interact with each other and how the system alerts them to important events.
+DFD 5.1: Post to Discussion Forum
+•	Description: Handling public discussions within a course context.
+•	Inputs:
+o	Post Content (Subject, Body, Attachment) from Student/Instructor.
+o	Forum Context (Discussion ID) from D7: Communication Table (forum_discussions).
+•	Process Logic: Validates that the user has permission to post. Sanatizes HTML input. Saves the post. Identifies subscribers who need to be alerted.
+•	Outputs:
+o	Updated Thread View 
+o	        →\rightarrow→
+      
+to Student/Instructor.
+o	Post Record 
+o	        →\rightarrow→
+      
+stored in D7: Communication Table (forum_posts).
+o	New Discussion Record (if creating a new thread) 
+o	        →\rightarrow→
+      
+stored in D7: Communication Table (forum_discussions).
+o	Alert Trigger 
+o	        →\rightarrow→
+      
+to DFD 5.3 (System Notifications).
+DFD 5.2: Send Private Message
+•	Description: Direct, one-to-one communication between users.
+•	Inputs:
+o	Message Payload (Text, Recipient ID) from User.
+o	Blocking Rules (Check if sender is blocked) from D1: Users Table.
+•	Process Logic: Checks if the recipient exists and accepts messages. Timestamps the message. Triggers a real-time event (WebSocket).
+•	Outputs:
+o	Message Display (Chat UI) 
+o	        →\rightarrow→
+      
+to User.
+o	Message Record 
+o	        →\rightarrow→
+      
+stored in D7: Communication Table (messages).
+o	Unread Count Update 
+o	        →\rightarrow→
+      
+stored in D7: Communication Table.
+DFD 5.3: Generate & Dispatch System Notifications
+•	Description: The centralized handler for routing alerts (e.g., "Grade Posted", "New Reply").
+•	Inputs:
+o	Event Trigger from Other Processes (Grading, Forums, Enrollment).
+o	User Preferences (Email vs. Web) from D1: Users Table.
+•	Process Logic: Determines the delivery method based on priority and user settings. Creates an internal database notification. Dispatches an email job if required.
+•	Outputs:
+o	In-App Alert (Bell Icon) 
+o	        →\rightarrow→
+      
+to User.
+o	Email Payload 
+o	        →\rightarrow→
+      
+to Email Service (External Entity).
+o	Notification Record 
+o	        →\rightarrow→
+      
+stored in D7: Communication Table (notifications).
+________________________________________
+6. Parent Process: Search & Discovery
+This diagram details the interaction between the core database and the high-speed search engine (TypeSense).
+DFD 6.1: Index Content (Sync with TypeSense)
+•	Description: The background process that keeps search results up-to-date.
+•	Inputs:
+o	New/Updated Data (Course, User, Book) from D2: Courses Table or D1: Users Table.
+•	Process Logic: Detects changes in the database (via Model Observers). Formats the data into a JSON document schema. Sends the data to the external search engine via API.
+•	Outputs:
+o	Index Payload (JSON) 
+o	        →\rightarrow→
+      
+to TypeSense Engine (External Entity).
+o	Sync Status (Log) 
+o	        →\rightarrow→
+      
+stored in D2: Courses Table (or System Logs).
+DFD 6.2: Execute Search Query & Filtering
+•	Description: Processing user queries to return ranked results.
+•	Inputs:
+o	Search Keywords & Filters from User.
+o	Indexed Documents from TypeSense Engine.
+•	Process Logic: Sends the query to TypeSense. Receives a list of matching IDs. (Optional) Hydrates these IDs with full details from the main database if the index doesn't contain all view data.
+•	Outputs:
+o	Search Results List 
+o	        →\rightarrow→
+      
+to User.
+o	Facet Counts (e.g., "5 Math Courses") 
+o	        →\rightarrow→
+      
+to User.
+o	Course Details (for result display) 
+o	        →\rightarrow→
+      
+retrieved from D2: Courses Table.
+

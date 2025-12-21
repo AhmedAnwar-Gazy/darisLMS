@@ -1,0 +1,24 @@
+@startuml UserAccountLifecycle
+title User Account Lifecycle (SMD-01)
+hide empty description
+
+state "Unregistered" as unregistered
+state "Pending Verification" as pending_verification
+state "Active" as active
+state "Suspended/Banned" as suspended
+state "Soft Deleted" as soft_deleted
+state "Hard Deleted" as hard_deleted
+
+[*] --> unregistered
+
+unregistered --> pending_verification : Register()
+pending_verification --> active : Click Email Link()
+active --> suspended : Admin Bans User()
+suspended --> active : Admin Unbans User()
+active --> soft_deleted : User Deletes Account()
+soft_deleted --> active : Admin Restores User()
+soft_deleted --> hard_deleted : Retention Period Expires()
+
+hard_deleted --> [*]
+
+@enduml

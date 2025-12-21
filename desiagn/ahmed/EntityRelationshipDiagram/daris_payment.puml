@@ -1,0 +1,52 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**payment_accounts**" as payment_accounts {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  idnumber : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  contextid : bigint unsigned NOT NULL (FK)
+  enabled : tinyint(1) NOT NULL DEFAULT '0' 
+  archived : tinyint(1) NOT NULL DEFAULT '0' 
+  timecreated : int DEFAULT NULL 
+  timemodified : int DEFAULT NULL 
+}
+
+entity "**payment_gateways**" as payment_gateways {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  accountid : bigint unsigned NOT NULL (FK)
+  gateway : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enabled : tinyint(1) NOT NULL DEFAULT '1' 
+  config : text COLLATE utf8mb4_unicode_ci 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**payments**" as payments {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The plugin this payment belongs to.' 
+  paymentarea : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of payable area' 
+  itemid : int NOT NULL 
+  userid : bigint unsigned NOT NULL (FK)
+  amount : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  currency : varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL 
+  accountid : bigint unsigned NOT NULL (FK)
+  gateway : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+payment_accounts }|--|| context
+payment_gateways }|--|| payment_accounts
+payments }|--|| payment_accounts
+payments }|--|| users
+@enduml

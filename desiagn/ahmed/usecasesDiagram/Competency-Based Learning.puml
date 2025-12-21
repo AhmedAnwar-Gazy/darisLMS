@@ -1,0 +1,39 @@
+@startuml CompetencyBasedLearning
+left to right direction
+
+actor "Administrator" as admin
+actor "Instructor" as instructor
+actor "Student" as student
+actor "System" as system
+actor "Curriculum Designer" as curriculum_designer
+
+rectangle "Competency-Based Learning System" {
+  usecase "Define Framework" as UC2001
+  usecase "Create Hierarchy" as create_hierarchy
+  usecase "Map Activity" as UC2002
+  usecase "Set Threshold" as set_threshold
+  usecase "Award Competency" as UC2003
+  usecase "Notify User" as notify_user
+  usecase "Create Learning Plan" as UC2004
+  usecase "Validate Achievement" as UC2005
+  usecase "Grade Activity" as grade_activity
+  usecase "View Progress" as UC2006
+  usecase "Calculate Completion" as calculate_completion
+}
+
+' Actor Associations
+admin --> UC2001 : **Association**
+instructor --> UC2002 : **Association**
+system --> UC2003 : **Association**
+system --> UC2005 : **Association**
+curriculum_designer --> UC2004 : **Association**
+student --> UC2006 : **Association**
+
+' Use Case Relationships
+UC2001 ..> create_hierarchy : **<<include>>**
+UC2002 ..> set_threshold : **<<include>>**
+UC2003 ..> notify_user : **<<include>>**
+UC2005 ..> grade_activity : **<<extend>>**
+UC2006 ..> calculate_completion : **<<include>>**
+
+@enduml

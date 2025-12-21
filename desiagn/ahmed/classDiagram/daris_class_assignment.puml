@@ -1,0 +1,265 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "assign" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : Integer
+  +introformat : Integer
+  +alwaysshowdescription : Integer
+  +nosubmissions : Integer
+  +submissiondrafts : Integer
+  +sendnotifications : Integer
+  +sendlatenotifications : Integer
+  +duedate : Integer
+  +allowsubmissionsfromdate : Integer
+  +grade : Integer
+  +timemodified : Integer
+  +requiresubmissionstatement : Integer
+  +completionsubmit : Integer
+  +cutoffdate : Integer
+  +gradingduedate : Integer
+  +teamsubmission : Integer
+  +requireallteammemberssubmit : Integer
+  +teamsubmissiongroupingid : Integer
+  +blindmarking : Integer
+  +hidegrader : Integer
+  +revealidentities : Integer
+  +attemptreopenmethod : String
+  +maxattempts : Integer
+  +markingworkflow : Integer
+  +markingallocation : Integer
+  +sendstudentnotifications : Integer
+  +preventsubmissionnotingroup : Integer
+  +activity : String
+  +activityformat : Integer
+  +timelimit : Integer
+  +submissionattachments : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assign_grades" {
+  +id : Integer
+  +assignment : Integer
+  +userid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +grader : Integer
+  +grade : Float
+  +attemptnumber : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assign_overrides" {
+  +id : Integer
+  +assignid : Integer
+  +groupid : Integer
+  +userid : Integer
+  +sortorder : Integer
+  +allowsubmissionsfromdate : Integer
+  +duedate : Integer
+  +cutoffdate : Integer
+  +timelimit : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assign_plugin_config" {
+  +id : Integer
+  +assignment : Integer
+  +plugin : String
+  +subtype : String
+  +name : String
+  +value : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assign_submission" {
+  +id : Integer
+  +assignment : Integer
+  +userid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +timestarted : Integer
+  +status : String
+  +groupid : Integer
+  +attemptnumber : Integer
+  +latest : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assign_user_flags" {
+  +id : Integer
+  +userid : Integer
+  +assignment : Integer
+  +locked : Integer
+  +mailed : Integer
+  +extensionduedate : Integer
+  +workflowstate : String
+  +allocatedmarker : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assign_user_mapping" {
+  +id : Integer
+  +assignment : Integer
+  +userid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assignfeedback_comments" {
+  +id : Integer
+  +assignment : Integer
+  +grade : Integer
+  +commenttext : String
+  +commentformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assignfeedback_editpdf_annot" {
+  +id : Integer
+  +gradeid : Integer
+  +pageno : Integer
+  +x : Integer
+  +y : Integer
+  +endx : Integer
+  +endy : Integer
+  +path : String
+  +type : String
+  +colour : String
+  +draft : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assignfeedback_editpdf_cmnt" {
+  +id : Integer
+  +gradeid : Integer
+  +x : Integer
+  +y : Integer
+  +width : Integer
+  +rawtext : String
+  +pageno : Integer
+  +colour : String
+  +draft : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assignfeedback_editpdf_quick" {
+  +id : Integer
+  +userid : Integer
+  +rawtext : String
+  +width : Integer
+  +colour : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assignfeedback_editpdf_rot" {
+  +id : Integer
+  +gradeid : Integer
+  +pageno : Integer
+  +pathnamehash : String
+  +isrotated : Integer
+  +degree : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assignfeedback_file" {
+  +id : Integer
+  +assignment : Integer
+  +grade : Integer
+  +numfiles : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assignsubmission_file" {
+  +id : Integer
+  +assignment : Integer
+  +submission : Integer
+  +numfiles : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "assignsubmission_onlinetext" {
+  +id : Integer
+  +assignment : Integer
+  +submission : Integer
+  +onlinetext : String
+  +onlineformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "groups" <<External>> {
+}
+
+"assign_grades" "*" --> "1" "assign" : assignment
+"assign_overrides" "*" --> "1" "assign" : assignid
+"assign_overrides" "*" --> "1" "groups" : groupid
+"assign_overrides" "*" --> "1" "users" : userid
+"assign_plugin_config" "*" --> "1" "assign" : assignment
+"assign_submission" "*" --> "1" "assign" : assignment
+"assign_user_flags" "*" --> "1" "assign" : assignment
+"assign_user_flags" "*" --> "1" "users" : userid
+"assign_user_mapping" "*" --> "1" "assign" : assignment
+"assign_user_mapping" "*" --> "1" "users" : userid
+"assignfeedback_comments" "*" --> "1" "assign" : assignment
+"assignfeedback_comments" "*" --> "1" "assign_grades" : grade
+"assignfeedback_editpdf_annot" "*" --> "1" "assign_grades" : gradeid
+"assignfeedback_editpdf_cmnt" "*" --> "1" "assign_grades" : gradeid
+"assignfeedback_editpdf_quick" "*" --> "1" "users" : userid
+"assignfeedback_editpdf_rot" "*" --> "1" "assign_grades" : gradeid
+"assignfeedback_file" "*" --> "1" "assign" : assignment
+"assignfeedback_file" "*" --> "1" "assign_grades" : grade
+"assignsubmission_file" "*" --> "1" "assign" : assignment
+"assignsubmission_file" "*" --> "1" "assign_submission" : submission
+"assignsubmission_onlinetext" "*" --> "1" "assign" : assignment
+"assignsubmission_onlinetext" "*" --> "1" "assign_submission" : submission
+@enduml

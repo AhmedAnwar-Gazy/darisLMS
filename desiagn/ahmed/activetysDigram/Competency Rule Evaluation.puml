@@ -1,0 +1,61 @@
+@startuml
+title Competency Rule Evaluation
+skinparam activityBackgroundColor #F5F5DC
+skinparam activityBorderColor #556B2F
+
+|Event System|
+start
+:Detect Grade Update\n(INSERT/UPDATE grade_grades);
+
+|Competency Engine|
+:Query Linked Competencies;
+
+|Database|
+:SELECT * FROM competency_modulecomp\nWHERE module_id=? AND module_type=?;
+-back->
+
+|Competency Engine|
+if (Activity Linked to Competency?) then (no)
+  :End Process;
+  stop
+else (yes)
+  :Retrieve Threshold Rules;
+endif
+
+:Compare Grade vs Threshold;
+
+if (Grade >= Threshold?) then (no)
+  :Update Grade Only;
+  :Do Not Award Competency;
+  stop
+else (yes)
+  :Award Competency;
+endif
+
+|Database|
+:INSERT/UPDATE competency_usercomp\nSET proficiency=1, grade=?;
+:CREATE competency_evidence record;
+-back->
+
+|Competency Engine|
+:Check Learning Plan Completion;
+
+|Database|
+:SELECT COUNT(*) FROM competency_plancomp\nWHERE plan_id=?;
+:SELECT COUNT(*) FROM competency_usercomp\nWHERE proficiency=1 AND plan_id=?;
+-back->
+
+|Competency Engine|
+if (Plan Now Complete?) then (yes)
+  :Mark Learning Plan Complete;
+  :Trigger Plan Completion Event;
+endif
+
+:Trigger "Competency Achieved" Notification;
+
+|Notification System|
+:Send Student Notification;
+:Update Dashboard Badges;
+
+stop
+@enduml

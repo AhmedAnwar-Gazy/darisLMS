@@ -1,0 +1,31 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "notifications" {
+  +id : Integer
+  +useridfrom : Integer
+  +useridto : Integer
+  +subject : String
+  +fullmessage : String
+  +fullmessageformat : Integer
+  +fullmessagehtml : String
+  +smallmessage : String
+  +component : String
+  +eventtype : String
+  +contexturl : String
+  +contexturlname : String
+  +timeread : Integer
+  +timecreated : Integer
+  +customdata : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+"notifications" "*" --> "1" "users" : useridto
+@enduml

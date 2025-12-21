@@ -1,0 +1,41 @@
+@startuml SystemHealthTaskScheduling
+left to right direction
+
+actor "System Timer" as system_timer
+actor "Administrator" as admin
+actor "System" as system
+actor "Monitoring Tool" as monitoring_tool
+actor "User" as user
+
+rectangle "System Health & Task Scheduling" {
+  usecase "Schedule Task" as UC2501
+  usecase "Set Frequency" as set_frequency
+  usecase "Execute Task" as UC2502
+  usecase "Acquire Lock" as acquire_lock
+  usecase "Monitor Health" as UC2503
+  usecase "Check Resources" as check_resources
+  usecase "View Task Logs" as UC2504
+  usecase "Filter Logs" as filter_task_logs
+  usecase "Handle Failure" as UC2505
+  usecase "Send Alert" as send_alert
+  usecase "Queue Adhoc Task" as UC2506
+}
+
+' Actor Associations
+system_timer --> UC2501 : **Association**
+system --> UC2502 : **Association**
+system --> UC2503 : **Association**
+admin --> UC2504 : **Association**
+system --> UC2505 : **Association**
+user --> UC2506 : **Association**
+monitoring_tool --> UC2503 : **Association**
+
+' Use Case Relationships
+UC2501 ..> set_frequency : **<<include>>**
+UC2502 ..> acquire_lock : **<<include>>**
+UC2503 ..> check_resources : **<<include>>**
+UC2504 ..> filter_task_logs : **<<include>>**
+UC2505 ..> send_alert : **<<include>>**
+UC2506 ..> UC2502 : **<<extend>>**
+
+@enduml

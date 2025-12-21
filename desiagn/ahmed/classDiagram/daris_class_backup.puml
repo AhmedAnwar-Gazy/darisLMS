@@ -1,0 +1,59 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "backup_controllers" {
+  +id : Integer
+  +backupid : String
+  +operation : String
+  +type : String
+  +itemid : Integer
+  +format : String
+  +interactive : Integer
+  +purpose : Integer
+  +userid : Integer
+  +status : Integer
+  +execution : Integer
+  +executiontime : Integer
+  +checksum : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +progress : Float
+  +controller : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "backup_courses" {
+  +id : Integer
+  +courseid : Integer
+  +laststarttime : Integer
+  +lastendtime : Integer
+  +laststatus : String
+  +nextstarttime : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "backup_logs" {
+  +id : Integer
+  +backupid : String
+  +loglevel : Integer
+  +message : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+"backup_controllers" "*" --> "1" "users" : userid
+"backup_logs" "*" --> "1" "backup_controllers" : backupid
+@enduml

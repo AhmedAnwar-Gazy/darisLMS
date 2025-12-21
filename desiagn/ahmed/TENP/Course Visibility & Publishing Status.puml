@@ -1,0 +1,42 @@
+@startuml CourseVisibilityPublishing
+title Course Visibility & Publishing Status (SMD-02)
+hide empty description
+
+state "Null" as null_state
+state "Draft" as draft
+state "Review Required" as review_required
+state "Published" as published
+state "Hidden" as hidden
+state "Archived" as archived
+state "Deleted" as deleted
+
+[*] --> null_state
+
+null_state --> draft : Save Draft()
+draft --> review_required : Request Publication() \n(if config enabled)
+draft --> published : Request Publication() \n(if no approval required)
+review_required --> published : Admin Approves()
+review_required --> draft : Admin Rejects()
+published --> hidden : Instructor Hides()
+hidden --> published : Instructor Unhides()
+published --> archived : Term Ends() \nor Instructor Archives()
+archived --> published : Re-open()
+draft --> deleted : Delete()
+archived --> deleted : Delete()
+
+deleted --> [*]
+
+note right of draft
+  Content visible only to
+  Instructor and Admins
+  Not indexed in TypeSense
+end note
+
+note right of published
+  Course is live
+  Visible in catalog
+  Indexed in search
+  Open for enrollment (if public)
+end note
+
+@enduml

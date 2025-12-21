@@ -1,0 +1,59 @@
+@startuml WorkshopActivityPhases
+title Workshop Activity Phases (SMD-06)
+hide empty description
+
+state "Setup Phase" as setup
+state "Submission Phase" as submission
+state "Assessment Phase" as assessment
+state "Grading Evaluation Phase" as grading_eval
+state "Closed" as closed
+
+[*] --> setup
+
+setup --> submission : Instructor Switches Phase()
+submission --> assessment : Instructor Switches Phase()\n/runAllocationLogic()
+assessment --> grading_eval : Instructor Switches Phase()
+grading_eval --> closed : Instructor Switches Phase()
+
+' Reversible transitions (instructor can go back)
+submission --> setup : Instructor Switches Phase()
+assessment --> submission : Instructor Switches Phase()
+grading_eval --> assessment : Instructor Switches Phase()
+closed --> grading_eval : Instructor Switches Phase()
+
+closed --> [*]
+
+note right of setup
+  Instructor edits settings
+  Defines grading strategy
+  Creates rubric
+  Students cannot submit yet
+end note
+
+note right of submission
+  Students upload work
+  Submissions are open
+  Cannot assess peers yet
+end note
+
+note right of assessment
+  Submissions closed
+  Students assess peers
+  Random or manual allocation
+  Uses rubric for grading
+end note
+
+note right of grading_eval
+  Peer assessments complete
+  System calculates grades
+  Instructor reviews/overrides
+  Grades not yet in gradebook
+end note
+
+note right of closed
+  Grades pushed to Gradebook
+  Students see grades/feedback
+  Activity completed
+end note
+
+@enduml

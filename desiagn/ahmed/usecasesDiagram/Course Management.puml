@@ -1,0 +1,35 @@
+@startuml CourseManagement
+left to right direction
+
+actor "Instructor" as instructor
+actor "Administrator" as admin
+actor "Student" as student
+actor "System (Scout)" as scout_system
+
+rectangle "Course Management System" {
+  usecase "Create Course" as UC0201
+  usecase "Validate Metadata" as validate_metadata
+  usecase "Edit Course Content" as UC0202
+  usecase "Index Content" as index_content
+  usecase "Publish Course" as UC0203
+  usecase "Validate Content" as validate_content
+  usecase "Manage Categories" as UC0204
+  usecase "Update Hierarchy" as update_hierarchy
+  usecase "View Published Courses" as view_courses
+}
+
+' Actor Associations
+instructor --> UC0201 : **Association**
+instructor --> UC0202 : **Association**
+instructor --> UC0203 : **Association**
+admin --> UC0204 : **Association**
+student --> view_courses : **Association**
+scout_system --> index_content : **Association**
+
+' Use Case Relationships
+UC0201 ..> validate_metadata : **<<include>>**
+UC0202 ..> index_content : **<<include>>**
+UC0203 ..> validate_content : **<<extend>>**
+UC0204 ..> update_hierarchy : **<<include>>**
+
+@enduml

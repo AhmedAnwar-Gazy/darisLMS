@@ -1,0 +1,18 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**url**" as url {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  externalurl : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  display : smallint NOT NULL DEFAULT '0' 
+  displayoptions : text COLLATE utf8mb4_unicode_ci 
+  parameters : text COLLATE utf8mb4_unicode_ci 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+@enduml

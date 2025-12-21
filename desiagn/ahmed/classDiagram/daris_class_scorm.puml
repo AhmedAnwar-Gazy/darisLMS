@@ -1,0 +1,234 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "scorm" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +scormtype : String
+  +reference : String
+  +intro : String
+  +introformat : Integer
+  +version : String
+  +maxgrade : String
+  +grademethod : Integer
+  +whatgrade : Integer
+  +maxattempt : Integer
+  +forcecompleted : Integer
+  +forcenewattempt : Integer
+  +lastattemptlock : Integer
+  +masteryoverride : Integer
+  +displayattemptstatus : Integer
+  +displaycoursestructure : Integer
+  +updatefreq : Integer
+  +sha1hash : String
+  +md5hash : String
+  +revision : Integer
+  +launch : Integer
+  +skipview : Integer
+  +hidebrowse : Integer
+  +hidetoc : Integer
+  +nav : Integer
+  +navpositionleft : Integer
+  +navpositiontop : Integer
+  +auto : Integer
+  +popup : Integer
+  +options : String
+  +width : Integer
+  +height : Integer
+  +timeopen : Integer
+  +timeclose : Integer
+  +timemodified : Integer
+  +completionstatusrequired : Integer
+  +completionscorerequired : Integer
+  +completionstatusallscos : Integer
+  +autocommit : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_aicc_session" {
+  +id : Integer
+  +userid : Integer
+  +scormid : Integer
+  +hacpsession : String
+  +scoid : Integer
+  +scormmode : String
+  +scormstatus : String
+  +attempt : Integer
+  +lessonstatus : String
+  +sessiontime : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_attempt" {
+  +id : Integer
+  +userid : Integer
+  +scormid : Integer
+  +attempt : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_element" {
+  +id : Integer
+  +element : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_scoes" {
+  +id : Integer
+  +scorm : Integer
+  +manifest : String
+  +organization : String
+  +parent : String
+  +identifier : String
+  +launch : String
+  +scormtype : String
+  +title : String
+  +sortorder : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_scoes_data" {
+  +id : Integer
+  +scoid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_scoes_value" {
+  +id : Integer
+  +scoid : Integer
+  +attemptid : Integer
+  +elementid : Integer
+  +value : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_seq_mapinfo" {
+  +id : Integer
+  +scoid : Integer
+  +objectiveid : Integer
+  +targetobjectiveid : Integer
+  +readsatisfiedstatus : Integer
+  +readnormalizedmeasure : Integer
+  +writesatisfiedstatus : Integer
+  +writenormalizedmeasure : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_seq_objective" {
+  +id : Integer
+  +scoid : Integer
+  +primaryobj : Integer
+  +objectiveid : String
+  +satisfiedbymeasure : Integer
+  +minnormalizedmeasure : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_seq_rolluprule" {
+  +id : Integer
+  +scoid : Integer
+  +childactivityset : String
+  +minimumcount : Integer
+  +minimumpercent : String
+  +conditioncombination : String
+  +action : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_seq_rolluprulecond" {
+  +id : Integer
+  +scoid : Integer
+  +rollupruleid : Integer
+  +operator : String
+  +cond : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_seq_rulecond" {
+  +id : Integer
+  +scoid : Integer
+  +ruleconditionsid : Integer
+  +refrencedobjective : String
+  +measurethreshold : String
+  +operator : String
+  +cond : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scorm_seq_ruleconds" {
+  +id : Integer
+  +scoid : Integer
+  +conditioncombination : String
+  +ruletype : Integer
+  +action : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+"scorm_aicc_session" "*" --> "1" "scorm" : scormid
+"scorm_aicc_session" "*" --> "1" "users" : userid
+"scorm_attempt" "*" --> "1" "scorm" : scormid
+"scorm_attempt" "*" --> "1" "users" : userid
+"scorm_scoes" "*" --> "1" "scorm" : scorm
+"scorm_scoes_data" "*" --> "1" "scorm_scoes" : scoid
+"scorm_scoes_value" "*" --> "1" "scorm_attempt" : attemptid
+"scorm_scoes_value" "*" --> "1" "scorm_element" : elementid
+"scorm_scoes_value" "*" --> "1" "scorm_scoes" : scoid
+"scorm_seq_mapinfo" "*" --> "1" "scorm_seq_objective" : objectiveid
+"scorm_seq_mapinfo" "*" --> "1" "scorm_scoes" : scoid
+"scorm_seq_objective" "*" --> "1" "scorm_scoes" : scoid
+"scorm_seq_rolluprule" "*" --> "1" "scorm_scoes" : scoid
+"scorm_seq_rolluprulecond" "*" --> "1" "scorm_seq_rolluprule" : rollupruleid
+"scorm_seq_rolluprulecond" "*" --> "1" "scorm_scoes" : scoid
+"scorm_seq_rulecond" "*" --> "1" "scorm_seq_ruleconds" : ruleconditionsid
+"scorm_seq_rulecond" "*" --> "1" "scorm_scoes" : scoid
+"scorm_seq_ruleconds" "*" --> "1" "scorm_scoes" : scoid
+@enduml

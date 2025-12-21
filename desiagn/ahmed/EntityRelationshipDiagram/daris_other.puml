@@ -1,0 +1,1199 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**adminpresets**" as adminpresets {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  comments : text COLLATE utf8mb4_unicode_ci 
+  site : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  author : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  moodleversion : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  moodlerelease : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  iscore : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether this is a core preset or not 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timeimported : int NOT NULL DEFAULT '0' 
+}
+
+entity "**adminpresets_app**" as adminpresets_app {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  adminpresetid : int NOT NULL 
+  userid : int NOT NULL 
+  time : int NOT NULL 
+}
+
+entity "**adminpresets_app_it**" as adminpresets_app_it {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  adminpresetapplyid : int NOT NULL 
+  configlogid : int NOT NULL 
+}
+
+entity "**adminpresets_app_it_a**" as adminpresets_app_it_a {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  adminpresetapplyid : int NOT NULL 
+  configlogid : int NOT NULL 
+  itemname : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Necessary to rollback' 
+}
+
+entity "**adminpresets_app_plug**" as adminpresets_app_plug {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  adminpresetapplyid : int NOT NULL 
+  plugin : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : smallint NOT NULL DEFAULT '0' 
+  oldvalue : smallint NOT NULL DEFAULT '0' 
+}
+
+entity "**adminpresets_it**" as adminpresets_it {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  adminpresetid : int NOT NULL 
+  plugin : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**adminpresets_it_a**" as adminpresets_it_a {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  itemid : int NOT NULL 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**adminpresets_plug**" as adminpresets_plug {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  adminpresetid : int NOT NULL 
+  plugin : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enabled : smallint NOT NULL DEFAULT '0' COMMENT 'Whether this plugins is currently enabled.' 
+}
+
+entity "**ai_action_explain_text**" as ai_action_explain_text {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  prompt : text COLLATE utf8mb4_unicode_ci 
+  responseid : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  fingerprint : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  generatedcontent : text COLLATE utf8mb4_unicode_ci 
+  finishreason : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  prompttokens : bigint unsigned DEFAULT NULL 
+  completiontoken : bigint unsigned DEFAULT NULL 
+}
+
+entity "**ai_action_generate_image**" as ai_action_generate_image {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  prompt : text COLLATE utf8mb4_unicode_ci 
+  numberimages : bigint unsigned NOT NULL 
+  quality : varchar(21) COLLATE utf8mb4_unicode_ci NOT NULL 
+  aspectratio : varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  style : varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  sourceurl : text COLLATE utf8mb4_unicode_ci 
+  revisedprompt : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**ai_action_generate_text**" as ai_action_generate_text {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  prompt : text COLLATE utf8mb4_unicode_ci 
+  responseid : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  fingerprint : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  generatedcontent : text COLLATE utf8mb4_unicode_ci 
+  finishreason : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  prompttokens : bigint unsigned DEFAULT NULL 
+  completiontoken : bigint unsigned DEFAULT NULL 
+}
+
+entity "**ai_action_register**" as ai_action_register {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  actionname : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  actionid : bigint unsigned NOT NULL 
+  success : tinyint unsigned NOT NULL DEFAULT '0' 
+  userid : bigint unsigned NOT NULL (FK)
+  contextid : bigint unsigned NOT NULL 
+  provider : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  errorcode : int unsigned DEFAULT NULL 
+  errormessage : text COLLATE utf8mb4_unicode_ci 
+  timecreated : bigint unsigned NOT NULL 
+  timecompleted : bigint unsigned DEFAULT NULL 
+  model : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**ai_action_summarise_text**" as ai_action_summarise_text {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  prompt : text COLLATE utf8mb4_unicode_ci 
+  responseid : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  fingerprint : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  generatedcontent : text COLLATE utf8mb4_unicode_ci 
+  finishreason : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  prompttokens : bigint unsigned DEFAULT NULL 
+  completiontoken : bigint unsigned DEFAULT NULL 
+}
+
+entity "**ai_policy_register**" as ai_policy_register {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  contextid : bigint unsigned NOT NULL 
+  timeaccepted : bigint unsigned NOT NULL 
+}
+
+entity "**ai_providers**" as ai_providers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  provider : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enabled : tinyint unsigned NOT NULL DEFAULT '1' 
+  config : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  actionconfig : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**bigbluebuttonbn**" as bigbluebuttonbn {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  type : tinyint NOT NULL DEFAULT '0' 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '1' 
+  meetingid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  moderatorpass : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  viewerpass : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  wait : tinyint(1) NOT NULL DEFAULT '0' 
+  record : tinyint(1) NOT NULL DEFAULT '0' 
+  recordallfromstart : tinyint(1) NOT NULL DEFAULT '0' 
+  recordhidebutton : tinyint(1) NOT NULL DEFAULT '0' 
+  welcome : text COLLATE utf8mb4_unicode_ci 
+  voicebridge : smallint NOT NULL DEFAULT '0' 
+  openingtime : int NOT NULL DEFAULT '0' 
+  closingtime : int NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  presentation : text COLLATE utf8mb4_unicode_ci 
+  participants : text COLLATE utf8mb4_unicode_ci 
+  userlimit : tinyint NOT NULL DEFAULT '0' 
+  recordings_html : tinyint(1) NOT NULL DEFAULT '0' 
+  recordings_deleted : tinyint(1) NOT NULL DEFAULT '1' 
+  recordings_imported : tinyint(1) NOT NULL DEFAULT '0' 
+  recordings_preview : tinyint(1) NOT NULL DEFAULT '0' 
+  clienttype : tinyint(1) NOT NULL DEFAULT '0' 
+  muteonstart : tinyint(1) NOT NULL DEFAULT '0' 
+  disablecam : tinyint(1) NOT NULL DEFAULT '0' 
+  disablemic : tinyint(1) NOT NULL DEFAULT '0' 
+  disableprivatechat : tinyint(1) NOT NULL DEFAULT '0' 
+  disablepublicchat : tinyint(1) NOT NULL DEFAULT '0' 
+  disablenote : tinyint(1) NOT NULL DEFAULT '0' 
+  hideuserlist : tinyint(1) NOT NULL DEFAULT '0' 
+  completionattendance : int NOT NULL DEFAULT '0' COMMENT 'Nonzero if a certain number of minutes in the meeting are required to mark an activity completed for a user.' 
+  completionengagementchats : int NOT NULL DEFAULT '0' COMMENT 'Nonzero if chat during the meeting is required to mark an activity completed for a user.' 
+  completionengagementtalks : int NOT NULL DEFAULT '0' COMMENT 'Nonzero if talking during the meeting is required to mark an activity completed for a user.' 
+  completionengagementraisehand : int NOT NULL DEFAULT '0' COMMENT 'Nonzero if raising hand during the meeting is required to mark an activity completed for a user.' 
+  completionengagementpollvotes : int NOT NULL DEFAULT '0' COMMENT 'Nonzero if poll voting during the meeting is required to mark an activity completed for a user.' 
+  completionengagementemojis : int NOT NULL DEFAULT '0' COMMENT 'Nonzero if the use of emojis during the meeting is required to mark an activity completed for a user.' 
+  guestallowed : tinyint DEFAULT '0' 
+  mustapproveuser : tinyint DEFAULT '1' 
+  guestlinkuid : text COLLATE utf8mb4_unicode_ci 
+  guestpassword : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**bigbluebuttonbn_logs**" as bigbluebuttonbn_logs {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL 
+  bigbluebuttonbnid : int NOT NULL 
+  userid : int DEFAULT NULL 
+  timecreated : int NOT NULL DEFAULT '0' 
+  meetingid : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  log : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL 
+  meta : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**bigbluebuttonbn_recordings**" as bigbluebuttonbn_recordings {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL 
+  bigbluebuttonbnid : bigint unsigned NOT NULL (FK)
+  groupid : int DEFAULT NULL 
+  recordingid : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL 
+  headless : tinyint(1) NOT NULL DEFAULT '0' 
+  imported : tinyint(1) NOT NULL DEFAULT '0' 
+  status : tinyint(1) NOT NULL DEFAULT '0' 
+  importeddata : text COLLATE utf8mb4_unicode_ci COMMENT 'This is the remote recording data stored as json and kept for future reference.' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**block**" as block {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  cron : int NOT NULL DEFAULT '0' 
+  lastcron : int NOT NULL DEFAULT '0' 
+  visible : tinyint(1) NOT NULL DEFAULT '1' 
+}
+
+entity "**blog_association**" as blog_association {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : bigint unsigned NOT NULL (FK)
+  blogid : bigint unsigned NOT NULL (FK)
+}
+
+entity "**blog_external**" as blog_external {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci 
+  url : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  filtertags : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Comma-separated list of tags that will be used to filter which entries are copied over from the external blog. They refer to existing tags in the external blog.' 
+  failedlastsync : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether or not the last sync failed for some reason' 
+  timemodified : int DEFAULT NULL 
+  timefetched : int NOT NULL DEFAULT '0' 
+}
+
+entity "**cache**" as cache {
+  *key : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : mediumtext COLLATE utf8mb4_unicode_ci NOT NULL 
+  expiration : int NOT NULL 
+}
+
+entity "**capabilities**" as capabilities {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  captype : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  contextlevel : int NOT NULL DEFAULT '0' 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  riskbitmask : int NOT NULL DEFAULT '0' 
+}
+
+entity "**cohort**" as cohort {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : bigint unsigned NOT NULL COMMENT 'Context is usually ignored in sync operations so that the cohorts may be moved freely around in the context tree without any side affects.' (FK)
+  name : varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Short human readable name for the cohort 
+  idnumber : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Unique identifier of a cohort 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'Standard description text box' 
+  descriptionformat : tinyint NOT NULL 
+  visible : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Visibility to teachers' 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Component (plugintype_pluignname) that manages the cohort 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  theme : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**cohort_members**" as cohort_members {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  cohortid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timeadded : int NOT NULL DEFAULT '0' 
+}
+
+entity "**comments**" as comments {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : int NOT NULL 
+  component : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The plugin this comment belongs to.' 
+  commentarea : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  itemid : int NOT NULL 
+  content : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  format : tinyint NOT NULL DEFAULT '0' 
+  userid : bigint unsigned NOT NULL (FK)
+  timecreated : int NOT NULL 
+}
+
+entity "**communication**" as communication {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : bigint unsigned NOT NULL COMMENT 'The id of the context that this communication instance relates to' (FK)
+  instanceid : int NOT NULL COMMENT 'ID of the instance where the communication is a part of' 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Component of the instance where the communication room is a part of' 
+  instancetype : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The type of the instance for the given component' 
+  provider : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name of the selected communication provider' 
+  roomname : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Name of the communication room' 
+  avatarfilename : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Name of the avatar file name for the communication instance' 
+  active : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'The communication instance is active or not' 
+  avatarsynced : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Indicate if the avatar has been synced with the provider' 
+}
+
+entity "**communication_customlink**" as communication_customlink {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  commid : bigint unsigned NOT NULL COMMENT 'ID of the communication record' (FK)
+  url : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL being linked to by the provider' 
+}
+
+entity "**communication_user**" as communication_user {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  commid : bigint unsigned NOT NULL COMMENT 'ID of the communication instance' (FK)
+  userid : bigint unsigned NOT NULL COMMENT 'ID of the moodle user to map with communication instance' (FK)
+  synced : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'The user is synced or not' 
+  deleted : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'The user need to be deleted or not' 
+}
+
+entity "**config**" as config {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**config_log**" as config_log {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  timemodified : int NOT NULL 
+  plugin : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : text COLLATE utf8mb4_unicode_ci 
+  oldvalue : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**config_plugins**" as config_plugins {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  plugin : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'core' 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**contentbank_content**" as contentbank_content {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  contenttype : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  contextid : bigint unsigned NOT NULL COMMENT 'References context.id.' (FK)
+  visibility : tinyint(1) NOT NULL DEFAULT '1' 
+  instanceid : int DEFAULT NULL 
+  configdata : text COLLATE utf8mb4_unicode_ci 
+  usercreated : bigint unsigned NOT NULL COMMENT 'The original author of the content' (FK)
+  usermodified : bigint unsigned DEFAULT NULL (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int DEFAULT '0' 
+}
+
+entity "**customfield_category**" as customfield_category {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci 
+  descriptionformat : int DEFAULT NULL 
+  sortorder : int DEFAULT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  area : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  itemid : int NOT NULL DEFAULT '0' 
+  contextid : bigint unsigned DEFAULT NULL (FK)
+}
+
+entity "**customfield_data**" as customfield_data {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  fieldid : bigint unsigned NOT NULL (FK)
+  instanceid : int NOT NULL 
+  intvalue : int DEFAULT NULL 
+  decvalue : decimal(10 
+  shortcharvalue : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  charvalue : text COLLATE utf8mb4_unicode_ci 
+  value : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  valueformat : int NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  contextid : bigint unsigned DEFAULT NULL (FK)
+}
+
+entity "**customfield_field**" as customfield_field {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  shortname : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  name : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  type : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci 
+  descriptionformat : int DEFAULT NULL 
+  sortorder : int DEFAULT NULL 
+  categoryid : bigint unsigned DEFAULT NULL (FK)
+  configdata : text COLLATE utf8mb4_unicode_ci 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**customfield_shared**" as customfield_shared {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  categoryid : bigint unsigned NOT NULL (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  area : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  itemid : bigint unsigned NOT NULL DEFAULT '0' 
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : bigint unsigned NOT NULL DEFAULT '0' 
+  timemodified : bigint unsigned NOT NULL DEFAULT '0' 
+}
+
+entity "**data**" as data {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  comments : smallint NOT NULL DEFAULT '0' 
+  timeavailablefrom : int NOT NULL DEFAULT '0' 
+  timeavailableto : int NOT NULL DEFAULT '0' 
+  timeviewfrom : int NOT NULL DEFAULT '0' 
+  timeviewto : int NOT NULL DEFAULT '0' 
+  requiredentries : int NOT NULL DEFAULT '0' 
+  requiredentriestoview : int NOT NULL DEFAULT '0' 
+  maxentries : int NOT NULL DEFAULT '0' 
+  rssarticles : smallint NOT NULL DEFAULT '0' 
+  singletemplate : text COLLATE utf8mb4_unicode_ci 
+  listtemplate : text COLLATE utf8mb4_unicode_ci 
+  listtemplateheader : text COLLATE utf8mb4_unicode_ci 
+  listtemplatefooter : text COLLATE utf8mb4_unicode_ci 
+  addtemplate : text COLLATE utf8mb4_unicode_ci 
+  rsstemplate : text COLLATE utf8mb4_unicode_ci 
+  rsstitletemplate : text COLLATE utf8mb4_unicode_ci 
+  csstemplate : text COLLATE utf8mb4_unicode_ci 
+  jstemplate : text COLLATE utf8mb4_unicode_ci 
+  asearchtemplate : text COLLATE utf8mb4_unicode_ci 
+  approval : smallint NOT NULL DEFAULT '0' 
+  manageapproved : smallint NOT NULL DEFAULT '1' 
+  scale : int NOT NULL DEFAULT '0' 
+  assessed : int NOT NULL DEFAULT '0' 
+  assesstimestart : int NOT NULL DEFAULT '0' 
+  assesstimefinish : int NOT NULL DEFAULT '0' 
+  defaultsort : int NOT NULL DEFAULT '0' 
+  defaultsortdir : smallint NOT NULL DEFAULT '0' 
+  editany : smallint NOT NULL DEFAULT '0' 
+  notification : int NOT NULL DEFAULT '0' COMMENT 'Notify people when things change' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'The time the settings for this database module instance were last modified.' 
+  config : text COLLATE utf8mb4_unicode_ci 
+  completionentries : int DEFAULT '0' COMMENT 'Number of entries required for completion' 
+}
+
+entity "**data_content**" as data_content {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  fieldid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  recordid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  content : text COLLATE utf8mb4_unicode_ci 
+  content1 : text COLLATE utf8mb4_unicode_ci 
+  content2 : text COLLATE utf8mb4_unicode_ci 
+  content3 : text COLLATE utf8mb4_unicode_ci 
+  content4 : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**data_fields**" as data_fields {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  dataid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  type : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  required : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Required fields must have a value when inserted by a user' 
+  param1 : text COLLATE utf8mb4_unicode_ci 
+  param2 : text COLLATE utf8mb4_unicode_ci 
+  param3 : text COLLATE utf8mb4_unicode_ci 
+  param4 : text COLLATE utf8mb4_unicode_ci 
+  param5 : text COLLATE utf8mb4_unicode_ci 
+  param6 : text COLLATE utf8mb4_unicode_ci 
+  param7 : text COLLATE utf8mb4_unicode_ci 
+  param8 : text COLLATE utf8mb4_unicode_ci 
+  param9 : text COLLATE utf8mb4_unicode_ci 
+  param10 : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**data_records**" as data_records {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  groupid : int NOT NULL DEFAULT '0' 
+  dataid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  approved : smallint NOT NULL DEFAULT '0' 
+}
+
+entity "**editor_atto_autosave**" as editor_atto_autosave {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  elementid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The unique id for the text editor in the form.' 
+  contextid : int NOT NULL COMMENT 'The contextid that the form was loaded with.' 
+  pagehash : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The HTML DOM id of the page that loaded the form.' 
+  userid : int NOT NULL COMMENT 'The id of the user that loaded the form.' 
+  drafttext : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The draft text' 
+  draftid : int DEFAULT NULL COMMENT 'Optional draft area id containing draft files.' 
+  pageinstance : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The browser tab instance that last saved the draft text. This is to prevent multiple tabs from the same user saving different text alternately.' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'Store the last modified time for the auto save text.' 
+}
+
+entity "**external_functions**" as external_functions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL 
+  classname : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  methodname : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  classpath : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  capabilities : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'all capabilities that are required to be run by the function (separated by comma)' 
+  services : text COLLATE utf8mb4_unicode_ci COMMENT 'all the services (by shortname) where this function must be included' 
+}
+
+entity "**external_services**" as external_services {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enabled : tinyint(1) NOT NULL 
+  requiredcapability : varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  restrictedusers : tinyint(1) NOT NULL 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int DEFAULT NULL 
+  shortname : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'a unique shortname' 
+  downloadfiles : tinyint(1) NOT NULL DEFAULT '0' COMMENT '1 if the service allow people to download file from webservice/plugins.php - 0 if not' 
+  uploadfiles : tinyint(1) NOT NULL DEFAULT '0' COMMENT '1 if the service allow people to upload files to webservice/upload.php - 0 if not' 
+}
+
+entity "**external_services_functions**" as external_services_functions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  externalserviceid : bigint unsigned NOT NULL (FK)
+  functionname : varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**external_services_users**" as external_services_users {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  externalserviceid : bigint unsigned NOT NULL (FK)
+  userid : bigint unsigned NOT NULL (FK)
+  iprestriction : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ip restriction' 
+  validuntil : int DEFAULT NULL COMMENT 'timestampt - valid until data' 
+  timecreated : int DEFAULT NULL COMMENT 'created timestamp' 
+}
+
+entity "**external_tokens**" as external_tokens {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  token : varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'security token 
+  privatetoken : varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'private token 
+  tokentype : smallint NOT NULL COMMENT 'type of token: 0=permanent 
+  userid : bigint unsigned NOT NULL COMMENT 'owner of the token' (FK)
+  externalserviceid : bigint unsigned NOT NULL (FK)
+  sid : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'link to browser or emulated session' 
+  contextid : bigint unsigned NOT NULL COMMENT 'context id where in token valid' (FK)
+  creatorid : bigint unsigned NOT NULL DEFAULT '1' COMMENT 'user id of the token creator (useful to know when the administrator created a token and so display the token to a specific administrator)' (FK)
+  iprestriction : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ip restriction' 
+  validuntil : int DEFAULT NULL COMMENT 'timestampt - valid until data' 
+  timecreated : int NOT NULL COMMENT 'created timestamp' 
+  lastaccess : int DEFAULT NULL COMMENT 'last access timestamp' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'token name 
+}
+
+entity "**failed_jobs**" as failed_jobs {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  uuid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  connection : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  queue : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  payload : longtext COLLATE utf8mb4_unicode_ci NOT NULL 
+  exception : longtext COLLATE utf8mb4_unicode_ci NOT NULL 
+  failed_at : timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP 
+}
+
+entity "**favourite**" as favourite {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Defines the Moodle component in which the favourite was created.' 
+  itemtype : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The type of the item which is being favourited. Usually a table name 
+  itemid : int NOT NULL COMMENT 'The identifier of the item which is being favourited.' 
+  contextid : bigint unsigned NOT NULL COMMENT 'The context id of the item being favourited' (FK)
+  userid : bigint unsigned NOT NULL COMMENT 'The id of the user to whom the favourite belongs' (FK)
+  ordering : int DEFAULT NULL COMMENT 'Optional ordering of the favourite within its context area. For example 
+  timecreated : int NOT NULL COMMENT 'Creation time' 
+  timemodified : int NOT NULL COMMENT 'Last modification time' 
+}
+
+entity "**filter_active**" as filter_active {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  filter : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The filter internal name 
+  contextid : bigint unsigned NOT NULL COMMENT 'References context.id.' (FK)
+  active : smallint NOT NULL COMMENT 'Whether this filter is active in this context. +1 = On 
+  sortorder : int NOT NULL DEFAULT '0' COMMENT 'Only relevant if contextid points to the system context. In other cases this field should contain 0. The order in which the filters should be applied.' 
+}
+
+entity "**filter_config**" as filter_config {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  filter : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The filter internal name 
+  contextid : bigint unsigned NOT NULL COMMENT 'References context.id.' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The config variable name.' 
+  value : text COLLATE utf8mb4_unicode_ci COMMENT 'The correspoding config variable value.' 
+}
+
+entity "**folder**" as folder {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  revision : int NOT NULL DEFAULT '0' COMMENT 'incremented when after each file changes 
+  timemodified : int NOT NULL DEFAULT '0' 
+  display : smallint NOT NULL DEFAULT '0' COMMENT 'Display type of folder contents - on a separate page or inline' 
+  showexpanded : tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 = expanded 
+  showdownloadfolder : tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 = show download folder button' 
+  forcedownload : tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 = force download of individual files' 
+}
+
+entity "**grading_areas**" as grading_areas {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : bigint unsigned NOT NULL COMMENT 'The context of the gradable area (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Frankenstyle name of the component holding this area' 
+  areaname : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of gradable area' 
+  activemethod : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The default grading method (plugin) that should be used for this area' 
+}
+
+entity "**grading_definitions**" as grading_definitions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  areaid : bigint unsigned NOT NULL (FK)
+  method : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of the plugin providing this grading form' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The title of the form that helps users to identify it' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'More detailed description of the form' 
+  descriptionformat : tinyint DEFAULT NULL COMMENT 'Format of the description field' 
+  status : int NOT NULL DEFAULT '0' COMMENT 'Status of the form definition 
+  copiedfromid : int DEFAULT NULL COMMENT 'The id of the original definition that this was initially copied from or null if it was from scratch' 
+  timecreated : int NOT NULL COMMENT 'The timestamp of when the form definition was created initially' 
+  usercreated : bigint unsigned NOT NULL COMMENT 'The ID of the user who created this definition and is considered as its owner for access control purposes' (FK)
+  timemodified : int NOT NULL COMMENT 'The time stamp of when the form definition was modified recently' 
+  usermodified : bigint unsigned NOT NULL COMMENT 'The ID of the user who did the most recent modification' (FK)
+  timecopied : int DEFAULT '0' COMMENT 'The timestamp of when this form was most recently copied into another area' 
+  options : text COLLATE utf8mb4_unicode_ci COMMENT 'General field to be used by plugins as a general storage place for their own settings' 
+}
+
+entity "**grading_instances**" as grading_instances {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  definitionid : bigint unsigned NOT NULL COMMENT 'The ID of the form definition this is instance of' (FK)
+  raterid : bigint unsigned NOT NULL COMMENT 'The ID of the user who did the assessment' (FK)
+  itemid : int DEFAULT NULL COMMENT 'This identifies the graded item within the grabable area' 
+  rawgrade : decimal(10 
+  status : int NOT NULL DEFAULT '0' COMMENT 'The status of the assessment. By default the instance is under-assessment state' 
+  feedback : text COLLATE utf8mb4_unicode_ci COMMENT 'Overall feedback from the rater for the author of the graded item' 
+  feedbackformat : tinyint DEFAULT NULL COMMENT 'The format of the feedback field' 
+  timemodified : int NOT NULL COMMENT 'The timestamp of when the assessment was most recently modified' 
+}
+
+entity "**gradingform_guide_comments**" as gradingform_guide_comments {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  definitionid : bigint unsigned NOT NULL COMMENT 'The ID of the form definition this faq is part of' (FK)
+  sortorder : int NOT NULL COMMENT 'Defines the order of the comments' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'The comment description' 
+  descriptionformat : tinyint DEFAULT NULL COMMENT 'The format of the description field' 
+}
+
+entity "**gradingform_guide_criteria**" as gradingform_guide_criteria {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  definitionid : bigint unsigned NOT NULL COMMENT 'The ID of the form definition this criterion is part of' (FK)
+  sortorder : int NOT NULL COMMENT 'Defines the order of the criterion in the guide' 
+  shortname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'shortname of this criterion' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'The criterion description for students' 
+  descriptionformat : tinyint DEFAULT NULL COMMENT 'The format of the description field' 
+  descriptionmarkers : text COLLATE utf8mb4_unicode_ci COMMENT 'Description for Markers' 
+  descriptionmarkersformat : tinyint DEFAULT NULL 
+  maxscore : decimal(10 
+}
+
+entity "**gradingform_guide_fillings**" as gradingform_guide_fillings {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  instanceid : bigint unsigned NOT NULL COMMENT 'The ID of the grading form instance' (FK)
+  criterionid : bigint unsigned NOT NULL COMMENT 'The ID of the criterion (row) in the guide' (FK)
+  remark : text COLLATE utf8mb4_unicode_ci COMMENT 'Side note feedback regarding this particular criterion' 
+  remarkformat : tinyint DEFAULT NULL COMMENT 'The format of the remark field' 
+  score : decimal(10 
+}
+
+entity "**gradingform_rubric_criteria**" as gradingform_rubric_criteria {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  definitionid : bigint unsigned NOT NULL COMMENT 'The ID of the form definition this criterion is part of' (FK)
+  sortorder : int NOT NULL COMMENT 'Defines the order of the criterion in the rubric' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'The criterion description' 
+  descriptionformat : tinyint DEFAULT NULL COMMENT 'The format of the description field' 
+}
+
+entity "**gradingform_rubric_fillings**" as gradingform_rubric_fillings {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  instanceid : bigint unsigned NOT NULL COMMENT 'The ID of the grading form instance' (FK)
+  criterionid : bigint unsigned NOT NULL COMMENT 'The ID of the criterion (row) in the rubric' (FK)
+  levelid : int DEFAULT NULL COMMENT 'If a particular level was selected during the assessment 
+  remark : text COLLATE utf8mb4_unicode_ci COMMENT 'Side note feedback regarding this particular criterion' 
+  remarkformat : tinyint DEFAULT NULL COMMENT 'The format of the remark field' 
+}
+
+entity "**gradingform_rubric_levels**" as gradingform_rubric_levels {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  criterionid : bigint unsigned NOT NULL COMMENT 'The rubric criterion we are level of' (FK)
+  score : decimal(10 
+  definition : text COLLATE utf8mb4_unicode_ci COMMENT 'The optional text describing the level' 
+  definitionformat : int DEFAULT NULL COMMENT 'The format of the definition field' 
+}
+
+entity "**groupings**" as groupings {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Short human readable unique name for group.' 
+  idnumber : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci 
+  descriptionformat : tinyint NOT NULL DEFAULT '0' 
+  configdata : text COLLATE utf8mb4_unicode_ci COMMENT 'extra configuration data - may be used by group IU tools' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**groupings_groups**" as groupings_groups {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  groupingid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  groupid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timeadded : int NOT NULL DEFAULT '0' 
+}
+
+entity "**imscp**" as imscp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  revision : int NOT NULL DEFAULT '0' COMMENT 'incremented when after each file changes 
+  keepold : int NOT NULL DEFAULT '-1' COMMENT 'incremented when after each file changes 
+  structure : text COLLATE utf8mb4_unicode_ci 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**infected_files**" as infected_files {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  filename : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Original file name' 
+  quarantinedfile : text COLLATE utf8mb4_unicode_ci COMMENT 'Quarantine zip file' 
+  userid : bigint unsigned NOT NULL COMMENT 'The user that uploaded the infected file.' (FK)
+  reason : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The reason for the antivirus failure' 
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'The time the infected file was uploaded.' 
+}
+
+entity "**job_batches**" as job_batches {
+  *id : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  total_jobs : int NOT NULL 
+  pending_jobs : int NOT NULL 
+  failed_jobs : int NOT NULL 
+  failed_job_ids : longtext COLLATE utf8mb4_unicode_ci NOT NULL 
+  options : mediumtext COLLATE utf8mb4_unicode_ci 
+  cancelled_at : int DEFAULT NULL 
+  created_at : int NOT NULL 
+  finished_at : int DEFAULT NULL 
+}
+
+entity "**jobs**" as jobs {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  queue : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  payload : longtext COLLATE utf8mb4_unicode_ci NOT NULL 
+  attempts : tinyint unsigned NOT NULL 
+  reserved_at : int unsigned DEFAULT NULL 
+  available_at : int unsigned NOT NULL 
+  created_at : int unsigned NOT NULL 
+}
+
+entity "**label**" as label {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  introformat : smallint DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**license**" as license {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  shortname : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  fullname : text COLLATE utf8mb4_unicode_ci 
+  source : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  enabled : tinyint(1) NOT NULL DEFAULT '1' 
+  version : int NOT NULL DEFAULT '0' 
+  custom : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'If this flag is set 
+  sortorder : smallint NOT NULL DEFAULT '0' 
+}
+
+entity "**lock_db**" as lock_db {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  resourcekey : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'String identifying the resource to be locked. Should use frankenstyle format.' 
+  expires : int DEFAULT NULL COMMENT 'Expiry time for an active lock.' 
+  owner : varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'uuid indicating the owner of the lock.' 
+}
+
+entity "**log**" as log {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  time : int NOT NULL DEFAULT '0' 
+  userid : int NOT NULL DEFAULT '0' 
+  ip : varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL 
+  course : int NOT NULL DEFAULT '0' 
+  module : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  cmid : int NOT NULL DEFAULT '0' 
+  action : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  url : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  info : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**log_display**" as log_display {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  module : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  action : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  mtable : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+  field : varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'owner of the log action' 
+}
+
+entity "**log_queries**" as log_queries {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  qtype : smallint NOT NULL COMMENT 'query type constant' 
+  sqltext : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'query sql' 
+  sqlparams : text COLLATE utf8mb4_unicode_ci COMMENT 'query parameters' 
+  error : smallint NOT NULL DEFAULT '0' COMMENT 'is error' 
+  info : text COLLATE utf8mb4_unicode_ci COMMENT 'detailed info such as error text' 
+  backtrace : text COLLATE utf8mb4_unicode_ci COMMENT 'php execution trace' 
+  exectime : decimal(10 
+  timelogged : int NOT NULL COMMENT 'timestamp when log info stored into db' 
+}
+
+entity "**logstore_standard_log**" as logstore_standard_log {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  eventname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  action : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  target : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  objecttable : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  objectid : int DEFAULT NULL 
+  crud : varchar(1) COLLATE utf8mb4_unicode_ci NOT NULL 
+  edulevel : tinyint(1) NOT NULL 
+  contextid : bigint unsigned NOT NULL (FK)
+  contextlevel : int NOT NULL 
+  contextinstanceid : int NOT NULL 
+  userid : bigint unsigned NOT NULL (FK)
+  courseid : bigint unsigned DEFAULT NULL (FK)
+  relateduserid : bigint unsigned DEFAULT NULL (FK)
+  anonymous : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Was this event anonymous at the time of triggering?' 
+  other : text COLLATE utf8mb4_unicode_ci 
+  timecreated : int NOT NULL 
+  origin : varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'cli 
+  ip : varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'IP address' 
+  realuserid : bigint unsigned DEFAULT NULL COMMENT 'real user id when logged-in-as' (FK)
+}
+
+entity "**matrix_room**" as matrix_room {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  commid : bigint unsigned NOT NULL COMMENT 'ID of the communication record' (FK)
+  roomid : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ID of the matrix room instance' 
+  topic : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Topic of the matrix room instance.' 
+}
+
+entity "**migrations**" as migrations {
+  *id : int unsigned NOT NULL AUTO_INCREMENT 
+  migration : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  batch : int NOT NULL 
+}
+
+entity "**moodle_sessions**" as moodle_sessions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  state : int NOT NULL DEFAULT '0' COMMENT '0 means normal session' 
+  sid : varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Session id' 
+  userid : bigint unsigned NOT NULL (FK)
+  sessdata : text COLLATE utf8mb4_unicode_ci COMMENT 'session content' 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  firstip : varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  lastip : varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**moodlenet_share_progress**" as moodlenet_share_progress {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  type : tinyint NOT NULL 
+  courseid : int NOT NULL 
+  cmid : int DEFAULT NULL 
+  userid : int NOT NULL 
+  timecreated : int NOT NULL 
+  resourceurl : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  status : tinyint DEFAULT NULL 
+}
+
+entity "**password_reset_tokens**" as password_reset_tokens {
+  *email : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  token : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  created_at : timestamp NULL DEFAULT NULL 
+}
+
+entity "**paygw_paypal**" as paygw_paypal {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  paymentid : int NOT NULL 
+  pp_orderid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'The ID of the order in PayPal' 
+}
+
+entity "**personal_access_tokens**" as personal_access_tokens {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  tokenable_type : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  tokenable_id : bigint unsigned NOT NULL 
+  name : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  token : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL 
+  abilities : text COLLATE utf8mb4_unicode_ci 
+  last_used_at : timestamp NULL DEFAULT NULL 
+  expires_at : timestamp NULL DEFAULT NULL 
+  created_at : timestamp NULL DEFAULT NULL 
+  updated_at : timestamp NULL DEFAULT NULL 
+}
+
+entity "**profiling**" as profiling {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  runid : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'the unique id for this run (as generated by xhprof)' 
+  url : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'the url this profiling record is about (without wwwroot nor query params)' 
+  data : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'the raw data gathered by xhprof' 
+  totalexecutiontime : int NOT NULL COMMENT 'time (in microseconds) spent by the run' 
+  totalcputime : int NOT NULL COMMENT 'time (in microseconds) spent by the CPU in this run' 
+  totalcalls : int NOT NULL COMMENT 'Total number of calls performed by the run' 
+  totalmemory : int NOT NULL COMMENT 'Total memory used byt the run' 
+  runreference : tinyint NOT NULL DEFAULT '0' COMMENT 'Is this run a reference one' 
+  runcomment : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Brief comment for this run' 
+  timecreated : int NOT NULL COMMENT 'unix timestap of the creation of this run' 
+}
+
+entity "**qbank**" as qbank {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : bigint NOT NULL 
+  name : varchar(1333) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' 
+  timecreated : bigint NOT NULL DEFAULT '0' 
+  timemodified : bigint NOT NULL DEFAULT '0' 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  type : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' 
+}
+
+entity "**registration_hubs**" as registration_hubs {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  token : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'the token to communicate with the hub by web service' 
+  hubname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  huburl : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  confirmed : tinyint(1) NOT NULL DEFAULT '0' 
+  secret : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'the unique site identifier for this hub' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**scale**" as scale {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL DEFAULT '0' 
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  scale : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  descriptionformat : tinyint NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**scale_history**" as scale_history {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  action : int NOT NULL DEFAULT '0' COMMENT 'created/modified/deleted constants' 
+  oldid : bigint unsigned NOT NULL (FK)
+  source : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'What caused the modification? manual/module/import/...' 
+  timemodified : int DEFAULT NULL COMMENT 'The last time this grade_item was modified' 
+  loggeduser : bigint unsigned DEFAULT NULL COMMENT 'the userid of the person who last modified this outcome' (FK)
+  courseid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  scale : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**shortlink**" as shortlink {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  shortcode : varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL 
+  userid : bigint unsigned NOT NULL (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  linktype : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  identifier : varchar(1333) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**sms_gateways**" as sms_gateways {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  gateway : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enabled : tinyint unsigned NOT NULL DEFAULT '1' 
+  config : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**sms_messages**" as sms_messages {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  recipientnumber : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+  content : text COLLATE utf8mb4_unicode_ci 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  messagetype : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  recipientuserid : bigint unsigned DEFAULT NULL 
+  issensitive : tinyint unsigned NOT NULL DEFAULT '0' 
+  gatewayid : bigint unsigned DEFAULT NULL (FK)
+  status : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  timecreated : bigint unsigned NOT NULL 
+}
+
+entity "**stats_daily**" as stats_daily {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL DEFAULT '0' 
+  timeend : int NOT NULL DEFAULT '0' 
+  roleid : int NOT NULL DEFAULT '0' COMMENT 'id of role for the aggregates' 
+  stattype : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'activity' COMMENT 'type of stat' 
+  stat1 : int NOT NULL DEFAULT '0' COMMENT 'stat1. usually used for reads' 
+  stat2 : int NOT NULL DEFAULT '0' COMMENT 'stat2. usually used for writes.' 
+}
+
+entity "**stats_monthly**" as stats_monthly {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL DEFAULT '0' 
+  timeend : int NOT NULL DEFAULT '0' 
+  roleid : int NOT NULL DEFAULT '0' COMMENT 'id of role for the aggregates' 
+  stattype : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'activity' COMMENT 'type of stat' 
+  stat1 : int NOT NULL DEFAULT '0' COMMENT 'stat1. usually used for reads' 
+  stat2 : int NOT NULL DEFAULT '0' COMMENT 'stat2. usually used for writes.' 
+}
+
+entity "**stats_user_daily**" as stats_user_daily {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL DEFAULT '0' 
+  userid : int NOT NULL DEFAULT '0' 
+  roleid : int NOT NULL DEFAULT '0' 
+  timeend : int NOT NULL DEFAULT '0' 
+  statsreads : int NOT NULL DEFAULT '0' 
+  statswrites : int NOT NULL DEFAULT '0' 
+  stattype : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**stats_user_monthly**" as stats_user_monthly {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL DEFAULT '0' 
+  userid : int NOT NULL DEFAULT '0' 
+  roleid : int NOT NULL DEFAULT '0' 
+  timeend : int NOT NULL DEFAULT '0' 
+  statsreads : int NOT NULL DEFAULT '0' 
+  statswrites : int NOT NULL DEFAULT '0' 
+  stattype : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**stats_user_weekly**" as stats_user_weekly {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL DEFAULT '0' 
+  userid : int NOT NULL DEFAULT '0' 
+  roleid : int NOT NULL DEFAULT '0' 
+  timeend : int NOT NULL DEFAULT '0' 
+  statsreads : int NOT NULL DEFAULT '0' 
+  statswrites : int NOT NULL DEFAULT '0' 
+  stattype : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**stats_weekly**" as stats_weekly {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL DEFAULT '0' 
+  timeend : int NOT NULL DEFAULT '0' 
+  roleid : int NOT NULL DEFAULT '0' COMMENT 'id of role for the aggregates' 
+  stattype : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'activity' COMMENT 'type of stat' 
+  stat1 : int NOT NULL DEFAULT '0' COMMENT 'stat1. usually used for reads' 
+  stat2 : int NOT NULL DEFAULT '0' COMMENT 'stat2. usually used for writes.' 
+}
+
+entity "**stored_progress**" as stored_progress {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  idnumber : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timestart : bigint unsigned DEFAULT NULL 
+  lastupdate : bigint unsigned DEFAULT NULL 
+  percentcompleted : decimal(5 
+  message : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  haserrored : tinyint unsigned NOT NULL DEFAULT '0' 
+}
+
+entity "**subsection**" as subsection {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : bigint NOT NULL DEFAULT '0' 
+  name : varchar(1333) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' 
+  timemodified : bigint NOT NULL DEFAULT '0' 
+}
+
+entity "**tiny_autosave**" as tiny_autosave {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  elementid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The unique id for the text editor in the form.' 
+  contextid : int NOT NULL COMMENT 'The contextid that the form was loaded with.' 
+  pagehash : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The HTML DOM id of the page that loaded the form.' 
+  userid : int NOT NULL COMMENT 'The id of the user that loaded the form.' 
+  drafttext : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The draft text' 
+  draftid : int DEFAULT NULL COMMENT 'Optional draft area id containing draft files.' 
+  pageinstance : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The browser tab instance that last saved the draft text. This is to prevent multiple tabs from the same user saving different text alternately.' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'Store the last modified time for the auto save text.' 
+}
+
+entity "**xapi_states**" as xapi_states {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  component : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The component name' 
+  userid : int DEFAULT NULL 
+  itemid : int NOT NULL COMMENT 'The Agent Id (usually the plugin instance)' 
+  stateid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Component identified for the state data' 
+  statedata : text COLLATE utf8mb4_unicode_ci COMMENT 'JSON state data' 
+  registration : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Optional registration identifier' 
+  timecreated : int NOT NULL 
+  timemodified : int DEFAULT NULL 
+}
+
+entity "**post**" as post <<External>> {
+  --
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**groups**" as groups <<External>> {
+  --
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+ai_action_register }|--|| users
+ai_policy_register }|--|| users
+bigbluebuttonbn_recordings }|--|| bigbluebuttonbn
+bigbluebuttonbn_recordings }|--|| users
+blog_association }|--|| post
+blog_association }|--|| context
+blog_external }|--|| users
+cohort }|--|| context
+cohort_members }|--|| cohort
+cohort_members }|--|| users
+comments }|--|| users
+communication }|--|| context
+communication_customlink }|--|| communication
+communication_user }|--|| communication
+communication_user }|--|| users
+config_log }|--|| users
+contentbank_content }|--|| context
+contentbank_content }|--|| users
+contentbank_content }|--|| users
+customfield_category }|--|| context
+customfield_data }|--|| context
+customfield_data }|--|| customfield_field
+customfield_field }|--|| customfield_category
+customfield_shared }|--|| customfield_category
+customfield_shared }|--|| users
+data_content }|--|| data_fields
+data_content }|--|| data_records
+data_fields }|--|| data
+data_records }|--|| data
+data_records }|--|| users
+external_services_functions }|--|| external_services
+external_services_users }|--|| external_services
+external_services_users }|--|| users
+external_tokens }|--|| context
+external_tokens }|--|| users
+external_tokens }|--|| external_services
+external_tokens }|--|| users
+favourite }|--|| context
+favourite }|--|| users
+filter_active }|--|| context
+filter_config }|--|| context
+grading_areas }|--|| context
+grading_definitions }|--|| grading_areas
+grading_definitions }|--|| users
+grading_definitions }|--|| users
+grading_instances }|--|| grading_definitions
+grading_instances }|--|| users
+gradingform_guide_comments }|--|| grading_definitions
+gradingform_guide_criteria }|--|| grading_definitions
+gradingform_guide_fillings }|--|| gradingform_guide_criteria
+gradingform_guide_fillings }|--|| grading_instances
+gradingform_rubric_criteria }|--|| grading_definitions
+gradingform_rubric_fillings }|--|| gradingform_rubric_criteria
+gradingform_rubric_fillings }|--|| grading_instances
+gradingform_rubric_levels }|--|| gradingform_rubric_criteria
+groupings }|--|| course
+groupings_groups }|--|| groups
+groupings_groups }|--|| groupings
+infected_files }|--|| users
+logstore_standard_log }|--|| context
+logstore_standard_log }|--|| course
+logstore_standard_log }|--|| users
+logstore_standard_log }|--|| users
+logstore_standard_log }|--|| users
+matrix_room }|--|| communication
+moodle_sessions }|--|| users
+scale }|--|| users
+scale_history }|--|| course
+scale_history }|--|| users
+scale_history }|--|| scale
+scale_history }|--|| users
+shortlink }|--|| users
+sms_messages }|--|| sms_gateways
+@enduml

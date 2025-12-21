@@ -1,0 +1,40 @@
+@startuml GamificationBadges
+left to right direction
+
+actor "Administrator" as admin
+actor "Instructor" as instructor
+actor "Student" as student
+actor "System" as system
+actor "External Verifier" as external_verifier
+
+rectangle "Gamification & Badges System" {
+  usecase "Create Badge" as UC2101
+  usecase "Design Image" as design_image
+  usecase "Set Criteria" as UC2102
+  usecase "Validate Conditions" as validate_conditions
+  usecase "Award Badge" as UC2103
+  usecase "Log Achievement" as log_achievement
+  usecase "Display Badges" as UC2104
+  usecase "Fetch Badge Data" as fetch_badge_data
+  usecase "Export Badge" as UC2105
+  usecase "Verify Badge" as verify_badge
+  usecase "Manage Badge Types" as UC2106
+}
+
+' Actor Associations
+admin --> UC2101 : **Association**
+instructor --> UC2101 : **Association**
+admin --> UC2102 : **Association**
+instructor --> UC2102 : **Association**
+system --> UC2103 : **Association**
+student --> UC2104 : **Association**
+external_verifier --> verify_badge : **Association**
+
+' Use Case Relationships
+UC2101 ..> design_image : **<<include>>**
+UC2102 ..> validate_conditions : **<<include>>**
+UC2103 ..> log_achievement : **<<include>>**
+UC2104 ..> fetch_badge_data : **<<include>>**
+UC2105 ..> UC2104 : **<<extend>>**
+
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "rating" {
+  +id : Integer
+  +contextid : Integer
+  +component : String
+  +ratingarea : String
+  +itemid : Integer
+  +scaleid : Integer
+  +rating : Integer
+  +userid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+class "scale" <<External>> {
+}
+
+"rating" "*" --> "1" "context" : contextid
+"rating" "*" --> "1" "scale" : scaleid
+"rating" "*" --> "1" "users" : userid
+@enduml

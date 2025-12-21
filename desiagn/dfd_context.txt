@@ -1,0 +1,75 @@
+Here is the detailed description for the Context Diagram (Level 0 Data Flow Diagram) of DarisLMS.
+A Context Diagram defines the boundary of the system. It treats DarisLMS as a single "Black Box" process and shows how it interacts with external entities (Users and External Systems).
+________________________________________
+Central Node
+•	Name: Daris Learning Management System (DarisLMS)
+•	Description: The core software boundary containing the Next.js Frontend, Laravel Backend, Database, and internal logic.
+________________________________________
+External Entities and Data Flows
+Here are the external entities (squares in your diagram) and the data arrows flowing In and Out of the Central Node.
+1. Student (User)
+Represents learners accessing the platform.
+•	Flows INTO System (Inputs):
+o	Login Credentials: Email and password for authentication.
+o	Assignment Submissions: Files, text, and links for grading.
+o	Quiz Answers: Selections and text inputs for assessments.
+o	Forum Posts/Replies: Text content for discussions.
+o	Profile Data: Updates to bio, avatar, and preferences.
+o	Enrollment Requests: Actions to join courses.
+•	Flows OUT of System (Outputs):
+o	Course Content: Lessons, videos, and PDFs.
+o	Grades & Feedback: Scores and instructor comments.
+o	Notifications: Alerts about deadlines and messages.
+o	Badges/Certificates: Digital awards for completion.
+2. Instructor (User)
+Represents teachers creating content and grading.
+•	Flows INTO System (Inputs):
+o	Course Materials: Lesson text, structure, and media uploads.
+o	Grading Data: Scores and feedback for student submissions.
+o	Course Settings: Visibility, deadlines, and groups.
+o	Announcements: Broadcast messages to students.
+•	Flows OUT of System (Outputs):
+o	Student Submissions: Files and answers to be graded.
+o	Analytics Reports: Charts showing student progress and completion rates.
+o	Attendance Logs: Data on user activity.
+3. Administrator (User)
+Represents super-users managing the system configuration.
+•	Flows INTO System (Inputs):
+o	System Configuration: Global settings (Language, Theme, Mail).
+o	User Management: Actions to ban users, reset passwords, or assign roles.
+o	Backup Triggers: Commands to initiate system backups.
+•	Flows OUT of System (Outputs):
+o	Audit Logs: Records of who did what and when.
+o	System Health Status: Server performance metrics.
+o	Backup Files: Downloadable zip files of the system data.
+4. Email Service Provider (External System)
+Represents SMTP services like SendGrid, Mailgun, or Gmail.
+•	Flows INTO System (Inputs):
+o	Delivery Status: Confirmation that emails were sent (optional).
+•	Flows OUT of System (Outputs):
+o	Email Content: Subject, Body, and Recipient Address (for Password Resets, Notifications, Welcomes).
+5. Cloud Storage Service (External System)
+Represents AWS S3, DigitalOcean Spaces, or Google Cloud Storage.
+•	Flows INTO System (Inputs):
+o	File URLs: Public or signed URLs to access stored media.
+•	Flows OUT of System (Outputs):
+o	Raw Files: Binary data (Images, Videos, PDFs) uploaded by users.
+6. Identity/OAuth Provider (External System)
+Represents Google, Microsoft, or GitHub for Single Sign-On (Future Scope/TBD).
+•	Flows INTO System (Inputs):
+o	Auth Token & User Profile: Validated email and name from the provider.
+•	Flows OUT of System (Outputs):
+o	Auth Request: Redirection to the provider's login page.
+7. External File Repositories (External System)
+Represents Google Drive, OneDrive, or Dropbox.
+•	Flows INTO System (Inputs):
+o	File Metadata: Name, Size, and Download Link (Reference).
+•	Flows OUT of System (Outputs):
+o	Access Token Request: Requesting permission to read user files.
+________________________________________
+Visual Summary for Drawing
+To draw this:
+1.	Draw a large Circle in the center labeled "DarisLMS".
+2.	Draw Squares around the circle for Student, Instructor, Admin, Email Service, Cloud Storage, and OAuth Provider.
+3.	Draw Arrows between the Squares and the Circle using the "Flows" listed above as labels on the lines.
+

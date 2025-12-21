@@ -1,0 +1,62 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**task_adhoc**" as task_adhoc {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  component : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The component that triggered this adhoc task.' 
+  classname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of the class extending adhoc_task to run when this task is executed.' 
+  nextruntime : int NOT NULL 
+  faildelay : int DEFAULT NULL 
+  customdata : text COLLATE utf8mb4_unicode_ci COMMENT 'Custom data to be passed to the adhoc task. Must be serialisable using json_encode()' 
+  userid : bigint unsigned DEFAULT NULL (FK)
+  blocking : tinyint NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'Timestamp of adhoc task creation' 
+  timestarted : int DEFAULT NULL COMMENT 'Time when the task was started' 
+  hostname : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Hostname where the task is running' 
+  pid : int DEFAULT NULL COMMENT 'PHP process ID that is running the task' 
+}
+
+entity "**task_log**" as task_log {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  type : smallint NOT NULL COMMENT 'The type of task. Scheduled task = 0; Adhoc task = 1.' 
+  component : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The component that the task belongs to' 
+  classname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The class of the task being run' 
+  userid : bigint unsigned NOT NULL COMMENT 'The userid that the task was configured to run as (Adhoc tasks only)' (FK)
+  timestart : decimal(20 
+  timeend : decimal(20 
+  dbreads : int NOT NULL COMMENT 'The number of DB reads performed during the task.' 
+  dbwrites : int NOT NULL COMMENT 'The number of DB writes performed during the task.' 
+  result : tinyint NOT NULL COMMENT 'Whether the task was successful or not. 0 = pass; 1 = fail.' 
+  output : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  hostname : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Hostname where the task was executed' 
+  pid : int DEFAULT NULL COMMENT 'PHP process ID that was running the task' 
+}
+
+entity "**task_scheduled**" as task_scheduled {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  component : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The component this scheduled task belongs to.' 
+  classname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The class extending scheduled_task to be called when running this task.' 
+  lastruntime : int DEFAULT NULL 
+  nextruntime : int DEFAULT NULL 
+  blocking : tinyint NOT NULL DEFAULT '0' COMMENT 'Block the entire cron when this task is running.' 
+  minute : varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL 
+  hour : varchar(70) COLLATE utf8mb4_unicode_ci NOT NULL 
+  day : varchar(90) COLLATE utf8mb4_unicode_ci NOT NULL 
+  month : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+  dayofweek : varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL 
+  faildelay : int DEFAULT NULL 
+  customised : tinyint NOT NULL DEFAULT '0' COMMENT 'Used on upgrades to prevent overwriting custom schedules.' 
+  disabled : tinyint(1) NOT NULL DEFAULT '0' COMMENT '1 means do not run from cron' 
+  timestarted : int DEFAULT NULL COMMENT 'Time when the task was started' 
+  hostname : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Hostname where the task is running' 
+  pid : int DEFAULT NULL COMMENT 'PHP process ID that is running the task' 
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+task_adhoc }|--|| users
+task_log }|--|| users
+@enduml

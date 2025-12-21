@@ -1,0 +1,52 @@
+@startuml
+title Search & Discovery Flow
+skinparam activityBackgroundColor #E6E6FA
+skinparam activityBorderColor #483D8B
+
+|User|
+start
+:Type Keyword in Search Bar;
+
+|Frontend|
+:Debounce Input (300ms);
+if (Query Length > 2?) then (yes)
+  :Send Async Query to TypeSense;
+else (no)
+  :Clear Results;
+  stop
+endif
+
+|TypeSense|
+:Receive Search Query;
+:Parse Search String;
+:Apply Facet Filters;
+
+fork
+  :Search Courses Index;
+fork again
+  :Search Users Index;
+fork again
+  :Search Resources Index;
+end fork
+
+:Rank Results by Relevance;
+:Apply Sorting Preferences;
+:Return JSON Results;
+
+|Frontend|
+:Receive Search Results;
+:Render Results List/Dropdown;
+
+|User|
+:Review Search Results;
+if (Apply Filters?) then (yes)
+  :Select Facet Filters;
+  ->[Filter] Frontend;
+  :Refine Results;
+endif
+
+:Click Search Result;
+:Navigate to Resource Page;
+stop
+
+@enduml

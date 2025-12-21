@@ -1,0 +1,56 @@
+@startuml
+autonumber
+    participant Admin
+    participant LogViewer
+    participant LogController
+    participant TypeSense
+    participant Database
+
+    Admin -> LogViewer: Navigate to Admin → Audit Logs
+    LogViewer -> LogController: GET /api/admin/logs (default: last 7 days)
+    
+    LogController -> TypeSense: Query logstore_standard_log index
+    note over LogController,TypeSense: Search: {timecreated: {"gte": "2024-01-08"}}
+    
+    TypeSense -> TypeSense: Execute search with pagination
+    TypeSense --> LogController: Return raw log entries
+    note over TypeSense,LogController: {hits: [{userid: 456, courseid: 789, ...}], total: 150}
+    
+    loop For each log entry
+        LogController -> Database: Resolve user_id → user name
+        Database --> LogController: Return user data
+        LogController -> Database: Resolve course_id → course name
+        Database --> LogController: Return course data
+    end
+    
+    LogController -> LogController: Enrich & format log entries
+    
+    LogController --> LogViewer: Return 200 OK with enriched logs
+    note over LogController,LogViewer: [{user: "John Doe", action: "delete", target: "Biology 101", ...}]
+    
+    LogViewer -> LogViewer: Render data table with filters
+    
+    Admin -> LogViewer: Apply filter: "Action: delete"
+    Admin -> LogViewer: Apply filter: "Target Type: course"
+    
+    LogViewer -> LogController: GET /api/admin/logs?action=delete&target_type=course&page=1
+    
+    LogController -> TypeSense: Filtered search
+    TypeSense --> LogController: Return filtered results
+    
+    LogController -> LogController: Enrich filtered results
+    LogController --> LogViewer: Return filtered logs
+    
+    LogViewer --> Admin: Display "Deleted Courses" audit trail
+    
+    Admin -> LogViewer: Click "Export to CSV"
+    LogViewer -> LogController: POST /api/admin/logs/export {filters}
+    
+    LogController -> TypeSense: Export query
+    TypeSense --> LogController: Return all matching logs
+    
+    LogController -> LogController: Format as CSV
+    LogController --> LogViewer: Return CSV file download
+    
+    LogViewer --> Admin: Download audit_log_export.csv
+@enduml

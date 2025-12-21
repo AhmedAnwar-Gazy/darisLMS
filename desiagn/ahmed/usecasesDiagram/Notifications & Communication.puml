@@ -1,0 +1,33 @@
+@startuml NotificationsCommunication
+left to right direction
+
+actor "User" as user
+actor "Instructor" as instructor
+actor "System" as system
+actor "SMTP Server" as smtp
+
+rectangle "Notifications & Communication System" {
+  usecase "Send Notification" as UC0701
+  usecase "Log Event" as log_event
+  usecase "Send Email" as UC0702
+  usecase "Private Messaging" as UC0703
+  usecase "Validate Recipient" as validate_recipient
+  usecase "Manage Preferences" as UC0704
+  usecase "Mark as Read" as UC0705
+}
+
+' Actor Associations
+system --> UC0701 : **Association**
+system --> UC0702 : **Association**
+user --> UC0703 : **Association**
+user --> UC0704 : **Association**
+user --> UC0705 : **Association**
+instructor --> UC0703 : **Association**
+smtp --> UC0702 : **Association**
+
+' Use Case Relationships
+UC0701 ..> log_event : **<<include>>**
+UC0702 ..> UC0701 : **<<extend>>**
+UC0703 ..> validate_recipient : **<<include>>**
+
+@enduml

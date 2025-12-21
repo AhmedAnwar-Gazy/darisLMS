@@ -1,0 +1,34 @@
+@startuml EnrollmentAccessControl
+left to right direction
+
+actor "Student" as student
+actor "Instructor" as instructor
+actor "Administrator" as admin
+actor "System" as system
+
+rectangle "Enrollment & Access Control System" {
+  usecase "Self-Enroll" as UC0301
+  usecase "Check Availability" as check_availability
+  usecase "Manual Enrollment" as UC0302
+  usecase "Validate User" as validate_user
+  usecase "Bulk Enrollment" as UC0303
+  usecase "Parse CSV" as parse_csv
+  usecase "Assign to Cohort" as UC0304
+  usecase "Validate Access" as UC0305
+  usecase "Course Actions" as course_actions
+}
+
+' Actor Associations
+student --> UC0301 : **Association**
+instructor --> UC0302 : **Association**
+instructor --> UC0304 : **Association**
+admin --> UC0303 : **Association**
+system --> UC0305 : **Association**
+
+' Use Case Relationships
+UC0301 ..> check_availability : **<<include>>**
+UC0302 ..> validate_user : **<<include>>**
+UC0303 ..> parse_csv : **<<include>>**
+UC0305 ..> course_actions : **<<extend>>**
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "book" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +numbering : Integer
+  +navstyle : Integer
+  +customtitles : Integer
+  +revision : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "book_chapters" {
+  +id : Integer
+  +bookid : Integer
+  +pagenum : Integer
+  +subchapter : Integer
+  +title : String
+  +content : String
+  +contentformat : Integer
+  +hidden : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +importsrc : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course" <<External>> {
+}
+
+"book" "*" --> "1" "course" : course
+@enduml

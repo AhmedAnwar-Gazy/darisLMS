@@ -1,0 +1,99 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "block_instances" {
+  +id : Integer
+  +blockname : String
+  +parentcontextid : Integer
+  +showinsubcontexts : Integer
+  +requiredbytheme : Integer
+  +pagetypepattern : String
+  +subpagepattern : String
+  +defaultregion : String
+  +defaultweight : Integer
+  +configdata : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "block_positions" {
+  +id : Integer
+  +blockinstanceid : Integer
+  +contextid : Integer
+  +pagetype : String
+  +subpage : String
+  +visible : Integer
+  +region : String
+  +weight : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "block_recent_activity" {
+  +id : Integer
+  +courseid : Integer
+  +cmid : Integer
+  +timecreated : Integer
+  +userid : Integer
+  +action : Integer
+  +modname : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "block_recentlyaccesseditems" {
+  +id : Integer
+  +courseid : Integer
+  +cmid : Integer
+  +userid : Integer
+  +timeaccess : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "block_rss_client" {
+  +id : Integer
+  +userid : Integer
+  +title : String
+  +preferredtitle : String
+  +description : String
+  +shared : Integer
+  +url : String
+  +skiptime : Integer
+  +skipuntil : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_modules" <<External>> {
+}
+
+class "users" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"block_instances" "*" --> "1" "context" : parentcontextid
+"block_positions" "*" --> "1" "block_instances" : blockinstanceid
+"block_positions" "*" --> "1" "context" : contextid
+"block_recentlyaccesseditems" "*" --> "1" "course_modules" : cmid
+"block_recentlyaccesseditems" "*" --> "1" "course" : courseid
+"block_recentlyaccesseditems" "*" --> "1" "users" : userid
+@enduml

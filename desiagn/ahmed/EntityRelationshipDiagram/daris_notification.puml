@@ -1,0 +1,28 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**notifications**" as notifications {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  useridfrom : int NOT NULL 
+  useridto : bigint unsigned NOT NULL (FK)
+  subject : text COLLATE utf8mb4_unicode_ci COMMENT 'The message subject' 
+  fullmessage : text COLLATE utf8mb4_unicode_ci 
+  fullmessageformat : tinyint(1) NOT NULL DEFAULT '0' 
+  fullmessagehtml : text COLLATE utf8mb4_unicode_ci 
+  smallmessage : text COLLATE utf8mb4_unicode_ci 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  eventtype : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  contexturl : text COLLATE utf8mb4_unicode_ci 
+  contexturlname : text COLLATE utf8mb4_unicode_ci 
+  timeread : int DEFAULT NULL 
+  timecreated : int NOT NULL 
+  customdata : text COLLATE utf8mb4_unicode_ci COMMENT 'Custom data to be passed to the message processor. Must be serialisable using json_encode()' 
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+notifications }|--|| users
+@enduml

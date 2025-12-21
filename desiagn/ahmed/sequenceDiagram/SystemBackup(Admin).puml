@@ -1,0 +1,67 @@
+@startuml
+autonumber
+    participant Admin
+    participant BackupPanel
+    participant AdminController
+    participant "Redis Queue" as Queue
+    participant BackupWorker
+    participant Database
+    participant "AWS S3" as Storage
+    
+    Admin -> BackupPanel: Click "Start Backup"
+    BackupPanel -> BackupPanel: Show Confirmation Modal
+    Admin -> BackupPanel: Confirm "Yes, Start Backup Now"
+    
+    BackupPanel -> AdminController: POST /api/admin/backup {type: "full", retention: 30}
+    
+    AdminController -> Queue: dispatch(SystemBackupJob::class, [admin_id, backup_type])
+    Queue --> AdminController: Job ID: backup_789
+    
+    AdminController --> BackupPanel: Return 202 Accepted {job_id: "backup_789", message: "Backup started"}
+    
+    BackupPanel -> BackupPanel: Start Polling /api/admin/backup/status
+    
+    note over Queue,Storage: Asynchronous Backup Process
+    
+    Queue -> BackupWorker: Process SystemBackupJob
+    
+    BackupWorker -> Database: SELECT COUNT(*) as total_users FROM users
+    Database --> BackupWorker: Return Statistics
+    
+    BackupWorker -> BackupWorker: Create Backup Directory: backups/2024-01-15_14-30/
+    
+    par Parallel Backup Tasks
+        BackupWorker -> Database: mysqldump --all-databases > backup.sql
+        Database --> BackupWorker: SQL Dump Complete
+        
+        BackupWorker -> Storage: Compress Uploaded Files
+        Storage --> BackupWorker: Files Archived
+        
+        BackupWorker -> BackupWorker: Export Configuration Files
+    end
+    
+    BackupWorker -> BackupWorker: Create backup_manifest.json
+    note right of BackupWorker: {\n  "timestamp": "2024-01-15T14:30:00Z",\n  "size_mb": 2450,\n  "database_rows": 150000,\n  "files_count": 12000\n}
+    
+    BackupWorker -> Storage: Upload ZIP to S3: bucket/backups/2024-01-15_14-30.zip
+    Storage --> BackupWorker: Upload Complete
+    
+    BackupWorker -> Database: INSERT INTO backup_logs (admin_id, path, size, status, job_id)
+    Database --> BackupWorker: Log Created
+    
+    BackupWorker --> Queue: Job Complete
+    
+    note over BackupPanel,AdminController: Polling Loop (Every 3s)
+    
+    loop Polling Until Complete
+        BackupPanel -> AdminController: GET /api/admin/backup/status?job_id=backup_789
+        AdminController -> Database: SELECT status FROM backup_logs WHERE job_id=?
+        Database --> AdminController: Return Status
+        AdminController --> BackupPanel: Return Status Update
+    end
+    
+    BackupPanel -> BackupPanel: When Status="completed", Stop Polling
+    BackupPanel -> BackupPanel: Update UI: Show "Backup Complete"
+    BackupPanel -> BackupPanel: Show Download Button + Size Info
+    BackupPanel --> Admin: Display Success Notification
+@enduml

@@ -1,0 +1,53 @@
+@startuml
+autonumber
+    participant Instructor
+    participant WorkshopPanel
+    participant WorkshopController
+    participant AllocationEngine
+    participant Database
+
+    Instructor -> WorkshopPanel: Click "Switch to Assessment Phase"
+    
+    WorkshopPanel -> WorkshopController: POST /api/workshops/{id}/phase {phase: 20}
+    
+    WorkshopController -> Database: UPDATE workshops SET phase=20, timemodified=NOW() WHERE id=?
+    Database --> WorkshopController: Phase Updated
+    
+    WorkshopController --> WorkshopPanel: Return 200 OK
+    
+    Instructor -> WorkshopPanel: Click "Auto-Allocate Submissions"
+    WorkshopPanel -> WorkshopPanel: Show Loading Spinner
+    
+    WorkshopPanel -> WorkshopController: POST /api/workshops/{id}/allocate {num_reviews: 3}
+    
+    WorkshopController -> AllocationEngine: allocateRandomly(workshop_id, 3)
+    
+    AllocationEngine -> Database: SELECT id, author_id FROM workshop_submissions WHERE workshop_id=?
+    Database --> AllocationEngine: Return [ {id:1, author:101}, {id:2, author:102}, ... ]
+    
+    AllocationEngine -> AllocationEngine: Calculate Allocation Matrix
+    note over AllocationEngine: Algorithm: Prevent self-review + Distribute evenly
+    
+    loop For Each Submission
+        AllocationEngine -> Database: INSERT INTO workshop_assessments (submission_id, reviewer_id, weight)
+        Database --> AllocationEngine: Assessment Created
+    end
+    
+    AllocationEngine --> WorkshopController: Return Allocation Summary
+    
+    WorkshopController -> Database: UPDATE workshops SET allocation_status='completed'
+    Database --> WorkshopController: Status Updated
+    
+    WorkshopController --> WorkshopPanel: Return 200 OK {allocated: 15, total: 20}
+    
+    WorkshopPanel -> WorkshopPanel: Hide Loading Spinner
+    WorkshopPanel -> WorkshopPanel: Update Dashboard Stats
+    WorkshopPanel --> Instructor: Show "Allocation Complete: 15/20"
+    
+    note over WorkshopPanel,Database: Real-time Updates
+    
+    WorkshopPanel -> WorkshopController: Poll GET /api/workshops/{id}/status (Every 5s)
+    WorkshopController -> Database: SELECT assessment_count FROM workshop_progress
+    Database --> WorkshopController: Return Current Count
+    WorkshopController --> WorkshopPanel: Return Progress
+@enduml

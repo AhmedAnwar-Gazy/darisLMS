@@ -1,0 +1,58 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "choice" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +publish : Integer
+  +showresults : Integer
+  +display : Integer
+  +allowupdate : Integer
+  +allowmultiple : Integer
+  +showunanswered : Integer
+  +includeinactive : Integer
+  +limitanswers : Integer
+  +timeopen : Integer
+  +timeclose : Integer
+  +showpreview : Integer
+  +timemodified : Integer
+  +completionsubmit : Integer
+  +showavailable : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "choice_answers" {
+  +id : Integer
+  +choiceid : Integer
+  +userid : Integer
+  +optionid : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "choice_options" {
+  +id : Integer
+  +choiceid : Integer
+  +text : String
+  +maxanswers : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+"choice_answers" "*" --> "1" "choice" : choiceid
+"choice_answers" "*" --> "1" "choice_options" : optionid
+"choice_options" "*" --> "1" "choice" : choiceid
+@enduml

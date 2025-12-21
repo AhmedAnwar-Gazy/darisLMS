@@ -1,0 +1,66 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "repository" {
+  +id : Integer
+  +type : String
+  +visible : Integer
+  +sortorder : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "repository_instance_config" {
+  +id : Integer
+  +instanceid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "repository_instances" {
+  +id : Integer
+  +name : String
+  +typeid : Integer
+  +userid : Integer
+  +contextid : Integer
+  +username : String
+  +password : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +readonly : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "repository_onedrive_access" {
+  +id : Integer
+  +timemodified : Integer
+  +timecreated : Integer
+  +usermodified : Integer
+  +permissionid : String
+  +itemid : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+"repository_instances" "*" --> "1" "context" : contextid
+"repository_instances" "*" --> "1" "users" : userid
+"repository_onedrive_access" "*" --> "1" "users" : usermodified
+@enduml

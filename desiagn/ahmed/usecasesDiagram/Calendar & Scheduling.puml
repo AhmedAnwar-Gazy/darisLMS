@@ -1,0 +1,40 @@
+@startuml CalendarScheduling
+left to right direction
+
+actor "User" as user
+actor "System" as system
+actor "Instructor" as instructor
+actor "External Calendar" as external_calendar
+
+rectangle "Calendar & Scheduling System" {
+  usecase "View Calendar" as UC2201
+  usecase "Aggregate Events" as aggregate_events
+  usecase "Create Event" as UC2202
+  usecase "Validate Date" as validate_date
+  usecase "Add Personal Event" as UC2203
+  usecase "Set Privacy" as set_privacy
+  usecase "Export Calendar" as UC2204
+  usecase "Format iCal" as format_ical
+  usecase "Sync Calendar" as UC2205
+  usecase "Set Reminders" as UC2206
+  usecase "Create Course Event" as create_course_event
+}
+
+' Actor Associations
+user --> UC2201 : **Association**
+system --> UC2202 : **Association**
+user --> UC2203 : **Association**
+user --> UC2204 : **Association**
+system --> UC2205 : **Association**
+user --> UC2206 : **Association**
+instructor --> create_course_event : **Association**
+external_calendar --> UC2205 : **Association**
+
+' Use Case Relationships
+UC2201 ..> aggregate_events : **<<include>>**
+UC2202 ..> validate_date : **<<include>>**
+UC2203 ..> set_privacy : **<<include>>**
+UC2204 ..> format_ical : **<<include>>**
+UC2205 ..> UC2204 : **<<extend>>**
+
+@enduml

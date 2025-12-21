@@ -1,0 +1,32 @@
+@startuml PolicyDocumentVersioning
+title Policy Document Versioning (SMD-08)
+hide empty description
+
+state "Draft" as draft
+note right of draft
+The policy is being written or edited by 
+an Administrator. It is not visible to 
+users, and no consent is required yet. 
+end note
+
+state "Active" as active
+note right of active
+The policy is published and enforceable. 
+end note
+
+state "Archived/Deprecated" as archived_deprecated
+note right of archived_deprecated
+The policy has been replaced by a newer 
+version. It remains in the database for 
+legal audit trails (to prove what a user 
+agreed to at a specific time in the 
+past) but is no longer presented for new 
+consent. 
+end note
+
+draft --> draft : Admin Saves Changes
+draft --> active : Admin Publishes
+active --> archived_deprecated : New Version Published
+active --> archived_deprecated : Admin Manually Retires
+
+@enduml

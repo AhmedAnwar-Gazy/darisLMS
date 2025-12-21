@@ -1,0 +1,132 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**analytics_indicator_calc**" as analytics_indicator_calc {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  starttime : int NOT NULL 
+  endtime : int NOT NULL 
+  contextid : bigint unsigned NOT NULL (FK)
+  sampleorigin : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sampleid : int NOT NULL 
+  indicator : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : decimal(10 
+  timecreated : int NOT NULL 
+}
+
+entity "**analytics_models**" as analytics_models {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  enabled : tinyint(1) NOT NULL DEFAULT '0' 
+  trained : tinyint(1) NOT NULL DEFAULT '0' 
+  name : text COLLATE utf8mb4_unicode_ci COMMENT 'Explicit name of the model 
+  target : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  indicators : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timesplitting : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  predictionsprocessor : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  version : int NOT NULL 
+  contextids : text COLLATE utf8mb4_unicode_ci COMMENT 'The model will be restricted to this contexts' 
+  timecreated : int DEFAULT NULL 
+  timemodified : int NOT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**analytics_models_log**" as analytics_models_log {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  modelid : bigint unsigned NOT NULL (FK)
+  version : int NOT NULL 
+  evaluationmode : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  target : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  indicators : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timesplitting : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  score : decimal(10 
+  info : text COLLATE utf8mb4_unicode_ci 
+  dir : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**analytics_predict_samples**" as analytics_predict_samples {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  modelid : bigint unsigned NOT NULL (FK)
+  analysableid : int NOT NULL 
+  timesplitting : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  rangeindex : int NOT NULL 
+  sampleids : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**analytics_prediction_actions**" as analytics_prediction_actions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  predictionid : bigint unsigned NOT NULL (FK)
+  userid : bigint unsigned NOT NULL (FK)
+  actionname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL 
+}
+
+entity "**analytics_predictions**" as analytics_predictions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  modelid : bigint unsigned NOT NULL (FK)
+  contextid : bigint unsigned NOT NULL (FK)
+  sampleid : int NOT NULL 
+  rangeindex : smallint NOT NULL 
+  prediction : decimal(10 
+  predictionscore : decimal(10 
+  calculations : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timestart : int DEFAULT NULL 
+  timeend : int DEFAULT NULL 
+}
+
+entity "**analytics_train_samples**" as analytics_train_samples {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  modelid : bigint unsigned NOT NULL (FK)
+  analysableid : int NOT NULL 
+  timesplitting : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sampleids : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL DEFAULT '0' 
+}
+
+entity "**analytics_used_analysables**" as analytics_used_analysables {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  modelid : bigint unsigned NOT NULL (FK)
+  action : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  analysableid : int NOT NULL 
+  firstanalysis : int NOT NULL 
+  timeanalysed : int NOT NULL 
+}
+
+entity "**analytics_used_files**" as analytics_used_files {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  modelid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  fileid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  action : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  time : int NOT NULL DEFAULT '0' 
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+entity "**files**" as files <<External>> {
+  --
+}
+
+analytics_indicator_calc }|--|| context
+analytics_models }|--|| users
+analytics_models_log }|--|| analytics_models
+analytics_models_log }|--|| users
+analytics_predict_samples }|--|| analytics_models
+analytics_prediction_actions }|--|| analytics_predictions
+analytics_prediction_actions }|--|| users
+analytics_predictions }|--|| context
+analytics_predictions }|--|| analytics_models
+analytics_train_samples }|--|| analytics_models
+analytics_used_analysables }|--|| analytics_models
+analytics_used_files }|--|| files
+analytics_used_files }|--|| analytics_models
+@enduml

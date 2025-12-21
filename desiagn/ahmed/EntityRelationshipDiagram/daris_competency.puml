@@ -1,0 +1,267 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**competency**" as competency {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  shortname : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Shortname of a competency' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'Description of a single competency' 
+  descriptionformat : smallint NOT NULL DEFAULT '0' COMMENT 'The format of the description field' 
+  idnumber : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  competencyframeworkid : int NOT NULL COMMENT 'The framework this competency relates to.' 
+  parentid : int NOT NULL DEFAULT '0' COMMENT 'The parent competency.' 
+  path : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Used to speed up queries that use an entire branch of the tree. Looks like /5/34/54.' 
+  sortorder : int NOT NULL COMMENT 'Relative sort order within the branch' 
+  ruletype : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  ruleoutcome : tinyint NOT NULL DEFAULT '0' 
+  ruleconfig : text COLLATE utf8mb4_unicode_ci 
+  scaleid : bigint unsigned DEFAULT NULL (FK)
+  scaleconfiguration : text COLLATE utf8mb4_unicode_ci 
+  timecreated : int NOT NULL COMMENT 'The time this competency was created.' 
+  timemodified : int NOT NULL COMMENT 'The time this competency was last modified.' 
+  usermodified : bigint unsigned DEFAULT NULL COMMENT 'The user who last modified this competency' (FK)
+}
+
+entity "**competency_coursecomp**" as competency_coursecomp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : bigint unsigned NOT NULL COMMENT 'The course this competency is linked to.' (FK)
+  competencyid : bigint unsigned NOT NULL COMMENT 'The competency that is linked to this course.' (FK)
+  ruleoutcome : tinyint NOT NULL COMMENT 'The rule that applies to the competency when the course is completed.' 
+  timecreated : int NOT NULL COMMENT 'The time this link was created.' 
+  timemodified : int NOT NULL COMMENT 'The time this link was modified.' 
+  usermodified : bigint unsigned NOT NULL COMMENT 'The user who modified this link.' (FK)
+  sortorder : int NOT NULL COMMENT 'The display order for this link.' 
+}
+
+entity "**competency_coursecompsetting**" as competency_coursecompsetting {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL COMMENT 'The course this setting is linked to.' 
+  pushratingstouserplans : tinyint DEFAULT NULL COMMENT 'Does this course push ratings to user plans?' 
+  timecreated : int NOT NULL COMMENT 'The time this setting was created.' 
+  timemodified : int NOT NULL COMMENT 'The time this setting was last modified.' 
+  usermodified : bigint unsigned DEFAULT NULL COMMENT 'The user who last modified this setting' (FK)
+}
+
+entity "**competency_evidence**" as competency_evidence {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  usercompetencyid : int NOT NULL 
+  contextid : bigint unsigned NOT NULL (FK)
+  action : tinyint NOT NULL 
+  actionuserid : bigint unsigned DEFAULT NULL (FK)
+  descidentifier : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  desccomponent : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  desca : text COLLATE utf8mb4_unicode_ci 
+  url : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  grade : int DEFAULT NULL 
+  note : text COLLATE utf8mb4_unicode_ci COMMENT 'A non-localised text to attach to the evidence.' 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**competency_framework**" as competency_framework {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  shortname : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Short name for the competency framework.' 
+  contextid : bigint unsigned NOT NULL (FK)
+  idnumber : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Unique idnumber for this competency framework.' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'Description of this competency framework' 
+  descriptionformat : smallint NOT NULL DEFAULT '0' COMMENT 'The format of the description field' 
+  scaleid : bigint unsigned DEFAULT NULL COMMENT 'Scale used to define competency.' (FK)
+  scaleconfiguration : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Scale information.' 
+  visible : tinyint NOT NULL DEFAULT '1' COMMENT 'Used to show/hide this competency framework.' 
+  taxonomies : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Sequence of terms to use for each competency level.' 
+  timecreated : int NOT NULL COMMENT 'The time this competency framework was created.' 
+  timemodified : int NOT NULL COMMENT 'The time this competency framework was last modified.' 
+  usermodified : bigint unsigned DEFAULT NULL COMMENT 'The user who last modified this framework' (FK)
+}
+
+entity "**competency_modulecomp**" as competency_modulecomp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  cmid : bigint unsigned NOT NULL COMMENT 'ID of the record in the course_modules table.' (FK)
+  timecreated : int NOT NULL COMMENT 'The time this record was created.' 
+  timemodified : int NOT NULL COMMENT 'The time this record was last modified' 
+  usermodified : bigint unsigned NOT NULL COMMENT 'The user who last modified this field.' (FK)
+  sortorder : int NOT NULL COMMENT 'The field used to naturally sort this link.' 
+  competencyid : bigint unsigned NOT NULL COMMENT 'The course competency this activity is linked to.' (FK)
+  ruleoutcome : tinyint NOT NULL COMMENT 'The outcome when an activity is completed.' 
+  overridegrade : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Enables the ability to override an existing competencys grade.' 
+}
+
+entity "**competency_plan**" as competency_plan {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci 
+  descriptionformat : smallint NOT NULL DEFAULT '0' 
+  userid : int NOT NULL 
+  templateid : int DEFAULT NULL 
+  origtemplateid : int DEFAULT NULL COMMENT 'The template ID this plan was based on originally' 
+  status : tinyint(1) NOT NULL 
+  duedate : int DEFAULT '0' 
+  reviewerid : int DEFAULT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL DEFAULT '0' 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**competency_plancomp**" as competency_plancomp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  planid : int NOT NULL 
+  competencyid : int NOT NULL 
+  sortorder : int DEFAULT NULL COMMENT 'Relative sort order' 
+  timecreated : int NOT NULL 
+  timemodified : int DEFAULT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**competency_relatedcomp**" as competency_relatedcomp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  competencyid : bigint unsigned NOT NULL (FK)
+  relatedcompetencyid : bigint unsigned NOT NULL (FK)
+  timecreated : int NOT NULL 
+  timemodified : int DEFAULT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**competency_template**" as competency_template {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  shortname : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Short name for the learning plan template.' 
+  contextid : bigint unsigned NOT NULL (FK)
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'Description of this learning plan template' 
+  descriptionformat : smallint NOT NULL DEFAULT '0' COMMENT 'The format of the description field' 
+  visible : tinyint NOT NULL DEFAULT '1' COMMENT 'Used to show/hide this learning plan template.' 
+  duedate : int DEFAULT NULL COMMENT 'The default due date for instances of this plan.' 
+  timecreated : int NOT NULL COMMENT 'The time this learning plan template was created.' 
+  timemodified : int NOT NULL COMMENT 'The time this learning plan template was last modified.' 
+  usermodified : bigint unsigned DEFAULT NULL COMMENT 'The user who last modified this learning plan template' (FK)
+}
+
+entity "**competency_templatecohort**" as competency_templatecohort {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  templateid : int NOT NULL 
+  cohortid : int NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**competency_templatecomp**" as competency_templatecomp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  templateid : bigint unsigned NOT NULL COMMENT 'The template this competency is linked to.' (FK)
+  competencyid : bigint unsigned NOT NULL COMMENT 'The competency that is linked to this course.' (FK)
+  timecreated : int NOT NULL COMMENT 'The time this link was created.' 
+  timemodified : int NOT NULL COMMENT 'The time this link was modified.' 
+  usermodified : bigint unsigned NOT NULL COMMENT 'The user who modified this link.' (FK)
+  sortorder : int DEFAULT NULL COMMENT 'Relative sort order' 
+}
+
+entity "**competency_usercomp**" as competency_usercomp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL COMMENT 'User associated to the competency.' 
+  competencyid : int NOT NULL COMMENT 'Competency associated to the user.' 
+  status : tinyint NOT NULL DEFAULT '0' COMMENT 'Competency status.' 
+  reviewerid : int DEFAULT NULL COMMENT 'User that reviewed the competency.' 
+  proficiency : tinyint DEFAULT NULL COMMENT 'Indicate if the competency is proficient not.' 
+  grade : int DEFAULT NULL COMMENT 'Grade assigned to the competency.' 
+  timecreated : int NOT NULL 
+  timemodified : int DEFAULT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**competency_usercompcourse**" as competency_usercompcourse {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL COMMENT 'User associated to the competency.' 
+  courseid : int NOT NULL COMMENT 'The course this competency is linked to.' 
+  competencyid : int NOT NULL COMMENT 'Competency associated to the user.' 
+  proficiency : tinyint DEFAULT NULL COMMENT 'Indicate if the competency is proficient not.' 
+  grade : int DEFAULT NULL COMMENT 'The course grade assigned for the competency.' 
+  timecreated : int NOT NULL 
+  timemodified : int DEFAULT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**competency_usercompplan**" as competency_usercompplan {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL COMMENT 'User associated to the competency.' 
+  competencyid : int NOT NULL COMMENT 'Competency associated to the user.' 
+  planid : int NOT NULL COMMENT 'Plan associated to the user.' 
+  proficiency : tinyint DEFAULT NULL COMMENT 'Indicate if the competency is proficient not.' 
+  grade : int DEFAULT NULL COMMENT 'Grade assigned to the competency.' 
+  sortorder : int DEFAULT NULL COMMENT 'Relative sort order' 
+  timecreated : int NOT NULL 
+  timemodified : int DEFAULT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**competency_userevidence**" as competency_userevidence {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  descriptionformat : tinyint(1) NOT NULL 
+  url : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**competency_userevidencecomp**" as competency_userevidencecomp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userevidenceid : int NOT NULL 
+  competencyid : int NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**scale**" as scale <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+entity "**course_modules**" as course_modules <<External>> {
+  --
+}
+
+competency }|--|| scale
+competency }|--|| users
+competency_coursecomp }|--|| competency
+competency_coursecomp }|--|| course
+competency_coursecomp }|--|| users
+competency_coursecompsetting }|--|| users
+competency_evidence }|--|| users
+competency_evidence }|--|| context
+competency_evidence }|--|| users
+competency_framework }|--|| context
+competency_framework }|--|| scale
+competency_framework }|--|| users
+competency_modulecomp }|--|| course_modules
+competency_modulecomp }|--|| competency
+competency_modulecomp }|--|| users
+competency_plan }|--|| users
+competency_plancomp }|--|| users
+competency_relatedcomp }|--|| competency
+competency_relatedcomp }|--|| competency
+competency_relatedcomp }|--|| users
+competency_template }|--|| context
+competency_template }|--|| users
+competency_templatecohort }|--|| users
+competency_templatecomp }|--|| competency
+competency_templatecomp }|--|| competency_template
+competency_templatecomp }|--|| users
+competency_usercomp }|--|| users
+competency_usercompcourse }|--|| users
+competency_usercompplan }|--|| users
+competency_userevidence }|--|| users
+competency_userevidencecomp }|--|| users
+@enduml

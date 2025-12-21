@@ -1,0 +1,39 @@
+@startuml AdvancedLearningActivities
+left to right direction
+
+actor "Instructor" as instructor
+actor "Student" as student
+actor "System" as system
+actor "Peer Reviewer" as peer_reviewer
+
+rectangle "Advanced Learning Activities" {
+  usecase "Create Forum" as UC1901
+  usecase "Set Permissions" as set_permissions
+  usecase "Edit Wiki" as UC1902
+  usecase "Save Version" as save_version
+  usecase "Conduct Peer Review" as UC1903
+  usecase "Apply Rubric" as apply_rubric
+  usecase "Manage Glossary" as UC1904
+  usecase "Launch SCORM Package" as UC1905
+  usecase "Track Progress" as track_progress
+  usecase "Track Activity" as UC1906
+  usecase "Update Gradebook" as update_gradebook
+}
+
+' Actor Associations
+instructor --> UC1901 : **Association**
+instructor --> UC1904 : **Association**
+student --> UC1902 : **Association**
+student --> UC1903 : **Association**
+student --> UC1905 : **Association**
+system --> UC1906 : **Association**
+peer_reviewer --> UC1903 : **Association**
+
+' Use Case Relationships
+UC1901 ..> set_permissions : **<<include>>**
+UC1902 ..> save_version : **<<include>>**
+UC1903 ..> apply_rubric : **<<include>>**
+UC1905 ..> track_progress : **<<include>>**
+UC1906 ..> update_gradebook : **<<include>>**
+
+@enduml

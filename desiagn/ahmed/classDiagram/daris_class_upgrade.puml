@@ -1,0 +1,26 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "upgrade_log" {
+  +id : Integer
+  +type : Integer
+  +plugin : String
+  +version : String
+  +targetversion : String
+  +info : String
+  +details : String
+  +backtrace : String
+  +userid : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+"upgrade_log" "*" --> "1" "users" : userid
+@enduml

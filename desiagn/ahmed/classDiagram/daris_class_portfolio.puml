@@ -1,0 +1,92 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "portfolio_instance" {
+  +id : Integer
+  +plugin : String
+  +name : String
+  +visible : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "portfolio_instance_config" {
+  +id : Integer
+  +instance : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "portfolio_instance_user" {
+  +id : Integer
+  +instance : Integer
+  +userid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "portfolio_log" {
+  +id : Integer
+  +userid : Integer
+  +time : Integer
+  +portfolio : Integer
+  +caller_class : String
+  +caller_file : String
+  +caller_component : String
+  +caller_sha1 : String
+  +tempdataid : Integer
+  +returnurl : String
+  +continueurl : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "portfolio_mahara_queue" {
+  +id : Integer
+  +transferid : Integer
+  +token : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "portfolio_tempdata" {
+  +id : Integer
+  +data : String
+  +expirytime : Integer
+  +userid : Integer
+  +instance : Integer
+  +queued : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+"portfolio_instance_config" "*" --> "1" "portfolio_instance" : instance
+"portfolio_instance_user" "*" --> "1" "portfolio_instance" : instance
+"portfolio_instance_user" "*" --> "1" "users" : userid
+"portfolio_log" "*" --> "1" "portfolio_instance" : portfolio
+"portfolio_log" "*" --> "1" "portfolio_tempdata" : tempdataid
+"portfolio_log" "*" --> "1" "users" : userid
+"portfolio_mahara_queue" "*" --> "1" "portfolio_tempdata" : transferid
+"portfolio_tempdata" "*" --> "1" "portfolio_instance" : instance
+"portfolio_tempdata" "*" --> "1" "users" : userid
+@enduml

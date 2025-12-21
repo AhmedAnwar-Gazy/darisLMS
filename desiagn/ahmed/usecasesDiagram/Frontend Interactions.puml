@@ -1,0 +1,34 @@
+@startuml FrontendInteractions
+left to right direction
+
+actor "User" as user
+actor "System" as system
+actor "Browser" as browser
+
+rectangle "Frontend Interactions System" {
+  usecase "Render Responsive UI" as UC1101
+  usecase "Display Dashboard" as UC1102
+  usecase "Load User Data" as load_user_data
+  usecase "Navigate Course" as UC1103
+  usecase "Toggle Theme" as UC1104
+  usecase "Validate Form" as UC1105
+  usecase "Check Required Fields" as check_fields
+  usecase "Switch Language" as UC1106
+  usecase "Update Locale" as update_locale
+}
+
+' Actor Associations
+user --> UC1103 : **Association**
+user --> UC1104 : **Association**
+user --> UC1106 : **Association**
+system --> UC1101 : **Association**
+system --> UC1102 : **Association**
+system --> UC1105 : **Association**
+browser --> UC1101 : **Association**
+
+' Use Case Relationships
+UC1102 ..> load_user_data : **<<include>>**
+UC1105 ..> check_fields : **<<include>>**
+UC1106 ..> update_locale : **<<include>>**
+
+@enduml

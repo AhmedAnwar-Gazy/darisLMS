@@ -1,0 +1,109 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "event" {
+  +id : Integer
+  +name : String
+  +description : String
+  +format : Integer
+  +categoryid : Integer
+  +courseid : Integer
+  +groupid : Integer
+  +userid : Integer
+  +repeatid : Integer
+  +component : String
+  +modulename : String
+  +instance : Integer
+  +type : Integer
+  +eventtype : String
+  +timestart : Integer
+  +timeduration : Integer
+  +timesort : Integer
+  +visible : Integer
+  +uuid : String
+  +sequence : Integer
+  +timemodified : Integer
+  +subscriptionid : Integer
+  +priority : Integer
+  +location : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "event_subscriptions" {
+  +id : Integer
+  +url : String
+  +categoryid : Integer
+  +courseid : Integer
+  +groupid : Integer
+  +userid : Integer
+  +eventtype : String
+  +pollinterval : Integer
+  +lastupdated : Integer
+  +name : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "events_handlers" {
+  +id : Integer
+  +eventname : String
+  +component : String
+  +handlerfile : String
+  +handlerfunction : String
+  +schedule : String
+  +status : Integer
+  +internal : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "events_queue" {
+  +id : Integer
+  +eventdata : String
+  +stackdump : String
+  +userid : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "events_queue_handlers" {
+  +id : Integer
+  +queuedeventid : Integer
+  +handlerid : Integer
+  +status : Integer
+  +errormessage : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+class "course_categories" <<External>> {
+}
+
+"event" "*" --> "1" "course_categories" : categoryid
+"event" "*" --> "1" "event_subscriptions" : subscriptionid
+"event_subscriptions" "*" --> "1" "course" : courseid
+"event_subscriptions" "*" --> "1" "users" : userid
+"events_queue" "*" --> "1" "users" : userid
+"events_queue_handlers" "*" --> "1" "events_handlers" : handlerid
+"events_queue_handlers" "*" --> "1" "events_queue" : queuedeventid
+@enduml

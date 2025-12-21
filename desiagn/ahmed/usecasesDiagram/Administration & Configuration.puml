@@ -1,0 +1,37 @@
+@startuml AdministrationConfiguration
+left to right direction
+
+actor "Administrator" as admin
+actor "System" as system
+actor "Backup System" as backup_system
+
+rectangle "Administration & Configuration System" {
+  usecase "Configure System" as UC0901
+  usecase "Apply Settings" as apply_settings
+  usecase "Trigger Backup" as UC0902
+  usecase "Validate Storage" as validate_storage
+  usecase "Execute Backup" as execute_backup
+  usecase "Store Backup" as store_backup
+  usecase "View Audit Logs" as UC0903
+  usecase "Filter Logs" as filter_logs
+  usecase "Manage Plugins" as UC0904
+  usecase "Schedule Maintenance" as UC0905
+}
+
+' Actor Associations
+admin --> UC0901 : **Association**
+admin --> UC0902 : **Association**
+admin --> UC0903 : **Association**
+admin --> UC0904 : **Association**
+admin --> UC0905 : **Association**
+system --> execute_backup : **Association**
+backup_system --> store_backup : **Association**
+
+' Use Case Relationships
+UC0901 ..> apply_settings : **<<include>>**
+UC0902 ..> validate_storage : **<<include>>**
+UC0902 ..> execute_backup : **<<include>>**
+execute_backup ..> store_backup : **<<include>>**
+UC0903 ..> filter_logs : **<<include>>**
+
+@enduml

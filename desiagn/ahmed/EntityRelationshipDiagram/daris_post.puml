@@ -1,0 +1,42 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**post**" as post {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  module : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  userid : int NOT NULL DEFAULT '0' 
+  courseid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  groupid : int NOT NULL DEFAULT '0' 
+  moduleid : int NOT NULL DEFAULT '0' 
+  coursemoduleid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  subject : varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL 
+  summary : text COLLATE utf8mb4_unicode_ci 
+  content : text COLLATE utf8mb4_unicode_ci 
+  uniquehash : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  rating : int NOT NULL DEFAULT '0' 
+  format : int NOT NULL DEFAULT '0' 
+  summaryformat : tinyint NOT NULL DEFAULT '0' 
+  attachment : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'attachment' 
+  publishstate : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'draft' 
+  lastmodified : int NOT NULL DEFAULT '0' 
+  created : int NOT NULL DEFAULT '0' 
+  usermodified : bigint unsigned DEFAULT NULL (FK)
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+entity "**course_modules**" as course_modules <<External>> {
+  --
+}
+
+post }|--|| course
+post }|--|| course_modules
+post }|--|| users
+@enduml

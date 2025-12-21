@@ -1,0 +1,51 @@
+@startuml
+title External File Repository Linking Process
+skinparam activityBackgroundColor #F5F5FF
+
+start
+
+:User opens file picker;
+:Selects "Google Drive";
+
+partition "Authentication Phase" {
+  if (Has valid OAuth token?) then (yes)
+    :Use existing token;
+  else (no)
+    :Redirect to Google OAuth;
+    :User grants permissions;
+    :Receive authorization code;
+    :Exchange code for access token;
+    :Store token securely;
+  endif
+}
+
+partition "File Selection Phase" {
+  :Request file list from Google Drive;
+  :Display files in picker UI;
+  :User selects target file;
+  :User clicks "Link File";
+}
+
+partition "Linking Phase" {
+  :Create file reference record;
+  note right
+    files_reference table:
+    - external_id: "gd_file_123"
+    - repository: "google_drive"
+    - metadata: JSON of file info
+    - access_token: encrypted
+  end note
+  
+  :Create file entry in files table;
+  :Set type = "external_reference";
+  
+  :Return success with file_id;
+}
+
+partition "UI Update" {
+  :Update interface with linked file;
+  :Show success message;
+  :Close file picker;
+}
+
+stop

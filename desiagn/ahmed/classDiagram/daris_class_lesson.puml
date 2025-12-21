@@ -1,0 +1,189 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "lesson" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +practice : Integer
+  +modattempts : Integer
+  +usepassword : Integer
+  +password : String
+  +dependency : Integer
+  +conditions : String
+  +grade : Integer
+  +custom : Integer
+  +ongoing : Integer
+  +usemaxgrade : Integer
+  +maxanswers : Integer
+  +maxattempts : Integer
+  +review : Integer
+  +nextpagedefault : Integer
+  +feedback : Integer
+  +minquestions : Integer
+  +maxpages : Integer
+  +timelimit : Integer
+  +retake : Integer
+  +activitylink : Integer
+  +mediafile : String
+  +mediaheight : Integer
+  +mediawidth : Integer
+  +mediaclose : Integer
+  +slideshow : Integer
+  +width : Integer
+  +height : Integer
+  +bgcolor : String
+  +displayleft : Integer
+  +displayleftif : Integer
+  +progressbar : Integer
+  +available : Integer
+  +deadline : Integer
+  +timemodified : Integer
+  +completionendreached : Integer
+  +completiontimespent : Integer
+  +allowofflineattempts : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lesson_answers" {
+  +id : Integer
+  +lessonid : Integer
+  +pageid : Integer
+  +jumpto : Integer
+  +grade : Integer
+  +score : Integer
+  +flags : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +answer : String
+  +answerformat : Integer
+  +response : String
+  +responseformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lesson_attempts" {
+  +id : Integer
+  +lessonid : Integer
+  +pageid : Integer
+  +userid : Integer
+  +answerid : Integer
+  +retry : Integer
+  +correct : Integer
+  +useranswer : String
+  +timeseen : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lesson_branch" {
+  +id : Integer
+  +lessonid : Integer
+  +userid : Integer
+  +pageid : Integer
+  +retry : Integer
+  +flag : Integer
+  +timeseen : Integer
+  +nextpageid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lesson_grades" {
+  +id : Integer
+  +lessonid : Integer
+  +userid : Integer
+  +grade : String
+  +late : Integer
+  +completed : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lesson_overrides" {
+  +id : Integer
+  +lessonid : Integer
+  +groupid : Integer
+  +userid : Integer
+  +available : Integer
+  +deadline : Integer
+  +timelimit : Integer
+  +review : Integer
+  +maxattempts : Integer
+  +retake : Integer
+  +password : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lesson_pages" {
+  +id : Integer
+  +lessonid : Integer
+  +prevpageid : Integer
+  +nextpageid : Integer
+  +qtype : Integer
+  +qoption : Integer
+  +layout : Integer
+  +display : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +title : String
+  +contents : String
+  +contentsformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lesson_timer" {
+  +id : Integer
+  +lessonid : Integer
+  +userid : Integer
+  +starttime : Integer
+  +lessontime : Integer
+  +completed : Integer
+  +timemodifiedoffline : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "groups" <<External>> {
+}
+
+"lesson_answers" "*" --> "1" "lesson" : lessonid
+"lesson_answers" "*" --> "1" "lesson_pages" : pageid
+"lesson_attempts" "*" --> "1" "lesson_answers" : answerid
+"lesson_attempts" "*" --> "1" "lesson" : lessonid
+"lesson_attempts" "*" --> "1" "lesson_pages" : pageid
+"lesson_branch" "*" --> "1" "lesson" : lessonid
+"lesson_branch" "*" --> "1" "lesson_pages" : pageid
+"lesson_grades" "*" --> "1" "lesson" : lessonid
+"lesson_overrides" "*" --> "1" "groups" : groupid
+"lesson_overrides" "*" --> "1" "lesson" : lessonid
+"lesson_overrides" "*" --> "1" "users" : userid
+"lesson_pages" "*" --> "1" "lesson" : lessonid
+"lesson_timer" "*" --> "1" "lesson" : lessonid
+@enduml

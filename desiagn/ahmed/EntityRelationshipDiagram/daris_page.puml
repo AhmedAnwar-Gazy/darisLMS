@@ -1,0 +1,21 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**page**" as page {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  content : text COLLATE utf8mb4_unicode_ci 
+  contentformat : smallint NOT NULL DEFAULT '0' 
+  legacyfiles : smallint NOT NULL DEFAULT '0' 
+  legacyfileslast : int DEFAULT NULL 
+  display : smallint NOT NULL DEFAULT '0' 
+  displayoptions : text COLLATE utf8mb4_unicode_ci 
+  revision : int NOT NULL DEFAULT '0' COMMENT 'incremented when after each file changes 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+@enduml

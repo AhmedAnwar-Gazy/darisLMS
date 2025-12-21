@@ -1,0 +1,81 @@
+@startuml
+autonumber
+    participant "Grade Event System" as System
+    participant CompetencyService
+    participant Database
+    participant NotificationService
+    participant Student
+
+    note over System,Database: Trigger: Quiz graded (85/100)
+    
+    System -> Database: INSERT INTO grade_grades_history (old_value, new_value, timestamp)
+    
+    System -> CompetencyService: handleGradeUpdated(user_id=123, activity_id=456, grade=85)
+    
+    CompetencyService -> Database: Find Linked Competencies
+    note right of CompetencyService: SELECT competency_id, rule_type, threshold\nFROM competency_modulecomp\nWHERE module_id=456 AND module_type='quiz'
+    
+    Database --> CompetencyService: Return [{competency_id: 5, rule: "grade_threshold", threshold: 80}]
+    
+    CompetencyService -> Database: Check Current Competency Status
+    note right of CompetencyService: SELECT proficiency, grade\nFROM competency_usercomp\nWHERE userid=123 AND competencyid=5
+    
+    Database --> CompetencyService: Return {proficiency: 0, grade: null} (Not Proficient)
+    
+    alt Grade >= Threshold (85 >= 80)
+        CompetencyService -> Database: Check if Already Proficient
+        
+        alt Not Yet Proficient
+            CompetencyService -> Database: INSERT/UPDATE competency_usercomp SET proficiency=1, grade=85, timemodified=NOW()
+            Database --> CompetencyService: Competency Awarded
+            
+            CompetencyService -> Database: Create Evidence Record
+            note right of CompetencyService: INSERT INTO competency_evidence\n(userid, competencyid, action, contextid)\nVALUES (123, 5, 'grade_threshold_met', 456)
+            
+            Database --> CompetencyService: Evidence Logged
+            
+            CompetencyService -> Database: Check Learning Plan Progress
+            note right of CompetencyService: SELECT plan_id FROM competency_plancomp WHERE competencyid=5
+            
+            Database --> CompetencyService: Return [plan_1, plan_2]
+            
+            loop For Each Learning Plan
+                CompetencyService -> Database: Recalculate Plan Completion
+                note right of CompetencyService: UPDATE competency_plan\nSET progress=(SELECT COUNT(*) FROM competency_usercomp WHERE proficiency=1 AND plan_id=?)\nWHERE id=?
+                
+                Database --> CompetencyService: Plan Updated
+                
+                alt Plan Now Complete (100%)
+                    CompetencyService -> Database: Mark Plan as Complete
+                    Database --> CompetencyService: Plan Completed
+                    
+                    CompetencyService -> NotificationService: notifyPlanCompletion(user_id, plan_id)
+                end
+            end
+            
+            CompetencyService -> NotificationService: notifyCompetencyAchieved(user_id, competency_id)
+            
+            NotificationService -> Database: INSERT INTO notifications (type: "competency", user_id, data)
+            Database --> NotificationService: Notification Queued
+            
+            par Parallel Notifications
+                NotificationService -> Student: Send Email Notification
+                NotificationService -> Database: Create Dashboard Alert
+            end
+            
+            CompetencyService -> Database: Update User Badges (if applicable)
+        else Already Proficient
+            CompetencyService -> Database: Update grade only (keep proficiency)
+            Database --> CompetencyService: Grade Updated
+        end
+    else Grade < Threshold
+        CompetencyService -> Database: Update grade but not proficiency
+        Database --> CompetencyService: Record Updated
+    end
+    
+    note over Student,Database: Student Experience Update
+    
+    Database -> Student: Next Profile View Shows New Competency
+    Database -> Student: Learning Plan Progress Updated
+    Database -> Student: Badge Unlocked (if linked)
+@enduml

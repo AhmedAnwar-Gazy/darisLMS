@@ -1,0 +1,709 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**qtype_ddimageortext**" as qtype_ddimageortext {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  shuffleanswers : smallint NOT NULL DEFAULT '1' 
+  correctfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any correct response.' 
+  correctfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  partiallycorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any partially correct response.' 
+  partiallycorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  incorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any incorrect response.' 
+  incorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  shownumcorrect : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**qtype_ddimageortext_drags**" as qtype_ddimageortext_drags {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  no : int NOT NULL DEFAULT '0' COMMENT 'drag no' 
+  draggroup : int NOT NULL DEFAULT '0' 
+  infinite : smallint NOT NULL DEFAULT '0' 
+  label : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Alt text label for drag-able image.' 
+}
+
+entity "**qtype_ddimageortext_drops**" as qtype_ddimageortext_drops {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  no : int NOT NULL DEFAULT '0' COMMENT 'drop number' 
+  xleft : int NOT NULL DEFAULT '0' 
+  ytop : int NOT NULL DEFAULT '0' 
+  choice : int NOT NULL DEFAULT '0' 
+  label : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Alt label for drop box' 
+}
+
+entity "**qtype_ddmarker**" as qtype_ddmarker {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  shuffleanswers : smallint NOT NULL DEFAULT '1' 
+  correctfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any correct response.' 
+  correctfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  partiallycorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any partially correct response.' 
+  partiallycorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  incorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any incorrect response.' 
+  incorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  shownumcorrect : tinyint NOT NULL DEFAULT '0' 
+  showmisplaced : smallint NOT NULL DEFAULT '0' 
+}
+
+entity "**qtype_ddmarker_drags**" as qtype_ddmarker_drags {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  no : int NOT NULL DEFAULT '0' COMMENT 'drag no' 
+  label : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Alt text label for drag-able image.' 
+  infinite : smallint NOT NULL DEFAULT '0' 
+  noofdrags : int NOT NULL DEFAULT '1' COMMENT 'No of drag items 
+}
+
+entity "**qtype_ddmarker_drops**" as qtype_ddmarker_drops {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  no : int NOT NULL DEFAULT '0' COMMENT 'drop number' 
+  shape : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'circle 
+  coords : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  choice : int NOT NULL DEFAULT '0' 
+}
+
+entity "**qtype_essay_options**" as qtype_essay_options {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : int NOT NULL COMMENT 'Foreign key linking to the question table.' 
+  responseformat : varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'editor' COMMENT 'The type of input area students should be given for their response.' 
+  responserequired : tinyint NOT NULL DEFAULT '1' COMMENT 'Nonzero if an online text response is optional' 
+  responsefieldlines : smallint NOT NULL DEFAULT '15' COMMENT 'Approximate height 
+  minwordlimit : int DEFAULT NULL COMMENT 'Minimum number of words' 
+  maxwordlimit : int DEFAULT NULL COMMENT 'Maximum number of words' 
+  attachments : smallint NOT NULL DEFAULT '0' COMMENT 'Whether 
+  attachmentsrequired : smallint NOT NULL DEFAULT '0' COMMENT 'The number of attachments that should be required' 
+  graderinfo : text COLLATE utf8mb4_unicode_ci COMMENT 'Information shown to people with permission to manually grade the question 
+  graderinfoformat : smallint NOT NULL DEFAULT '0' COMMENT 'The text format for graderinfo.' 
+  responsetemplate : text COLLATE utf8mb4_unicode_ci COMMENT 'The template to pre-populate student''s response field during attempt.' 
+  responsetemplateformat : smallint NOT NULL DEFAULT '0' COMMENT 'The text format for responsetemplate.' 
+  maxbytes : int NOT NULL DEFAULT '0' COMMENT 'Maximum size of attached files in bytes.' 
+  filetypeslist : text COLLATE utf8mb4_unicode_ci COMMENT 'What attachment file type a student is allowed to include with their response. * or empty means unlimited.' 
+}
+
+entity "**qtype_match_options**" as qtype_match_options {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : int NOT NULL DEFAULT '0' COMMENT 'Foreign key link to question.id.' 
+  shuffleanswers : smallint NOT NULL DEFAULT '1' 
+  correctfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any correct response.' 
+  correctfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  partiallycorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any partially correct response.' 
+  partiallycorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  incorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any incorrect response.' 
+  incorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  shownumcorrect : tinyint NOT NULL DEFAULT '0' COMMENT 'If true 
+}
+
+entity "**qtype_match_subquestions**" as qtype_match_subquestions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key link to question.id.' (FK)
+  questiontext : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  questiontextformat : tinyint NOT NULL DEFAULT '0' 
+  answertext : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**qtype_multichoice_options**" as qtype_multichoice_options {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : int NOT NULL DEFAULT '0' COMMENT 'Foreign key references question.id' 
+  layout : smallint NOT NULL DEFAULT '0' COMMENT 'Not used. Was intended for a vertical/horizontal layout option. See MDL-18445.' 
+  single : smallint NOT NULL DEFAULT '0' COMMENT 'If 0 it multiple response (checkboxes). Otherwise it is radio buttons.' 
+  shuffleanswers : smallint NOT NULL DEFAULT '1' COMMENT 'Whether the choices can be randomly shuffled.' 
+  correctfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any correct response.' 
+  correctfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  partiallycorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any partially correct response.' 
+  partiallycorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  incorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any incorrect response.' 
+  incorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  answernumbering : varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'abc' COMMENT 'Indicates how and whether the choices should be numbered.' 
+  shownumcorrect : tinyint NOT NULL DEFAULT '0' COMMENT 'If true 
+  showstandardinstruction : tinyint NOT NULL DEFAULT '1' COMMENT 'Whether standard instruction (''Select one:'' or ''Select one or more:'') is displayed' 
+}
+
+entity "**qtype_ordering_options**" as qtype_ordering_options {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint NOT NULL DEFAULT '0' 
+  layouttype : tinyint NOT NULL DEFAULT '0' 
+  selecttype : tinyint NOT NULL DEFAULT '0' 
+  selectcount : smallint NOT NULL DEFAULT '2' 
+  gradingtype : tinyint NOT NULL DEFAULT '0' 
+  showgrading : tinyint NOT NULL DEFAULT '0' 
+  numberingstyle : varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'none' 
+  correctfeedback : text COLLATE utf8mb4_unicode_ci 
+  correctfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  incorrectfeedback : text COLLATE utf8mb4_unicode_ci 
+  incorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  partiallycorrectfeedback : text COLLATE utf8mb4_unicode_ci 
+  partiallycorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  shownumcorrect : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**qtype_randomsamatch_options**" as qtype_randomsamatch_options {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : int NOT NULL DEFAULT '0' COMMENT 'Foreign key references question.id.' 
+  choose : int NOT NULL DEFAULT '4' COMMENT 'Number of subquestions to randomly generate.' 
+  subcats : tinyint NOT NULL DEFAULT '1' COMMENT 'Whether to include or not the subcategories.' 
+  correctfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any correct response.' 
+  correctfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  partiallycorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any partially correct response.' 
+  partiallycorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  incorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any incorrect response.' 
+  incorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  shownumcorrect : tinyint NOT NULL DEFAULT '0' COMMENT 'If true 
+}
+
+entity "**qtype_shortanswer_options**" as qtype_shortanswer_options {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : int NOT NULL DEFAULT '0' COMMENT 'Foreign key references question.id.' 
+  usecase : tinyint NOT NULL DEFAULT '0' COMMENT 'Whether answers are matched case-sensitively.' 
+}
+
+entity "**question**" as question {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  parent : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  questiontext : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  questiontextformat : tinyint NOT NULL DEFAULT '0' 
+  generalfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'to store the question feedback' 
+  generalfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  defaultmark : decimal(12 
+  penalty : decimal(12 
+  qtype : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  length : int NOT NULL DEFAULT '1' 
+  stamp : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'time question was created' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'time that question was last modified' 
+  createdby : bigint unsigned DEFAULT NULL COMMENT 'userid of person who created this question' (FK)
+  modifiedby : bigint unsigned DEFAULT NULL COMMENT 'userid of person who last edited this question' (FK)
+}
+
+entity "**question_answers**" as question_answers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  question : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  answer : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  answerformat : tinyint NOT NULL DEFAULT '0' 
+  fraction : decimal(12 
+  feedback : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  feedbackformat : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**question_attempt_step_data**" as question_attempt_step_data {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  attemptstepid : bigint unsigned NOT NULL COMMENT 'Foreign key (FK)
+  name : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of this bit of data.' 
+  value : text COLLATE utf8mb4_unicode_ci COMMENT 'The corresponding value' 
+}
+
+entity "**question_attempt_steps**" as question_attempt_steps {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionattemptid : bigint unsigned NOT NULL COMMENT 'Foreign key (FK)
+  sequencenumber : int NOT NULL COMMENT 'Numbers the steps in a question attempt sequentially from 0.' 
+  state : varchar(13) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'One of the constants defined by the question_state class 
+  fraction : decimal(12 
+  timecreated : int NOT NULL COMMENT 'Time-stamp of the action that lead to this state being created.' 
+  userid : bigint unsigned DEFAULT NULL COMMENT 'The user whose action lead to this state being created.' (FK)
+}
+
+entity "**question_attempts**" as question_attempts {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionusageid : bigint unsigned NOT NULL COMMENT 'Foreign key (FK)
+  slot : int NOT NULL COMMENT 'Used to number the questions in one attempt sequentially.' 
+  behaviour : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of the question behaviour that is managing this question attempt.' 
+  questionid : bigint unsigned NOT NULL COMMENT 'The id of the question being attempted. Foreign key references question.id.' (FK)
+  variant : int NOT NULL DEFAULT '1' COMMENT 'The variant of the qusetion being used.' 
+  maxmark : decimal(12 
+  minfraction : decimal(12 
+  maxfraction : decimal(12 
+  flagged : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether this question has been flagged within the attempt.' 
+  questionsummary : text COLLATE utf8mb4_unicode_ci COMMENT 'If this question uses randomisation 
+  rightanswer : text COLLATE utf8mb4_unicode_ci COMMENT 'This is a human-readable textual summary of the right answer to this question. Might be used 
+  responsesummary : text COLLATE utf8mb4_unicode_ci COMMENT 'This is a textual summary of the student''s response (basically what you would expect to in the Quiz responses report).' 
+  timemodified : int NOT NULL COMMENT 'The time this record was last changed.' 
+}
+
+entity "**question_bank_entries**" as question_bank_entries {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questioncategoryid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'ID of the category this question is part of.' (FK)
+  idnumber : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Unique identifier 
+  ownerid : bigint unsigned DEFAULT NULL COMMENT 'userid of person who owns this question bank entry.' (FK)
+}
+
+entity "**question_calculated**" as question_calculated {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  question : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  answer : int NOT NULL DEFAULT '0' 
+  tolerance : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' 
+  tolerancetype : int NOT NULL DEFAULT '1' 
+  correctanswerlength : int NOT NULL DEFAULT '2' 
+  correctanswerformat : int NOT NULL DEFAULT '2' 
+}
+
+entity "**question_calculated_options**" as question_calculated_options {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  question : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  synchronize : tinyint NOT NULL DEFAULT '0' 
+  single : smallint NOT NULL DEFAULT '0' COMMENT 'If 0 it multiple response (checkboxes). Otherwise it is radio buttons.' 
+  shuffleanswers : smallint NOT NULL DEFAULT '0' COMMENT 'Whether the choices can be randomly shuffled.' 
+  correctfeedback : text COLLATE utf8mb4_unicode_ci COMMENT 'Feedback shown for any correct response.' 
+  correctfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  partiallycorrectfeedback : text COLLATE utf8mb4_unicode_ci COMMENT 'Feedback shown for any partially correct response.' 
+  partiallycorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  incorrectfeedback : text COLLATE utf8mb4_unicode_ci COMMENT 'Feedback shown for any incorrect response.' 
+  incorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  answernumbering : varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'abc' COMMENT 'Indicates how and whether the choices should be numbered.' 
+  shownumcorrect : tinyint NOT NULL DEFAULT '0' COMMENT 'If true 
+}
+
+entity "**question_categories**" as question_categories {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  contextid : int NOT NULL DEFAULT '0' COMMENT 'context that this category is shared in' 
+  info : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  infoformat : tinyint NOT NULL DEFAULT '0' 
+  stamp : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  parent : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  sortorder : int NOT NULL DEFAULT '999' 
+  idnumber : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**question_dataset_definitions**" as question_dataset_definitions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  category : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  type : int NOT NULL DEFAULT '0' 
+  options : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  itemcount : int NOT NULL DEFAULT '0' 
+}
+
+entity "**question_dataset_items**" as question_dataset_items {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  definition : int NOT NULL DEFAULT '0' 
+  itemnumber : int NOT NULL DEFAULT '0' 
+  value : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**question_datasets**" as question_datasets {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  question : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  datasetdefinition : bigint unsigned NOT NULL DEFAULT '0' (FK)
+}
+
+entity "**question_ddwtos**" as question_ddwtos {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  shuffleanswers : smallint NOT NULL DEFAULT '1' 
+  correctfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any correct response.' 
+  correctfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  partiallycorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any partially correct response.' 
+  partiallycorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  incorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any incorrect response.' 
+  incorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  shownumcorrect : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**question_gapselect**" as question_gapselect {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  shuffleanswers : smallint NOT NULL DEFAULT '1' 
+  correctfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any correct response.' 
+  correctfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  partiallycorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any partially correct response.' 
+  partiallycorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  incorrectfeedback : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Feedback shown for any incorrect response.' 
+  incorrectfeedbackformat : tinyint NOT NULL DEFAULT '0' 
+  shownumcorrect : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**question_hints**" as question_hints {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionid : bigint unsigned NOT NULL (FK)
+  hint : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The text of the feedback to be given.' 
+  hintformat : smallint NOT NULL DEFAULT '0' COMMENT 'The format of the hint.' 
+  shownumcorrect : tinyint(1) DEFAULT NULL COMMENT 'Whether the feedback should include a message about how many things the student got right. This is only applicable to certain question types (for example matching or multiple choice multiple-response).' 
+  clearwrong : tinyint(1) DEFAULT NULL COMMENT 'Whether any wrong choices should be cleared before the next try. Whether this is applicable 
+  options : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'A space for any other question-type specific options.' 
+}
+
+entity "**question_multianswer**" as question_multianswer {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  question : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  sequence : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**question_numerical**" as question_numerical {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  question : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Redundant (FK)
+  answer : int NOT NULL DEFAULT '0' COMMENT 'Foreign key references question_answers.id.' 
+  tolerance : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT 'Allowed error when matching a response to this answer. I don''t know why this is stored as a string.' 
+}
+
+entity "**question_numerical_options**" as question_numerical_options {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  question : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  showunits : smallint NOT NULL DEFAULT '0' COMMENT 'How units are handled: 3) Not used at all 
+  unitsleft : smallint NOT NULL DEFAULT '0' COMMENT 'display the unit at left as in $1.00' 
+  unitgradingtype : smallint NOT NULL DEFAULT '0' COMMENT '0 no penalty 
+  unitpenalty : decimal(12 
+}
+
+entity "**question_numerical_units**" as question_numerical_units {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  question : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key references question.id' (FK)
+  multiplier : decimal(38 
+  unit : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The unit. For example ''m'' or ''kg''.' 
+}
+
+entity "**question_references**" as question_references {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  usingcontextid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Context where question is used.' (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Component (e.g. mod_quiz or core_question)' 
+  questionarea : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Depending on the component 
+  itemid : int DEFAULT NULL COMMENT 'Plugin specific id (e.g. slotid for quiz) where its used.' 
+  questionbankentryid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'ID of the question bank entry this question is part of.' (FK)
+  version : int DEFAULT NULL COMMENT 'Version number for the question where NULL means use the latest non-draft version.' 
+}
+
+entity "**question_response_analysis**" as question_response_analysis {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  hashcode : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sha1 hash of serialized qubaids_condition class. Unique for every combination of class name and property.' 
+  whichtries : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timemodified : int NOT NULL 
+  questionid : bigint unsigned NOT NULL (FK)
+  variant : int DEFAULT NULL 
+  subqid : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  aid : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  response : text COLLATE utf8mb4_unicode_ci 
+  credit : decimal(15 
+}
+
+entity "**question_response_count**" as question_response_count {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  analysisid : bigint unsigned NOT NULL (FK)
+  try : int NOT NULL 
+  rcount : int NOT NULL 
+}
+
+entity "**question_set_references**" as question_set_references {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  usingcontextid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Context where question is used.' (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Component (e.g. mod_quiz)' 
+  questionarea : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Depending on the component 
+  itemid : int DEFAULT NULL COMMENT 'Plugin specific id (e.g. slotid for quiz) where its used.' 
+  questionscontextid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Context questions come from.' (FK)
+  filtercondition : text COLLATE utf8mb4_unicode_ci COMMENT 'Filter expression in json format' 
+}
+
+entity "**question_statistics**" as question_statistics {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  hashcode : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sha1 hash of serialized qubaids_condition class. Unique for every combination of class name and property.' 
+  timemodified : int NOT NULL 
+  questionid : bigint unsigned NOT NULL (FK)
+  slot : int DEFAULT NULL COMMENT 'The position in the quiz where this question appears' 
+  subquestion : smallint NOT NULL 
+  variant : int DEFAULT NULL 
+  s : int NOT NULL DEFAULT '0' 
+  effectiveweight : decimal(15 
+  negcovar : tinyint NOT NULL DEFAULT '0' 
+  discriminationindex : decimal(15 
+  discriminativeefficiency : decimal(15 
+  sd : decimal(15 
+  facility : decimal(15 
+  subquestions : text COLLATE utf8mb4_unicode_ci 
+  maxmark : decimal(12 
+  positions : text COLLATE utf8mb4_unicode_ci COMMENT 'positions in which this item appears. Only used for random questions.' 
+  randomguessscore : decimal(12 
+}
+
+entity "**question_truefalse**" as question_truefalse {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  question : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key references question.id.' (FK)
+  trueanswer : int NOT NULL DEFAULT '0' COMMENT 'Foreign key references question_answers.id. The ''True'' choice.' 
+  falseanswer : int NOT NULL DEFAULT '0' COMMENT 'Foreign key references question_answers.id. The ''False'' choice.' 
+  showstandardinstruction : tinyint NOT NULL DEFAULT '1' COMMENT 'Whether standard instruction (''Select one:'') is displayed' 
+}
+
+entity "**question_usages**" as question_usages {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : bigint unsigned NOT NULL COMMENT 'Every question usage must be associated with some context.' (FK)
+  component : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The plugin this attempt belongs to 
+  preferredbehaviour : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The archetypal behaviour that should be used for question attempts in this usage.' 
+}
+
+entity "**question_versions**" as question_versions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionbankentryid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'ID of the question bank entry this question version is part of.' (FK)
+  version : int NOT NULL DEFAULT '1' COMMENT 'Version number for the question where the first version is always 1.' 
+  questionid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'The question ID.' (FK)
+  status : varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ready' COMMENT 'If the question is ready 
+}
+
+entity "**quiz**" as quiz {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' COMMENT 'Foreign key reference to the course this quiz is part of.' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Quiz name.' 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Quiz introduction text.' 
+  introformat : smallint NOT NULL DEFAULT '0' COMMENT 'Quiz intro text format.' 
+  timeopen : int NOT NULL DEFAULT '0' COMMENT 'The time when this quiz opens. (0 = no restriction.)' 
+  timeclose : int NOT NULL DEFAULT '0' COMMENT 'The time when this quiz closes. (0 = no restriction.)' 
+  timelimit : int NOT NULL DEFAULT '0' COMMENT 'The time limit for quiz attempts 
+  overduehandling : varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'autoabandon' COMMENT 'The method used to handle overdue attempts. ''autosubmit'' 
+  graceperiod : int NOT NULL DEFAULT '0' COMMENT 'The amount of time (in seconds) after the time limit runs out during which attempts can still be submitted 
+  preferredbehaviour : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The behaviour to ask questions to use.' 
+  canredoquestions : smallint NOT NULL DEFAULT '0' COMMENT 'Allows students to redo any completed question within a quiz attempt.' 
+  attempts : int NOT NULL DEFAULT '0' COMMENT 'The maximum number of attempts a student is allowed.' 
+  attemptonlast : smallint NOT NULL DEFAULT '0' COMMENT 'Whether subsequent attempts start from the answer to the previous attempt (1) or start blank (0).' 
+  grademethod : smallint NOT NULL DEFAULT '1' COMMENT 'One of the values QUIZ_GRADEHIGHEST 
+  decimalpoints : smallint NOT NULL DEFAULT '2' COMMENT 'Number of decimal points to use when displaying grades.' 
+  questiondecimalpoints : smallint NOT NULL DEFAULT '-1' COMMENT 'Number of decimal points to use when displaying question grades. (-1 means use decimalpoints.)' 
+  reviewattempt : int NOT NULL DEFAULT '0' COMMENT 'Whether users are allowed to review their quiz attempts at various times. This is a bit field 
+  reviewcorrectness : int NOT NULL DEFAULT '0' COMMENT 'Whether users are allowed to review the correctness of the questions in their quiz attempts at various times. A bit field 
+  reviewmaxmarks : int NOT NULL DEFAULT '0' COMMENT 'Works with reviewmarks to control whether users can see grades at various times. 0 here means no grade information is shown at all. If 1 
+  reviewmarks : int NOT NULL DEFAULT '0' COMMENT 'Works with reviewmaxmarks to control whether users can see grades at various times. If reviewmaxmarks is 1 
+  reviewspecificfeedback : int NOT NULL DEFAULT '0' COMMENT 'Whether users are allowed to see the specific feedback in their quiz attempts. A bit field 
+  reviewgeneralfeedback : int NOT NULL DEFAULT '0' COMMENT 'Whether users are allowed to see the general feedback in their quiz attempts. A bit field 
+  reviewrightanswer : int NOT NULL DEFAULT '0' COMMENT 'Whether users are allowed to see the right answer in their quiz attempts. A bit field 
+  reviewoverallfeedback : int NOT NULL DEFAULT '0' COMMENT 'Whether users are allowed to see the overall feedback in their quiz attempts. A bit field 
+  questionsperpage : int NOT NULL DEFAULT '0' COMMENT 'How often to insert a page break when editing the quiz 
+  navmethod : varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'free' COMMENT 'Any constraints on how the user is allowed to navigate around the quiz. Currently recognised values are ''free'' and ''seq''.' 
+  shuffleanswers : smallint NOT NULL DEFAULT '0' COMMENT 'Whether the parts of the question should be shuffled 
+  sumgrades : decimal(10 
+  grade : decimal(10 
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'The time when the quiz was added to the course.' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'Last modified time.' 
+  password : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'A password that the student must enter before starting or continuing a quiz attempt.' 
+  subnet : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Used to restrict the IP addresses from which this quiz can be attempted. The format is as requried by the address_in_subnet function.' 
+  browsersecurity : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Restriciton on the browser the student must use. E.g. ''securewindow''.' 
+  delay1 : int NOT NULL DEFAULT '0' COMMENT 'Delay that must be left between the first and second attempt 
+  delay2 : int NOT NULL DEFAULT '0' COMMENT 'Delay that must be left between the second and subsequent attempt 
+  showuserpicture : smallint NOT NULL DEFAULT '0' COMMENT 'Option to show the user''s picture during the attempt and on the review page.' 
+  showblocks : smallint NOT NULL DEFAULT '0' COMMENT 'Whether blocks should be shown on the attempt.php and review.php pages.' 
+  completionattemptsexhausted : tinyint(1) DEFAULT '0' 
+  completionminattempts : int NOT NULL DEFAULT '0' 
+  allowofflineattempts : tinyint(1) DEFAULT '0' COMMENT 'Whether to allow the quiz to be attempted offline in the mobile app' 
+}
+
+entity "**quiz_attempts**" as quiz_attempts {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  quiz : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key reference to the quiz that was attempted.' (FK)
+  userid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key reference to the user whose attempt this is.' (FK)
+  attempt : int NOT NULL DEFAULT '0' COMMENT 'Sequentially numbers this student''s attempts at this quiz.' 
+  uniqueid : int NOT NULL DEFAULT '0' COMMENT 'Foreign key reference to the question_usage that holds the details of the the question_attempts that make up this quiz attempt.' 
+  layout : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  currentpage : int NOT NULL DEFAULT '0' 
+  preview : tinyint NOT NULL DEFAULT '0' 
+  state : varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'inprogress' COMMENT 'The current state of the attempts. ''inprogress'' 
+  timestart : int NOT NULL DEFAULT '0' COMMENT 'Time when the attempt was started.' 
+  timefinish : int NOT NULL DEFAULT '0' COMMENT 'Time when the attempt was submitted. 0 if the attempt has not been submitted yet.' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'Last modified time.' 
+  timemodifiedoffline : int NOT NULL DEFAULT '0' COMMENT 'Last modified time via web services.' 
+  timecheckstate : int DEFAULT '0' COMMENT 'Next time quiz cron should check attempt for state changes.  NULL means never check.' 
+  sumgrades : decimal(10 
+  gradednotificationsenttime : int DEFAULT NULL COMMENT 'The timestamp when the ''graded'' notification was sent.' 
+}
+
+entity "**quiz_feedback**" as quiz_feedback {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  quizid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key references quiz.id.' (FK)
+  feedbacktext : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The feedback to show for a attempt where mingrade <= attempt grade < maxgrade. See function quiz_feedback_for_grade in mod/quiz/locallib.php.' 
+  feedbacktextformat : tinyint NOT NULL DEFAULT '0' 
+  mingrade : decimal(10 
+  maxgrade : decimal(10 
+}
+
+entity "**quiz_grade_items**" as quiz_grade_items {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  quizid : bigint NOT NULL 
+  sortorder : bigint NOT NULL 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' 
+}
+
+entity "**quiz_grades**" as quiz_grades {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  quiz : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key references quiz.id.' (FK)
+  userid : int NOT NULL DEFAULT '0' COMMENT 'Foreign key references user.id.' 
+  grade : decimal(10 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'The last time this grade changed.' 
+}
+
+entity "**quiz_overrides**" as quiz_overrides {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  quiz : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key references quiz.id' (FK)
+  groupid : bigint unsigned DEFAULT NULL COMMENT 'Foreign key references groups.id.  Can be null if this is a per-user override.' (FK)
+  userid : bigint unsigned DEFAULT NULL COMMENT 'Foreign key references user.id.  Can be null if this is a per-group override.' (FK)
+  timeopen : int DEFAULT NULL COMMENT 'Time at which students may start attempting this quiz. Can be null 
+  timeclose : int DEFAULT NULL COMMENT 'Time by which students must have completed their attempt.  Can be null 
+  timelimit : int DEFAULT NULL COMMENT 'Time limit in seconds.  Can be null 
+  attempts : int DEFAULT NULL 
+  password : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Quiz password.  Can be null 
+}
+
+entity "**quiz_overview_regrades**" as quiz_overview_regrades {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  questionusageid : int NOT NULL COMMENT 'Foreign key references question_usages.id 
+  slot : int NOT NULL COMMENT 'Foreign key 
+  newfraction : decimal(12 
+  oldfraction : decimal(12 
+  regraded : smallint NOT NULL COMMENT 'set to 0 if element has just been regraded. Set to 1 if element has been marked as needing regrading.' 
+  timemodified : int NOT NULL COMMENT 'Timestamp of when this row was last modified.' 
+}
+
+entity "**quiz_reports**" as quiz_reports {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'name of the report 
+  displayorder : int NOT NULL COMMENT 'display order for report tabs' 
+  capability : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Capability required to see this report. May be blank which means use the default of mod/quiz:viewreport. This is used when deciding which tabs to render.' 
+}
+
+entity "**quiz_sections**" as quiz_sections {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  quizid : bigint unsigned NOT NULL COMMENT 'Foreign key references quiz.id.' (FK)
+  firstslot : int NOT NULL COMMENT 'Number of the first slot in the section. The section runs from here to the start of the next section 
+  heading : text COLLATE utf8mb4_unicode_ci COMMENT 'The text of the heading. May be an empty string/null. Multilang format.' 
+  shufflequestions : smallint NOT NULL DEFAULT '0' COMMENT 'Whether the question order within this section should be shuffled for each attempt.' 
+}
+
+entity "**quiz_slots**" as quiz_slots {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  slot : int NOT NULL COMMENT 'Where this question comes in order in the list of questions in this quiz. Like question_attempts.slot.' 
+  quizid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key references quiz.id.' (FK)
+  page : int NOT NULL COMMENT 'The page number that this questions appears on. If the question in slot n appears on page p 
+  displaynumber : varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Stores customised question number such as 1.2 
+  requireprevious : smallint NOT NULL DEFAULT '0' COMMENT 'Set to 1 when current question requires previous one to be answered first.' 
+  maxmark : decimal(12 
+}
+
+entity "**quiz_statistics**" as quiz_statistics {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  hashcode : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sha1 hash of serialized qubaids_condition class. Unique for every combination of class name and property.' 
+  whichattempts : smallint NOT NULL COMMENT 'bool used to indicate whether these stats are for all attempts or just for the first.' 
+  timemodified : int NOT NULL 
+  firstattemptscount : int NOT NULL 
+  highestattemptscount : int NOT NULL 
+  lastattemptscount : int NOT NULL 
+  allattemptscount : int NOT NULL 
+  firstattemptsavg : decimal(15 
+  highestattemptsavg : decimal(15 
+  lastattemptsavg : decimal(15 
+  allattemptsavg : decimal(15 
+  median : decimal(15 
+  standarddeviation : decimal(15 
+  skewness : decimal(15 
+  kurtosis : decimal(15 
+  cic : decimal(15 
+  errorratio : decimal(15 
+  standarderror : decimal(15 
+}
+
+entity "**quizaccess_seb_quizsettings**" as quizaccess_seb_quizsettings {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  quizid : int NOT NULL COMMENT 'Foreign key to quiz id.' 
+  cmid : int NOT NULL COMMENT 'Foreign key to course module id.' 
+  templateid : bigint unsigned NOT NULL COMMENT 'Foreign key to quizaccess_seb_template.id.' (FK)
+  requiresafeexambrowser : tinyint(1) NOT NULL COMMENT 'Bool whether to require SEB.' 
+  showsebtaskbar : tinyint(1) DEFAULT NULL COMMENT 'Bool to show SEB task bar' 
+  showwificontrol : tinyint(1) DEFAULT NULL COMMENT 'Bool to allow user to control networking.' 
+  showreloadbutton : tinyint(1) DEFAULT NULL COMMENT 'Bool to show reload button.' 
+  showtime : tinyint(1) DEFAULT NULL COMMENT 'Bool to show the clock.' 
+  showkeyboardlayout : tinyint(1) DEFAULT NULL COMMENT 'Bool to show keyboard layout.' 
+  allowuserquitseb : tinyint(1) DEFAULT NULL COMMENT 'Bool to show quit button.' 
+  quitpassword : text COLLATE utf8mb4_unicode_ci COMMENT 'Quit password to exit SEB.' 
+  linkquitseb : text COLLATE utf8mb4_unicode_ci COMMENT 'Link to exit SEB.' 
+  userconfirmquit : tinyint(1) DEFAULT NULL COMMENT 'Bool whether confirm quit popup should appear.' 
+  enableaudiocontrol : tinyint(1) DEFAULT NULL COMMENT 'Bool to show volume and audio controls.' 
+  muteonstartup : tinyint(1) DEFAULT NULL COMMENT 'Bool whether browser starts muted.' 
+  allowspellchecking : tinyint(1) DEFAULT NULL COMMENT 'Bool whether spell checking will happen in SEB.' 
+  allowreloadinexam : tinyint(1) DEFAULT NULL COMMENT 'Bool whether user can reload.' 
+  activateurlfiltering : tinyint(1) DEFAULT NULL COMMENT 'Bool whether URLs will be filtered.' 
+  filterembeddedcontent : tinyint(1) DEFAULT NULL COMMENT 'Bool wither embedded content will be filtered' 
+  expressionsallowed : text COLLATE utf8mb4_unicode_ci COMMENT 'Comma or newline separated list of allowed expressions' 
+  regexallowed : text COLLATE utf8mb4_unicode_ci COMMENT 'Regex of allowed URLs' 
+  expressionsblocked : text COLLATE utf8mb4_unicode_ci COMMENT 'Comma or newline separated list of blocked expressions' 
+  regexblocked : text COLLATE utf8mb4_unicode_ci COMMENT 'Regex of blocked URLs' 
+  allowedbrowserexamkeys : text COLLATE utf8mb4_unicode_ci COMMENT 'List of allowed browser exam keys.' 
+  showsebdownloadlink : tinyint(1) DEFAULT NULL COMMENT 'Bool whether SEB download link should appear' 
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**quizaccess_seb_template**" as quizaccess_seb_template {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name of the template' 
+  description : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  content : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Content of the template' 
+  enabled : tinyint(1) NOT NULL 
+  sortorder : int NOT NULL 
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**groups**" as groups <<External>> {
+  --
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+qtype_ddimageortext }|--|| question
+qtype_ddimageortext_drags }|--|| question
+qtype_ddimageortext_drops }|--|| question
+qtype_ddmarker }|--|| question
+qtype_ddmarker_drags }|--|| question
+qtype_ddmarker_drops }|--|| question
+qtype_match_subquestions }|--|| question
+question }|--|| users
+question }|--|| users
+question }|--|| question
+question_answers }|--|| question
+question_attempt_step_data }|--|| question_attempt_steps
+question_attempt_steps }|--|| question_attempts
+question_attempt_steps }|--|| users
+question_attempts }|--|| question
+question_attempts }|--|| question_usages
+question_bank_entries }|--|| users
+question_bank_entries }|--|| question_categories
+question_calculated }|--|| question
+question_calculated_options }|--|| question
+question_categories }|--|| question_categories
+question_dataset_definitions }|--|| question_categories
+question_datasets }|--|| question_dataset_definitions
+question_datasets }|--|| question
+question_ddwtos }|--|| question
+question_gapselect }|--|| question
+question_hints }|--|| question
+question_multianswer }|--|| question
+question_numerical }|--|| question
+question_numerical_options }|--|| question
+question_numerical_units }|--|| question
+question_references }|--|| question_bank_entries
+question_references }|--|| context
+question_response_analysis }|--|| question
+question_response_count }|--|| question_response_analysis
+question_set_references }|--|| context
+question_set_references }|--|| context
+question_statistics }|--|| question
+question_truefalse }|--|| question
+question_usages }|--|| context
+question_versions }|--|| question_bank_entries
+question_versions }|--|| question
+quiz_attempts }|--|| quiz
+quiz_attempts }|--|| users
+quiz_feedback }|--|| quiz
+quiz_grades }|--|| quiz
+quiz_overrides }|--|| groups
+quiz_overrides }|--|| quiz
+quiz_overrides }|--|| users
+quiz_sections }|--|| quiz
+quiz_slots }|--|| quiz
+quizaccess_seb_quizsettings }|--|| quizaccess_seb_template
+quizaccess_seb_quizsettings }|--|| users
+quizaccess_seb_template }|--|| users
+@enduml

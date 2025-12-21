@@ -1,0 +1,53 @@
+@startuml
+title Course Creation & Publishing Flow
+skinparam activityBackgroundColor #FFF8DC
+skinparam activityBorderColor #8B4513
+
+|Instructor|
+start
+:Click "Create Course";
+:Fill Metadata\n(Title, Category, Summary);
+:Save as Draft;
+:Add Course Content;
+:Upload Files/Resources;
+:Click "Publish Course";
+
+|Frontend|
+:Validate Form Data;
+:Upload Files to Backend;
+
+|Backend|
+:Create Course Record;
+:Set visible=0 (Draft);
+:Process File Upload;
+:Store in S3/Local;
+:Create File Metadata Entry;
+
+|Database|
+:INSERT INTO courses;
+:INSERT INTO files;
+:INSERT INTO course_modules;
+-back->
+
+|Backend|
+if (Has Published Modules?) then (no)
+  :Return Error\n"Course is Empty";
+  stop
+else (yes)
+  :Update visible=1 (Published);
+  :Trigger Laravel Scout Indexing;
+endif
+
+|TypeSense|
+:Index Course Data;
+:Index Associated Resources;
+
+|Backend|
+:Return Success Response;
+
+|Frontend|
+:Redirect to Course View;
+:Show "Published Successfully";
+stop
+
+@enduml

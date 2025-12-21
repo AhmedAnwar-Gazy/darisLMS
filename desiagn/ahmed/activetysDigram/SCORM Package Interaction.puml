@@ -1,0 +1,66 @@
+@startuml
+title SCORM Package Interaction
+skinparam activityBackgroundColor #CCFFCC
+skinparam activityBorderColor #006600
+
+|Student|
+start
+:Launch SCORM Activity;
+
+|SCORM Player|
+:Load Package in iFrame;
+:Inject SCORM API JavaScript;
+
+partition "SCORM Runtime API" {
+  :LMSInitialize("");
+  :LMSSetValue("cmi.core.lesson_status", "incomplete");
+  :LMSSetValue("cmi.core.entry", "ab-initio");
+}
+
+|Student|
+:Navigate Through Content;
+:Complete Interactive Elements;
+:Answer Assessment Questions;
+
+|SCORM Player|
+:Track User Progress;
+:Buffer SCORM Data Calls;
+
+if (User Action Requires Save?) then (yes)
+  :Call LMSCommit("");
+endif
+
+|SCORM API|
+:Send Data to Backend;
+
+|Database|
+:UPDATE scorm_scoes_track\nSET value=? WHERE element=?;
+:INSERT INTO scorm_scoes_track\nfor new elements;
+-back->
+
+|Student|
+:Complete All Content;
+:Click "Exit" or Finish;
+
+|SCORM Player|
+:LMSSetValue("cmi.core.lesson_status", "completed");
+:LMSSetValue("cmi.core.exit", "normal");
+:Call LMSFinish("");
+
+|SCORM API|
+:Finalize Session;
+
+|Database|
+:Calculate Final Score\nfrom tracked data;
+:Determine Pass/Fail Status;
+-back->
+
+|Gradebook|
+:Receive SCORM Grade;
+:Update Course Gradebook;
+
+|Student|
+:View SCORM Results;
+:Return to Course;
+stop
+@enduml

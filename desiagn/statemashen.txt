@@ -1,0 +1,329 @@
+Here are the detailed descriptions for the State Machine Diagrams (SMD) covering the Core System Entities of DarisLMS. These descriptions define the states, the events that trigger transitions, and the resulting behavior.
+________________________________________
+SMD-01: User Account Lifecycle
+Description: This diagram models the life of a user record in the user table, controlled by authentication logic and administrative actions.
+•	Initial State: Unregistered (User submits registration form).
+•	Final State: Hard Deleted (Data permanently removed from database).
+States:
+1.	Pending Verification: The account is created, but the email address has not been verified. Login is restricted.
+2.	Active: The user has verified their email and has full access based on their role.
+3.	Suspended/Banned: The user is blocked from logging in due to administrative action or security violation.
+4.	Soft Deleted: The user has requested account deletion, or an admin removed them. The data remains for audit purposes (GDPR retention period) but the user cannot log in.
+Transitions:
+•	Unregistered 
+•	        →Register()\xrightarrow{\text{Register()}}Register()
+      
+Pending Verification
+•	Pending Verification 
+•	        →Click Email Link()\xrightarrow{\text{Click Email Link()}}Click Email Link()
+      
+Active
+•	Active 
+•	        →Admin Bans User()\xrightarrow{\text{Admin Bans User()}}Admin Bans User()
+      
+Suspended/Banned
+•	Suspended/Banned 
+•	        →Admin Unbans User()\xrightarrow{\text{Admin Unbans User()}}Admin Unbans User()
+      
+Active
+•	Active 
+•	        →User Deletes Account()\xrightarrow{\text{User Deletes Account()}}User Deletes Account()
+      
+Soft Deleted
+•	Soft Deleted 
+•	        →Admin Restores User()\xrightarrow{\text{Admin Restores User()}}Admin Restores User()
+      
+Active
+•	Soft Deleted 
+•	        →Retention Period Expires()\xrightarrow{\text{Retention Period Expires()}}Retention Period Expires()
+      
+Hard Deleted (Object Destroyed)
+________________________________________
+SMD-02: Course Visibility & Publishing Status
+Description: This diagram models the lifecycle of a Course entity, determining its visibility to students and search indexing status.
+•	Initial State: Null (Instructor clicks "Create Course").
+•	Final State: Deleted (Course removed from database).
+States:
+1.	Draft: The course is being built. Content is visible only to the Instructor and Admins. It is not indexed in TypeSense.
+2.	Review Required (Optional): If system settings require approval, the course sits here waiting for an Admin check.
+3.	Published: The course is live, visible in the catalog, indexed in search, and open for enrollment (if public).
+4.	Hidden: The course exists and has students, but is hidden from the catalog and search results (e.g., for maintenance).
+5.	Archived: The course has ended. Content is read-only for existing students; no new enrollments allowed.
+Transitions:
+•	Null 
+•	        →Save Draft()\xrightarrow{\text{Save Draft()}}Save Draft()
+      
+Draft
+•	Draft 
+•	        →Request Publication()\xrightarrow{\text{Request Publication()}}Request Publication()
+      
+Review Required (if config enabled) OR Published
+•	Review Required 
+•	        →Admin Approves()\xrightarrow{\text{Admin Approves()}}Admin Approves()
+      
+Published
+•	Review Required 
+•	        →Admin Rejects()\xrightarrow{\text{Admin Rejects()}}Admin Rejects()
+      
+Draft
+•	Published 
+•	        →Instructor Hides()\xrightarrow{\text{Instructor Hides()}}Instructor Hides()
+      
+Hidden
+•	Hidden 
+•	        →Instructor Unhides()\xrightarrow{\text{Instructor Unhides()}}Instructor Unhides()
+      
+Published
+•	Published 
+•	        →Term Ends() or Instructor Archives()\xrightarrow{\text{Term Ends() or Instructor Archives()}}Term Ends() or Instructor Archives()
+      
+Archived
+•	Archived 
+•	        →Re-open()\xrightarrow{\text{Re-open()}}Re-open()
+      
+Published
+•	Draft/Archived 
+•	        →Delete()\xrightarrow{\text{Delete()}}Delete()
+      
+Deleted
+________________________________________
+SMD-03: Student Enrollment Status
+Description: This diagram models the specific link between a User and a Course (user_enrolments table).
+•	Initial State: Null (User clicks "Enroll").
+•	Final State: Unenrolled (Record removed).
+States:
+1.	Pending: The user has requested to join a private course and is waiting for Instructor/Admin approval. Content access is denied.
+2.	Active: The user is fully enrolled. They can view content, submit assignments, and receive grades.
+3.	Suspended: The enrollment is locked (e.g., non-payment or behavioral issue in this specific course). The user cannot access this course, though their account remains active elsewhere.
+4.	Expired: The enrollment duration (e.g., 6 months) has passed. Access is restricted or read-only.
+5.	Completed: The user has met all course completion criteria (grades/activities). They retain read-only access to their certificate.
+Transitions:
+•	Null 
+•	        →Request Access()\xrightarrow{\text{Request Access()}}Request Access()
+      
+Pending
+•	Null 
+•	        →Self Enroll (Public Course)\xrightarrow{\text{Self Enroll (Public Course)}}Self Enroll (Public Course)
+      
+Active
+•	Pending 
+•	        →Instructor Approves()\xrightarrow{\text{Instructor Approves()}}Instructor Approves()
+      
+Active
+•	Active 
+•	        →Admin Suspends()\xrightarrow{\text{Admin Suspends()}}Admin Suspends()
+      
+Suspended
+•	Suspended 
+•	        →Admin Unsuspends()\xrightarrow{\text{Admin Unsuspends()}}Admin Unsuspends()
+      
+Active
+•	Active 
+•	        →Time Limit Reached()\xrightarrow{\text{Time Limit Reached()}}Time Limit Reached()
+      
+Expired
+•	Expired 
+•	        →Extend/Renew()\xrightarrow{\text{Extend/Renew()}}Extend/Renew()
+      
+Active
+•	Active 
+•	        →Requirements Met()\xrightarrow{\text{Requirements Met()}}Requirements Met()
+      
+Completed
+•	Any State 
+•	        →Drop Course()\xrightarrow{\text{Drop Course()}}Drop Course()
+      
+Unenrolled
+Here are the detailed descriptions for the State Machine Diagrams (SMD) covering the Assessment & Grading module of DarisLMS. These diagrams define the status workflows for assignments, quizzes, and peer assessments.
+________________________________________
+SMD-04: Assignment Submission Workflow
+Description: This diagram models the status of a specific student's submission record in the assign_submission table. It tracks the progress from the moment a student opens the assignment to the final release of grades.
+•	Initial State: New / Not Started (Student opens the assignment page).
+•	Final State: Graded/Released (Grade is recorded in the gradebook).
+States:
+1.	New (Not Started): No files have been uploaded, and no text has been entered.
+2.	Draft: The student has uploaded a file or saved text, but has not clicked the "Submit" button. The student can still modify the work.
+3.	Submitted: The student has finalized the submission before the Due Date. The content is locked from further editing.
+4.	Late Submitted: The student finalized the submission after the Due Date (only valid if the "Cut-off Date" has not passed).
+5.	Grading in Progress: The Instructor has opened the submission for review but hasn't finalized the score.
+6.	Graded/Released: The Instructor has assigned a score and feedback. The student receives a notification.
+Transitions:
+•	New 
+•	        →Upload File / Save Text\xrightarrow{\text{Upload File / Save Text}}Upload File / Save Text
+      
+Draft
+•	Draft 
+•	        →Update File\xrightarrow{\text{Update File}}Update File
+      
+Draft
+•	Draft 
+•	        →Click Submit (Time < Due Date)\xrightarrow{\text{Click Submit (Time < Due Date)}}Click Submit (Time < Due Date)
+      
+Submitted
+•	Draft 
+•	        →Click Submit (Time > Due Date)\xrightarrow{\text{Click Submit (Time > Due Date)}}Click Submit (Time > Due Date)
+      
+Late Submitted
+•	Submitted 
+•	        →Instructor Unlocks Submission\xrightarrow{\text{Instructor Unlocks Submission}}Instructor Unlocks Submission
+      
+Draft (Revert to draft for corrections)
+•	Submitted 
+•	        →Instructor Opens Grading Interface\xrightarrow{\text{Instructor Opens Grading Interface}}Instructor Opens Grading Interface
+      
+Grading in Progress
+•	Grading in Progress 
+•	        →Save Grade\xrightarrow{\text{Save Grade}}Save Grade
+      
+Graded/Released
+________________________________________
+SMD-05: Quiz Attempt Lifecycle
+Description: This diagram models a timed quiz session in the quiz_attempts table. It handles strict timing logic and connection issues.
+•	Initial State: Null (User clicks "Start Attempt").
+•	Final State: Finished (Grade calculated).
+States:
+1.	In Progress: The timer is running. The student is navigating pages and answering questions.
+2.	Overdue: The time limit has expired, but the attempt hasn't been submitted yet. This state exists during a "Grace Period" if configured (where students can submit what they have done but not answer new questions).
+3.	Submitted: The attempt has been sent to the server for processing.
+4.	Abandoned: The student lost connection or logged out, and the time limit (plus any grace period) expired without a successful submission.
+5.	Finished (Graded): The system has auto-graded the attempt, or manual grading is complete.
+Transitions:
+•	Null 
+•	        →Start Quiz\xrightarrow{\text{Start Quiz}}Start Quiz
+      
+In Progress
+•	In Progress 
+•	        →User Clicks Finish\xrightarrow{\text{User Clicks Finish}}User Clicks Finish
+      
+Submitted
+•	In Progress 
+•	        →Time Expires (Auto-submit enabled)\xrightarrow{\text{Time Expires (Auto-submit enabled)}}Time Expires (Auto-submit enabled)
+      
+Submitted
+•	In Progress 
+•	        →Time Expires (Grace period enabled)\xrightarrow{\text{Time Expires (Grace period enabled)}}Time Expires (Grace period enabled)
+      
+Overdue
+•	Overdue 
+•	        →User Clicks Submit\xrightarrow{\text{User Clicks Submit}}User Clicks Submit
+      
+Submitted
+•	Overdue 
+•	        →Grace Period Expires\xrightarrow{\text{Grace Period Expires}}Grace Period Expires
+      
+Abandoned
+•	Submitted 
+•	        →System Calculates Score\xrightarrow{\text{System Calculates Score}}System Calculates Score
+      
+Finished
+________________________________________
+SMD-06: Workshop Activity Phases
+Description: This diagram models the phases of a Workshop activity (workshop table). Unlike other activities, the state here is controlled manually by the Instructor to move the whole class through the peer-assessment process.
+•	Initial State: Setup Phase (Activity Created).
+•	Final State: Closed (Activity completed).
+States:
+1.	Setup Phase: Instructor edits settings, grading strategy (rubric), and instructions. Students cannot submit yet.
+2.	Submission Phase: Students can upload their work. They cannot assess others yet.
+3.	Assessment Phase: Submissions are closed. Students are allocated peers (randomly or manually) and must grade them using the rubric.
+4.	Grading Evaluation Phase: Peer assessments are finished. The system calculates grades based on the grading strategy. The Instructor reviews scores and can override them.
+5.	Closed: Grades are pushed to the Gradebook. Students can see their grades and the feedback they received.
+Transitions:
+•	Setup Phase 
+•	        →Instructor Switches Phase\xrightarrow{\text{Instructor Switches Phase}}Instructor Switches Phase
+      
+Submission Phase
+•	Submission Phase 
+•	        →Instructor Switches Phase\xrightarrow{\text{Instructor Switches Phase}}Instructor Switches Phase
+      
+Assessment Phase
+o	(Trigger: Allocation logic runs during this transition).
+•	Assessment Phase 
+•	        →Instructor Switches Phase\xrightarrow{\text{Instructor Switches Phase}}Instructor Switches Phase
+      
+Grading Evaluation Phase
+•	Grading Evaluation Phase 
+•	        →Instructor Switches Phase\xrightarrow{\text{Instructor Switches Phase}}Instructor Switches Phase
+      
+Closed
+•	Note: The Instructor can reverse any transition (e.g., move from Assessment back to Submission) to handle exceptions.
+
+
+
+
+
+
+
+
+Here are the detailed descriptions for the State Machine Diagrams (SMD) covering the Content & Compliance module of DarisLMS. These diagrams define how interactive learning objects behave and how legal policies are managed.
+________________________________________
+SMD-07: Interactive Content (SCORM/H5P) Tracking
+Description: This diagram models the playback state of a learning package (SCORM or H5P) for a specific user. It tracks the session via the scorm_scoes_track or h5pactivity_attempts tables, handling resume capabilities and final grading status.
+•	Initial State: Not Attempted (User has never opened the content).
+•	Final State: Passed or Failed (Activity concluded).
+States:
+1.	Not Attempted: The user is enrolled but has not launched the activity yet. No tracking data exists.
+2.	Initialized: The player has launched, and the API handshake (LMSInitialize) is successful.
+3.	Incomplete/Running: The user is actively engaging with the content. Data is being sent (time spent, page location), but the mastery criteria haven't been met.
+4.	Suspended: The user exited the activity before finishing (clicked "Exit" or closed browser). The system saves the current state (bookmark) to resume later.
+5.	Completed: The user has viewed all required slides/content or reached the end of the video, regardless of the score.
+6.	Passed: The user completed the activity AND achieved a score higher than the "Mastery Score" defined in the package.
+7.	Failed: The user completed the activity but achieved a score lower than the "Mastery Score."
+Transitions:
+•	Not Attempted 
+•	        →User Clicks Launch\xrightarrow{\text{User Clicks Launch}}User Clicks Launch
+      
+Initialized
+•	Initialized 
+•	        →Content Loads\xrightarrow{\text{Content Loads}}Content Loads
+      
+Incomplete/Running
+•	Incomplete/Running 
+•	        →User Exits (Save Progress)\xrightarrow{\text{User Exits (Save Progress)}}User Exits (Save Progress)
+      
+Suspended
+•	Suspended 
+•	        →User Resumes\xrightarrow{\text{User Resumes}}User Resumes
+      
+Incomplete/Running
+•	Incomplete/Running 
+•	        →Criteria Met (No Score logic)\xrightarrow{\text{Criteria Met (No Score logic)}}Criteria Met (No Score logic)
+      
+Completed
+•	Completed 
+•	        →Score >= Mastery Score\xrightarrow{\text{Score >= Mastery Score}}Score >= Mastery Score
+      
+Passed
+•	Completed 
+•	        →Score < Mastery Score\xrightarrow{\text{Score < Mastery Score}}Score < Mastery Score
+      
+Failed
+________________________________________
+SMD-08: Policy Document Versioning
+Description: This diagram models the lifecycle of a legal document (e.g., Privacy Policy, Terms of Service) within the tool_policy_versions table. This ensures that users always consent to the correct, current version.
+•	Initial State: Draft (Admin creates a new policy).
+•	Final State: Archived/Deprecated (Replaced by a newer version).
+States:
+1.	Draft: The policy is being written or edited by an Administrator. It is not visible to users, and no consent is required yet.
+2.	Active: The policy is published and enforceable.
+o	Effect: Any user who has not accepted this specific version ID will be intercepted by the Policy Middleware upon login and forced to agree.
+o	Constraint: Only one version of a specific policy type (e.g., "Site Terms") can be Active at a time.
+3.	Archived/Deprecated: The policy has been replaced by a newer version. It remains in the database for legal audit trails (to prove what a user agreed to at a specific time in the past) but is no longer presented for new consent.
+Transitions:
+•	Draft 
+•	        →Admin Saves Changes\xrightarrow{\text{Admin Saves Changes}}Admin Saves Changes
+      
+Draft
+•	Draft 
+•	        →Admin Publishes\xrightarrow{\text{Admin Publishes}}Admin Publishes
+      
+Active
+o	(Side Effect: The previously "Active" version of this policy automatically transitions to Archived).
+•	Active 
+•	        →New Version Published\xrightarrow{\text{New Version Published}}New Version Published
+      
+Archived/Deprecated
+•	Active 
+•	        →Admin Manually Retires\xrightarrow{\text{Admin Manually Retires}}Admin Manually Retires
+      
+Archived/Deprecated
+

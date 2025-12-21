@@ -1,0 +1,37 @@
+@startuml
+autonumber
+    participant Student
+    participant "Course Page" as CoursePage
+    participant EnrolController
+    participant EnrolmentService
+    participant Database
+
+    Student -> CoursePage: Click "Enroll Now" Button
+    CoursePage -> EnrolController: POST /api/courses/{id}/enroll (Bearer Token)
+    
+    EnrolController -> EnrolmentService: checkPrerequisites(userId, courseId)
+    EnrolmentService -> Database: SELECT * FROM user_enrolments WHERE user_id=? AND course_id=?
+    Database --> EnrolmentService: Return Empty Result (Not Enrolled)
+    
+    alt Already Enrolled
+        EnrolmentService --> EnrolController: Return Error: "Already Enrolled"
+        EnrolController --> CoursePage: Return 409 Conflict
+        CoursePage --> Student: Show Error Message
+    else Not Enrolled
+        EnrolmentService --> EnrolController: Return Success: Eligible
+        
+        EnrolController -> EnrolmentService: enrolUser(userId, courseId, 'student')
+        
+        EnrolmentService -> Database: INSERT INTO user_enrolments
+        Database --> EnrolmentService: Enrollment Created
+        
+        EnrolmentService -> Database: INSERT INTO role_assignments
+        Database --> EnrolmentService: Role Assigned
+        
+        EnrolmentService --> EnrolController: Return Success
+        
+        EnrolController --> CoursePage: Return 201 Created
+        CoursePage -> CoursePage: Update UI State
+        CoursePage --> Student: Show "Enrollment Successful" + "Enter Course" Button
+    end
+@enduml

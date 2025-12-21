@@ -1,0 +1,41 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**auth_lti_linked_login**" as auth_lti_linked_login {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL COMMENT 'The user account the LTI user is linked to.' (FK)
+  issuer : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  issuer256 : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'SHA256 hash of the issuer from which the platform user originates.' 
+  sub : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sub256 : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'SHA256 hash of the subject identifying the user for the issuer.' 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**auth_oauth2_linked_login**" as auth_oauth2_linked_login {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+  userid : bigint unsigned NOT NULL COMMENT 'The user account this oauth login is linked to.' (FK)
+  issuerid : bigint unsigned NOT NULL (FK)
+  username : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The external username to map to this moodle account' 
+  email : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The external email to map to this moodle account' 
+  confirmtoken : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'If this is not empty - the user has not confirmed their email to create the link.' 
+  confirmtokenexpires : int DEFAULT NULL 
+}
+
+entity "**oauth2_issuer**" as oauth2_issuer <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+auth_lti_linked_login }|--|| users
+auth_oauth2_linked_login }|--|| oauth2_issuer
+auth_oauth2_linked_login }|--|| users
+auth_oauth2_linked_login }|--|| users
+@enduml

@@ -1,0 +1,63 @@
+@startuml InteractiveContent(SCORMH5P)Tracking
+title Interactive Content (SCORM/H5P) Tracking (SMD-07)
+hide empty description
+
+state "Not Attempted" as not_attempted
+note right of not_attempted
+The user is enrolled but has not 
+launched the activity yet. No tracking 
+data exists. 
+end note
+
+state "Initialized" as initialized
+note right of initialized
+The player has launched, and the API 
+handshake (LMSInitialize) is successful. 
+end note
+
+state "Incomplete/Running" as incomplete_running
+note right of incomplete_running
+The user is actively engaging with the 
+content. Data is being sent (time spent, 
+page location), but the mastery criteria 
+haven't been met. 
+end note
+
+state "Suspended" as suspended
+note right of suspended
+The user exited the activity before 
+finishing (clicked "Exit" or closed 
+browser). The system saves the current 
+state (bookmark) to resume later. 
+end note
+
+state "Completed" as completed
+note right of completed
+The user has viewed all required 
+slides/content or reached the end of the 
+video, regardless of the score. 
+end note
+
+state "Passed" as passed
+note right of passed
+The user completed the activity AND 
+achieved a score higher than the 
+"Mastery Score" defined in the package. 
+end note
+
+state "Failed" as failed
+note right of failed
+The user completed the activity but 
+achieved a score lower than the "Mastery 
+Score." 
+end note
+
+not_attempted --> initialized : User Clicks Launch
+initialized --> incomplete_running : Content Loads
+incomplete_running --> suspended : User Exits (Save Progress)
+suspended --> incomplete_running : User Resumes
+incomplete_running --> completed : Criteria Met (No Score logic)
+completed --> passed : Score >= Mastery Score
+completed --> failed : Score < Mastery Score
+
+@enduml

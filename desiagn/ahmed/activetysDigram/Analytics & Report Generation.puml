@@ -1,0 +1,58 @@
+@startuml
+title Analytics & Report Generation
+skinparam activityBackgroundColor #F8F8FF
+skinparam activityBorderColor #696969
+
+|Instructor|
+start
+:Navigate to Course Dashboard;
+:Select "Reports" Tab;
+:Choose Report Type\n(Completion, Grades, Engagement);
+:Set Date Range & Filters;
+:Click "Generate Report";
+
+|Frontend|
+:Send GET /api/reports/{type}?filters=;
+
+|Analytics Engine|
+:Parse Request Parameters;
+:Query Enrollment Data;
+
+|Database|
+:SELECT students FROM user_enrolments\nWHERE course_id=?;
+:SELECT completion FROM course_modules_completion;
+:SELECT grades FROM grade_grades;
+:SELECT activity FROM logstore_standard_log;
+-back->
+
+|Analytics Engine|
+:Aggregate Data;
+:Calculate Metrics;
+:Format for Visualization;
+
+fork
+  :Generate JSON for Frontend Charts;
+fork again
+  :Prepare CSV Export Data;
+fork again
+  :Create PDF Report (if requested);
+end fork
+
+:Cache Results\n(5 minutes TTL);
+
+|Frontend|
+:Render Data Visualization\n(Charts, Graphs, Tables);
+:Display Summary Statistics;
+
+|Instructor|
+:Analyze Report Data;
+if (Export Needed?) then (yes)
+  :Click "Export CSV" or "Export PDF";
+  ->[Export] Frontend;
+  :Download File;
+else (no)
+  :Continue Analysis;
+endif
+
+stop
+@enduml

@@ -1,0 +1,44 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "search_index_requests" {
+  +id : Integer
+  +contextid : Integer
+  +searcharea : String
+  +timerequested : Integer
+  +partialarea : String
+  +partialtime : Integer
+  +indexpriority : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "search_simpledb_index" {
+  +id : Integer
+  +docid : String
+  +itemid : Integer
+  +title : String
+  +content : String
+  +contextid : Integer
+  +areaid : String
+  +type : Integer
+  +courseid : Integer
+  +owneruserid : Integer
+  +modified : Integer
+  +userid : Integer
+  +description1 : String
+  +description2 : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "context" <<External>> {
+}
+
+"search_index_requests" "*" --> "1" "context" : contextid
+@enduml

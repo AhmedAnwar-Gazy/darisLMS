@@ -1,0 +1,38 @@
+@startuml ContentManagement
+left to right direction
+
+actor "Instructor" as instructor
+actor "System (S3)" as s3_system
+actor "Student" as student
+actor "System" as system
+
+rectangle "Content Management System" {
+  usecase "Upload Resource" as UC0501
+  usecase "Validate File Type" as validate_file
+  usecase "Store Metadata" as store_metadata
+  usecase "Create Thumbnail" as create_thumbnail
+  usecase "Manage File Metadata" as UC0502
+  usecase "Version Control" as UC0503
+  usecase "Archive Previous" as archive_previous
+  usecase "Stream/Embed Content" as UC0504
+  usecase "Delete Resource" as UC0505
+  usecase "Check Dependencies" as check_dependencies
+  usecase "Access Resources" as access_resources
+}
+
+' Actor Associations
+instructor --> UC0501 : **Association**
+instructor --> UC0505 : **Association**
+student --> access_resources : **Association**
+s3_system --> UC0502 : **Association**
+system --> UC0503 : **Association**
+system --> UC0504 : **Association**
+
+' Use Case Relationships
+UC0501 ..> validate_file : **<<include>>**
+UC0501 ..> store_metadata : **<<include>>**
+UC0501 ..> create_thumbnail : **<<extend>>**
+UC0503 ..> archive_previous : **<<include>>**
+UC0505 ..> check_dependencies : **<<include>>**
+
+@enduml

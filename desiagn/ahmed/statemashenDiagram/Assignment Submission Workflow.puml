@@ -1,0 +1,55 @@
+@startuml AssignmentSubmissionWorkflow
+title Assignment Submission Workflow (SMD-04)
+hide empty description
+
+state "New (Not Started)" as new_not_started
+note right of new_not_started
+No files have been uploaded, and no text 
+has been entered. 
+end note
+
+state "Draft" as draft
+note right of draft
+The student has uploaded a file or saved 
+text, but has not clicked the "Submit" 
+button. The student can still modify the 
+work. 
+end note
+
+state "Submitted" as submitted
+note right of submitted
+The student has finalized the submission 
+before the Due Date. The content is 
+locked from further editing. 
+end note
+
+state "Late Submitted" as late_submitted
+note right of late_submitted
+The student finalized the submission 
+after the Due Date (only valid if the 
+"Cut-off Date" has not passed). 
+end note
+
+state "Grading in Progress" as grading_in_progress
+note right of grading_in_progress
+The Instructor has opened the submission 
+for review but hasn't finalized the 
+score. 
+end note
+
+state "Graded/Released" as graded_released
+note right of graded_released
+The Instructor has assigned a score and 
+feedback. The student receives a 
+notification. 
+end note
+
+new_not_started --> draft : Upload File / Save Text
+draft --> draft : Update File
+draft --> late_submitted : Click Submit (Time < Due Date)
+draft --> late_submitted : Click Submit (Time > Due Date)
+late_submitted --> draft : Instructor Unlocks Submission
+late_submitted --> grading_in_progress : Instructor Opens Grading Interface
+grading_in_progress --> graded_released : Save Grade
+
+@enduml

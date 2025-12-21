@@ -1,0 +1,258 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "workshop" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : Integer
+  +introformat : Integer
+  +instructauthors : String
+  +instructauthorsformat : Integer
+  +instructreviewers : String
+  +instructreviewersformat : Integer
+  +timemodified : Integer
+  +phase : Integer
+  +useexamples : Integer
+  +usepeerassessment : Integer
+  +useselfassessment : Integer
+  +grade : Float
+  +gradinggrade : Float
+  +strategy : String
+  +evaluation : String
+  +gradedecimals : Integer
+  +submissiontypetext : Integer
+  +submissiontypefile : Integer
+  +nattachments : Integer
+  +submissionfiletypes : String
+  +latesubmissions : Integer
+  +maxbytes : Integer
+  +examplesmode : Integer
+  +submissionstart : Integer
+  +submissionend : Integer
+  +assessmentstart : Integer
+  +assessmentend : Integer
+  +phaseswitchassessment : Integer
+  +conclusion : String
+  +conclusionformat : Integer
+  +overallfeedbackmode : Integer
+  +overallfeedbackfiles : Integer
+  +overallfeedbackfiletypes : String
+  +overallfeedbackmaxbytes : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshop_aggregations" {
+  +id : Integer
+  +workshopid : Integer
+  +userid : Integer
+  +gradinggrade : Float
+  +timegraded : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshop_assessments" {
+  +id : Integer
+  +submissionid : Integer
+  +reviewerid : Integer
+  +weight : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +grade : Float
+  +gradinggrade : Float
+  +gradinggradeover : Float
+  +gradinggradeoverby : Integer
+  +feedbackauthor : String
+  +feedbackauthorformat : Integer
+  +feedbackauthorattachment : Integer
+  +feedbackreviewer : String
+  +feedbackreviewerformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshop_grades" {
+  +id : Integer
+  +assessmentid : Integer
+  +strategy : String
+  +dimensionid : Integer
+  +grade : Float
+  +peercomment : String
+  +peercommentformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshop_submissions" {
+  +id : Integer
+  +workshopid : Integer
+  +example : Integer
+  +authorid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +title : String
+  +content : String
+  +contentformat : Integer
+  +contenttrust : Integer
+  +attachment : Integer
+  +grade : Float
+  +gradeover : Float
+  +gradeoverby : Integer
+  +feedbackauthor : String
+  +feedbackauthorformat : Integer
+  +timegraded : Integer
+  +published : Integer
+  +late : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshopallocation_scheduled" {
+  +id : Integer
+  +workshopid : Integer
+  +enabled : Integer
+  +submissionend : Integer
+  +timeallocated : Integer
+  +settings : String
+  +resultstatus : Integer
+  +resultmessage : String
+  +resultlog : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshopeval_best_settings" {
+  +id : Integer
+  +workshopid : Integer
+  +comparison : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshopform_accumulative" {
+  +id : Integer
+  +workshopid : Integer
+  +sort : Integer
+  +description : String
+  +descriptionformat : Integer
+  +grade : Integer
+  +weight : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshopform_comments" {
+  +id : Integer
+  +workshopid : Integer
+  +sort : Integer
+  +description : String
+  +descriptionformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshopform_numerrors" {
+  +id : Integer
+  +workshopid : Integer
+  +sort : Integer
+  +description : String
+  +descriptionformat : Integer
+  +descriptiontrust : Integer
+  +grade0 : String
+  +grade1 : String
+  +weight : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshopform_numerrors_map" {
+  +id : Integer
+  +workshopid : Integer
+  +nonegative : Integer
+  +grade : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshopform_rubric" {
+  +id : Integer
+  +workshopid : Integer
+  +sort : Integer
+  +description : String
+  +descriptionformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshopform_rubric_config" {
+  +id : Integer
+  +workshopid : Integer
+  +layout : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "workshopform_rubric_levels" {
+  +id : Integer
+  +dimensionid : Integer
+  +grade : Float
+  +definition : String
+  +definitionformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"workshop" "*" --> "1" "course" : course
+"workshop_aggregations" "*" --> "1" "users" : userid
+"workshop_aggregations" "*" --> "1" "workshop" : workshopid
+"workshop_assessments" "*" --> "1" "users" : gradinggradeoverby
+"workshop_assessments" "*" --> "1" "users" : reviewerid
+"workshop_assessments" "*" --> "1" "workshop_submissions" : submissionid
+"workshop_grades" "*" --> "1" "workshop_assessments" : assessmentid
+"workshop_submissions" "*" --> "1" "users" : authorid
+"workshop_submissions" "*" --> "1" "users" : gradeoverby
+"workshop_submissions" "*" --> "1" "workshop" : workshopid
+"workshopform_accumulative" "*" --> "1" "workshop" : workshopid
+"workshopform_comments" "*" --> "1" "workshop" : workshopid
+"workshopform_numerrors" "*" --> "1" "workshop" : workshopid
+"workshopform_numerrors_map" "*" --> "1" "workshop" : workshopid
+"workshopform_rubric" "*" --> "1" "workshop" : workshopid
+"workshopform_rubric_levels" "*" --> "1" "workshopform_rubric" : dimensionid
+@enduml

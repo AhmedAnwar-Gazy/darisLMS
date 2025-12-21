@@ -1,0 +1,42 @@
+@startuml UserAccountLifecycle
+title User Account Lifecycle (SMD-01)
+hide empty description
+
+state "Pending Verification" as pending_verification
+note right of pending_verification
+The account is created, but the email 
+address has not been verified. Login is 
+restricted. 
+end note
+
+state "Active" as active
+note right of active
+The user has verified their email and 
+has full access based on their role. 
+end note
+
+state "Suspended/Banned" as suspended_banned
+note right of suspended_banned
+The user is blocked from logging in due 
+to administrative action or security 
+violation. 
+end note
+
+state "Soft Deleted" as soft_deleted
+note right of soft_deleted
+The user has requested account deletion, 
+or an admin removed them. The data 
+remains for audit purposes (GDPR 
+retention period) but the user cannot 
+log in. 
+end note
+
+unregistered --> pending_verification : Register()
+pending_verification --> active : Click Email Link()
+active --> suspended_banned : Admin Bans User()
+suspended_banned --> active : Admin Unbans User()
+active --> soft_deleted : User Deletes Account()
+soft_deleted --> active : Admin Restores User()
+soft_deleted --> hard_deleted : Retention Period Expires()
+
+@enduml

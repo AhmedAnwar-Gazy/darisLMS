@@ -1,0 +1,145 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "reportbuilder_audience" {
+  +id : Integer
+  +reportid : Integer
+  +heading : String
+  +classname : String
+  +configdata : String
+  +usercreated : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "reportbuilder_column" {
+  +id : Integer
+  +reportid : Integer
+  +uniqueidentifier : String
+  +aggregation : String
+  +heading : String
+  +columnorder : Integer
+  +sortenabled : Integer
+  +sortdirection : Integer
+  +sortorder : Integer
+  +usercreated : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "reportbuilder_filter" {
+  +id : Integer
+  +reportid : Integer
+  +uniqueidentifier : String
+  +heading : String
+  +iscondition : Integer
+  +filterorder : Integer
+  +usercreated : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "reportbuilder_report" {
+  +id : Integer
+  +name : String
+  +source : String
+  +type : Integer
+  +uniquerows : Integer
+  +conditiondata : String
+  +settingsdata : String
+  +contextid : Integer
+  +component : String
+  +area : String
+  +itemid : Integer
+  +usercreated : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "reportbuilder_schedule" {
+  +id : Integer
+  +reportid : Integer
+  +name : String
+  +enabled : Integer
+  +audiences : String
+  +format : String
+  +subject : String
+  +message : String
+  +messageformat : Integer
+  +userviewas : Integer
+  +timescheduled : Integer
+  +recurrence : Integer
+  +reportempty : Integer
+  +timelastsent : Integer
+  +timenextsend : Integer
+  +usercreated : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "reportbuilder_user_filter" {
+  +id : Integer
+  +reportid : Integer
+  +filterdata : String
+  +usercreated : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+"reportbuilder_audience" "*" --> "1" "reportbuilder_report" : reportid
+"reportbuilder_audience" "*" --> "1" "users" : usercreated
+"reportbuilder_audience" "*" --> "1" "users" : usermodified
+"reportbuilder_column" "*" --> "1" "reportbuilder_report" : reportid
+"reportbuilder_column" "*" --> "1" "users" : usercreated
+"reportbuilder_column" "*" --> "1" "users" : usermodified
+"reportbuilder_filter" "*" --> "1" "reportbuilder_report" : reportid
+"reportbuilder_filter" "*" --> "1" "users" : usercreated
+"reportbuilder_filter" "*" --> "1" "users" : usermodified
+"reportbuilder_report" "*" --> "1" "context" : contextid
+"reportbuilder_report" "*" --> "1" "users" : usercreated
+"reportbuilder_report" "*" --> "1" "users" : usermodified
+"reportbuilder_schedule" "*" --> "1" "reportbuilder_report" : reportid
+"reportbuilder_schedule" "*" --> "1" "users" : usercreated
+"reportbuilder_schedule" "*" --> "1" "users" : usermodified
+"reportbuilder_schedule" "*" --> "1" "users" : userviewas
+"reportbuilder_user_filter" "*" --> "1" "reportbuilder_report" : reportid
+"reportbuilder_user_filter" "*" --> "1" "users" : usercreated
+"reportbuilder_user_filter" "*" --> "1" "users" : usermodified
+@enduml

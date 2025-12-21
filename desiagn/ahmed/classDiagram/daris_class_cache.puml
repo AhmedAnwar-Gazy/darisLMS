@@ -1,0 +1,41 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "cache_filters" {
+  +id : Integer
+  +filter : String
+  +version : Integer
+  +md5key : String
+  +rawtext : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "cache_flags" {
+  +id : Integer
+  +flagtype : String
+  +name : String
+  +timemodified : Integer
+  +value : String
+  +expiry : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "cache_locks" {
+  +key : String
+  +owner : String
+  +expiration : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+@enduml

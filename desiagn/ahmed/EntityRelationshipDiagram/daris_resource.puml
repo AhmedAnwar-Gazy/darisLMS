@@ -1,0 +1,40 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**resource**" as resource {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  tobemigrated : smallint NOT NULL DEFAULT '0' 
+  legacyfiles : smallint NOT NULL DEFAULT '0' 
+  legacyfileslast : int DEFAULT NULL 
+  display : smallint NOT NULL DEFAULT '0' 
+  displayoptions : text COLLATE utf8mb4_unicode_ci 
+  filterfiles : smallint NOT NULL DEFAULT '0' 
+  revision : int NOT NULL DEFAULT '0' COMMENT 'incremented when after each file changes 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**resource_old**" as resource_old {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  type : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+  reference : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  alltext : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  popup : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  options : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timemodified : int NOT NULL DEFAULT '0' 
+  oldid : int NOT NULL 
+  cmid : int DEFAULT NULL 
+  newmodule : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  newid : int DEFAULT NULL 
+  migrated : int NOT NULL DEFAULT '0' 
+}
+
+@enduml

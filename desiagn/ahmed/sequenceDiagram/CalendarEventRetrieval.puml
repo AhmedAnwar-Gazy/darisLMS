@@ -1,0 +1,62 @@
+@startuml
+autonumber
+    participant Student
+    participant CalendarView
+    participant CalendarController
+    participant EventService
+    participant Database
+
+    Student -> CalendarView: Navigate to "My Calendar"
+    CalendarView -> CalendarView: Initialize FullCalendar.js
+    
+    CalendarView -> CalendarController: GET /api/calendar/events?start=2024-10-01&end=2024-10-31
+    
+    CalendarController -> EventService: getEventsForUser(user_id, date_range)
+    
+    EventService -> Database: Get Enrolled Courses
+    note right of EventService: SELECT course_id\nFROM user_enrolments\nWHERE user_id=?\nAND status='active'
+    
+    Database --> EventService: Return [course_101, course_102, course_103]
+    
+    EventService -> Database: Get Course Events
+    note right of EventService: SELECT * FROM event\nWHERE (\n  (course_id IN (?,?,?) AND groupid=0)\n  OR (userid=? AND course_id=0)\n)\nAND timestart BETWEEN ? AND ?
+    
+    Database --> EventService: Return Events
+    note right of Database: [\n  {id:1, course_id:101, name:"Quiz Due", type:"quiz", timestart:...},\n  {id:2, course_id:0, name:"Doctor Appointment", type:"user", timestart:...}\n]
+    
+    EventService -> Database: Get Event Details (Async)
+    note right of EventService: For quiz events:\nSELECT name, duedate\nFROM quiz\nWHERE id=?
+    
+    Database --> EventService: Return Activity Details
+    
+    EventService -> EventService: Categorize & Color Code
+    note right of EventService: Color Scheme:\n- Quizzes: Red\n- Assignments: Blue\n- Personal: Green\n- Exams: Purple
+    
+    EventService -> EventService: Format for FullCalendar
+    note right of EventService: {\n  title: "Biology Quiz Due",\n  start: "2024-10-15T23:59:00",\n  end: "2024-10-15T23:59:00",\n  color: "#dc3545",\n  url: "/course/101/quiz/5",\n  extendedProps: {type: "quiz"}\n}
+    
+    EventService --> CalendarController: Return Formatted Events
+    
+    CalendarController -> CalendarController: Cache Response (Redis, 5 minutes)
+    
+    CalendarController --> CalendarView: Return 200 OK with Events Array
+    
+    CalendarView -> CalendarView: Render Events on Calendar Grid
+    CalendarView --> Student: Display Color-Coded Calendar
+    
+    note over Student,CalendarView: Interactive Features
+    
+    Student -> CalendarView: Click on Event
+    CalendarView -> CalendarView: Show Event Details Popup
+    
+    Student -> CalendarView: Click "Go to Activity"
+    CalendarView -> Student: Navigate to Activity Page
+    
+    note over CalendarView,Database: Real-time Updates
+    
+    CalendarView -> CalendarController: WebSocket: Subscribe to calendar_updates
+    CalendarController -> Database: Listen for event changes
+    Database -> CalendarController: Event Changed (e.g., due date extended)
+    CalendarController -> CalendarView: Push Update via WebSocket
+    CalendarView -> CalendarView: Refresh Calendar
+@enduml

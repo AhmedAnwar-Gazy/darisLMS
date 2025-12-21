@@ -1,0 +1,55 @@
+@startuml
+title User Authentication Flow
+skinparam backgroundColor #F0F8FF
+skinparam activity {
+  StartColor DarkGreen
+  EndColor DarkRed
+  BorderColor DarkBlue
+  BackgroundColor LightBlue
+}
+
+|User|
+start
+:Navigate to Login Page;
+:Enter Email & Password;
+:Click "Login" Button;
+
+|Frontend|
+:Validate Input Format;
+if (Input Valid?) then (yes)
+  :Send POST /api/login;
+  :Show Loading Spinner;
+else (no)
+  :Display Error Message;
+  stop
+endif
+
+|Backend|
+:Receive Login Request;
+:Hash Input Password;
+:Query Database for User;
+
+|Database|
+:SELECT * FROM users WHERE email=?;
+-back->
+
+|Backend|
+if (Credentials Match?) then (yes)
+  :Generate Sanctum Token;
+  :Store Token in Database;
+  :Return 200 OK {token, user_role};
+else (no)
+  :Return 401 Unauthorized;
+endif
+
+|Frontend|
+if (Response = 200?) then (yes)
+  :Store Token in Redux/Cookie;
+  :Redirect to Dashboard;
+  stop
+else (Response = 401)
+  :Display "Invalid Credentials";
+  stop
+endif
+
+@enduml

@@ -1,0 +1,118 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "oauth2_access_token" {
+  +id : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +issuerid : Integer
+  +token : String
+  +expires : Integer
+  +scope : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "oauth2_endpoint" {
+  +id : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +name : String
+  +url : Integer
+  +issuerid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "oauth2_issuer" {
+  +id : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +name : String
+  +image : String
+  +baseurl : String
+  +clientid : String
+  +clientsecret : String
+  +loginscopes : String
+  +loginscopesoffline : String
+  +loginparams : String
+  +loginparamsoffline : String
+  +alloweddomains : String
+  +scopessupported : String
+  +enabled : Integer
+  +showonloginpage : Integer
+  +basicauth : Integer
+  +sortorder : Integer
+  +requireconfirmation : Integer
+  +servicetype : String
+  +loginpagename : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "oauth2_refresh_token" {
+  +id : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +userid : Integer
+  +issuerid : Integer
+  +token : String
+  +scopehash : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "oauth2_system_account" {
+  +id : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +issuerid : Integer
+  +refreshtoken : String
+  +grantedscopes : String
+  +email : String
+  +username : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "oauth2_user_field_mapping" {
+  +id : Integer
+  +timemodified : Integer
+  +timecreated : Integer
+  +usermodified : Integer
+  +issuerid : Integer
+  +externalfield : Integer
+  +internalfield : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+"oauth2_access_token" "*" --> "1" "users" : usermodified
+"oauth2_endpoint" "*" --> "1" "oauth2_issuer" : issuerid
+"oauth2_endpoint" "*" --> "1" "users" : usermodified
+"oauth2_refresh_token" "*" --> "1" "oauth2_issuer" : issuerid
+"oauth2_refresh_token" "*" --> "1" "users" : userid
+"oauth2_system_account" "*" --> "1" "users" : usermodified
+"oauth2_user_field_mapping" "*" --> "1" "oauth2_issuer" : issuerid
+"oauth2_user_field_mapping" "*" --> "1" "users" : usermodified
+@enduml

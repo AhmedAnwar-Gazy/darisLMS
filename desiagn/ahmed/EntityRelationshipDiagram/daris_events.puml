@@ -1,0 +1,92 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**event**" as event {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  format : smallint NOT NULL DEFAULT '0' 
+  categoryid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  courseid : int NOT NULL DEFAULT '0' 
+  groupid : int NOT NULL DEFAULT '0' 
+  userid : int NOT NULL DEFAULT '0' 
+  repeatid : int NOT NULL DEFAULT '0' 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Component that created this event 
+  modulename : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  instance : int NOT NULL DEFAULT '0' 
+  type : smallint NOT NULL DEFAULT '0' 
+  eventtype : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timestart : int NOT NULL DEFAULT '0' 
+  timeduration : int NOT NULL DEFAULT '0' 
+  timesort : int DEFAULT NULL 
+  visible : smallint NOT NULL DEFAULT '1' 
+  uuid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sequence : int NOT NULL DEFAULT '1' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  subscriptionid : bigint unsigned DEFAULT NULL COMMENT 'The event_subscription id this event is associated with.' (FK)
+  priority : int DEFAULT NULL COMMENT 'The event''s display priority. For multiple events with the same module name 
+  location : text COLLATE utf8mb4_unicode_ci COMMENT 'Event Location' 
+}
+
+entity "**event_subscriptions**" as event_subscriptions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  url : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  categoryid : int NOT NULL DEFAULT '0' 
+  courseid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  groupid : int NOT NULL DEFAULT '0' 
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  eventtype : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The type of the event' 
+  pollinterval : int NOT NULL DEFAULT '0' COMMENT 'Frequency of checks for new/changed events' 
+  lastupdated : int DEFAULT NULL 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**events_handlers**" as events_handlers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  eventname : varchar(166) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'name of the event 
+  component : varchar(166) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'e.g. moodle 
+  handlerfile : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'path to the file of the function 
+  handlerfunction : text COLLATE utf8mb4_unicode_ci COMMENT 'serialized string or array describing function 
+  schedule : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '''cron'' or ''instant''.' 
+  status : int NOT NULL DEFAULT '0' COMMENT 'number of failed attempts to process this handler' 
+  internal : tinyint NOT NULL DEFAULT '1' COMMENT '1 means standard plugin handler 
+}
+
+entity "**events_queue**" as events_queue {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  eventdata : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'serialized version of the data object passed to the event handler.' 
+  stackdump : text COLLATE utf8mb4_unicode_ci COMMENT 'serialized debug_backtrace showing where the event was fired from' 
+  userid : bigint unsigned DEFAULT NULL COMMENT '$USER-&gt;id when the event was fired' (FK)
+  timecreated : int NOT NULL COMMENT 'time stamp of the first time this was added' 
+}
+
+entity "**events_queue_handlers**" as events_queue_handlers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  queuedeventid : bigint unsigned NOT NULL COMMENT 'foreign key id corresponding to the id of the event_queues table' (FK)
+  handlerid : bigint unsigned NOT NULL COMMENT 'foreign key id corresponding to the id of the event_handlers table' (FK)
+  status : int DEFAULT NULL COMMENT 'number of failed attempts to process this handler' 
+  errormessage : text COLLATE utf8mb4_unicode_ci COMMENT 'if an error happened last time we tried to process this event 
+  timemodified : int NOT NULL COMMENT 'time stamp of the last attempt to run this from the queue' 
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+entity "**course_categories**" as course_categories <<External>> {
+  --
+}
+
+event }|--|| course_categories
+event }|--|| event_subscriptions
+event_subscriptions }|--|| course
+event_subscriptions }|--|| users
+events_queue }|--|| users
+events_queue_handlers }|--|| events_handlers
+events_queue_handlers }|--|| events_queue
+@enduml

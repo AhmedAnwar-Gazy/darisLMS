@@ -1,0 +1,64 @@
+@startuml
+title H5P Interactive Content Tracking
+skinparam activityBackgroundColor #F0FFF0
+skinparam activityBorderColor #006400
+
+|Student|
+start
+:Load Lesson with H5P Content;
+:Interact with Content\n(Answer Quiz, Watch Video);
+:Complete Activity;
+
+|H5P Player|
+:Initialize H5P Content;
+:Load Previous State;
+:Track User Interactions;
+:Generate xAPI Statement;
+
+partition "xAPI Statement Format" {
+  note right
+    {
+      "actor": "student_123",
+      "verb": "answered",
+      "object": "question_456",
+      "result": {
+        "score": {
+          "raw": 8,
+          "max": 10
+        },
+        "success": true
+      }
+    }
+  end note
+}
+
+:Send xAPI POST /api/h5p/xapi;
+
+|Backend|
+:Validate xAPI Statement;
+:Parse Score & Results;
+
+if (Graded Activity?) then (yes)
+  :Extract Score Data;
+  :Update Gradebook;
+  :Calculate Weighted Grade;
+else (no)
+  :Log for Analytics Only;
+endif
+
+|Database|
+:INSERT INTO h5pactivity_attempts_results;
+:UPDATE grade_grades\nSET finalgrade=?;
+:UPDATE grade_items\nSET timemodified=NOW();
+-back->
+
+|Backend|
+:Return 200 OK Response;
+
+|H5P Player|
+:Show "Score Saved" Confirmation;
+
+|Student|
+:Continue to Next Activity;
+stop
+@enduml

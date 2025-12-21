@@ -1,0 +1,92 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**glossary**" as glossary {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  allowduplicatedentries : tinyint NOT NULL DEFAULT '0' 
+  displayformat : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'dictionary' 
+  mainglossary : tinyint NOT NULL DEFAULT '0' 
+  showspecial : tinyint NOT NULL DEFAULT '1' 
+  showalphabet : tinyint NOT NULL DEFAULT '1' 
+  showall : tinyint NOT NULL DEFAULT '1' 
+  allowcomments : tinyint NOT NULL DEFAULT '0' 
+  allowprintview : tinyint NOT NULL DEFAULT '1' 
+  usedynalink : tinyint NOT NULL DEFAULT '1' 
+  defaultapproval : tinyint NOT NULL DEFAULT '1' 
+  approvaldisplayformat : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'default' COMMENT 'Display Format when approving entries' 
+  globalglossary : tinyint NOT NULL DEFAULT '0' 
+  entbypage : tinyint NOT NULL DEFAULT '10' 
+  editalways : tinyint NOT NULL DEFAULT '0' 
+  rsstype : tinyint NOT NULL DEFAULT '0' 
+  rssarticles : tinyint NOT NULL DEFAULT '0' 
+  assessed : int NOT NULL DEFAULT '0' 
+  assesstimestart : int NOT NULL DEFAULT '0' 
+  assesstimefinish : int NOT NULL DEFAULT '0' 
+  scale : int NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  completionentries : int NOT NULL DEFAULT '0' COMMENT 'Non zero if a certain number of entries are required to mark this glossary complete for a user.' 
+}
+
+entity "**glossary_alias**" as glossary_alias {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  entryid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  alias : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**glossary_categories**" as glossary_categories {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  glossaryid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  usedynalink : tinyint NOT NULL DEFAULT '1' 
+}
+
+entity "**glossary_entries**" as glossary_entries {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  glossaryid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  concept : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  definition : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  definitionformat : tinyint NOT NULL DEFAULT '0' 
+  definitiontrust : tinyint NOT NULL DEFAULT '0' 
+  attachment : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  teacherentry : tinyint NOT NULL DEFAULT '0' 
+  sourceglossaryid : int NOT NULL DEFAULT '0' 
+  usedynalink : tinyint NOT NULL DEFAULT '1' 
+  casesensitive : tinyint NOT NULL DEFAULT '0' 
+  fullmatch : tinyint NOT NULL DEFAULT '1' 
+  approved : tinyint NOT NULL DEFAULT '1' 
+}
+
+entity "**glossary_entries_categories**" as glossary_entries_categories {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  categoryid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  entryid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+}
+
+entity "**glossary_formats**" as glossary_formats {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  popupformatname : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  visible : tinyint NOT NULL DEFAULT '1' 
+  showgroup : tinyint NOT NULL DEFAULT '1' 
+  showtabs : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  defaultmode : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  defaulthook : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sortkey : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sortorder : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+glossary_alias }|--|| glossary_entries
+glossary_categories }|--|| glossary
+glossary_entries }|--|| glossary
+glossary_entries_categories }|--|| glossary_categories
+glossary_entries_categories }|--|| glossary_entries
+@enduml

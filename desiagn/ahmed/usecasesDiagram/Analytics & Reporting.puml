@@ -1,0 +1,33 @@
+@startuml AnalyticsReporting
+left to right direction
+
+actor "Instructor" as instructor
+actor "Administrator" as admin
+actor "Student" as student
+actor "System" as system
+
+rectangle "Analytics & Reporting System" {
+  usecase "View Course Analytics" as UC0801
+  usecase "Calculate Metrics" as calculate_metrics
+  usecase "View System Analytics" as UC0802
+  usecase "Export Report" as UC0803
+  usecase "Format Data" as format_data
+  usecase "Generate Dashboard" as UC0804
+  usecase "Aggregate Data" as aggregate_data
+  usecase "View Personal Progress" as UC0805
+}
+
+' Actor Associations
+instructor --> UC0801 : **Association**
+admin --> UC0802 : **Association**
+instructor --> UC0803 : **Association**
+admin --> UC0803 : **Association**
+student --> UC0805 : **Association**
+system --> UC0804 : **Association**
+
+' Use Case Relationships
+UC0801 ..> calculate_metrics : **<<include>>**
+UC0803 ..> format_data : **<<include>>**
+UC0804 ..> aggregate_data : **<<include>>**
+
+@enduml

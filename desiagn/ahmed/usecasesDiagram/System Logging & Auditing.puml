@@ -1,0 +1,32 @@
+@startuml SystemLoggingAuditing
+left to right direction
+
+actor "System" as system
+actor "Administrator" as admin
+actor "Compliance Officer" as compliance_officer
+
+rectangle "System Logging & Auditing" {
+  usecase "Log User Action" as UC1401
+  usecase "Capture Metadata" as capture_metadata
+  usecase "Log System Event" as UC1402
+  usecase "View Audit Log" as UC1403
+  usecase "Apply Filters" as apply_filters
+  usecase "Retain Logs" as UC1404
+  usecase "Archive Old Logs" as archive_logs
+  usecase "Export Logs" as UC1405
+}
+
+' Actor Associations
+system --> UC1401 : **Association**
+system --> UC1402 : **Association**
+admin --> UC1403 : **Association**
+system --> UC1404 : **Association**
+admin --> UC1405 : **Association**
+compliance_officer --> UC1403 : **Association**
+
+' Use Case Relationships
+UC1401 ..> capture_metadata : **<<include>>**
+UC1403 ..> apply_filters : **<<include>>**
+UC1404 ..> archive_logs : **<<include>>**
+
+@enduml

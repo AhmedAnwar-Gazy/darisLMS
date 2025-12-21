@@ -1,0 +1,339 @@
+Here is a detailed, step-by-step description for the Activity Diagrams of DarisLMS.
+Activity diagrams are behavioral diagrams that depict the flow of control and data. Since DarisLMS uses a decoupled architecture (Next.js Frontend and Laravel Backend), these steps are organized using Swimlanes to clearly distinguish between the User, the Frontend Interface, and the Backend API/Database.
+________________________________________
+1. User Authentication Flow (FR-01)
+Goal: Illustrate the logic for logging in and handling session tokens.
+•	Swimlanes: User | Frontend (Next.js) | Backend (Laravel/Sanctum)
+1.	Start Node
+2.	User: Enters Email and Password on the Login Screen.
+3.	User: Clicks "Login."
+4.	Frontend: Validates input format (e.g., checks for @ symbol).
+o	Decision: Is input valid?
+	No: Show error message (Stay on Login Screen).
+	Yes: Send POST /api/login request.
+5.	Backend: Receives request and hashes the entered password.
+6.	Backend: Compares hash with the user table.
+o	Decision: Do credentials match?
+	No: Return 401 Unauthorized. Frontend: Displays "Invalid Credentials."
+	Yes: Generate Sanctum API Token.
+7.	Backend: Return Token + User Role (Student/Instructor) in JSON response.
+8.	Frontend: Store Token in HTTP-Only Cookie or LocalStorage (Redux Store).
+9.	Frontend: Redirect User to Role-Specific Dashboard.
+10.	End Node
+________________________________________
+2. Course Creation & Publishing (FR-02, FR-05)
+Goal: The workflow for an Instructor creating a course and adding content.
+•	Swimlanes: Instructor | System (Backend) | Database/TypeSense
+1.	Start Node
+2.	Instructor: Clicks "Create Course."
+3.	Instructor: Fills metadata (Title, Category, Summary).
+4.	System: Creates a new record in the course table with visible = 0 (Draft).
+5.	Instructor: Selects "Add Content" (Lesson/Resource).
+6.	Instructor: Uploads a File (PDF/Video).
+7.	System: Streams file to Storage (S3/Local) and creates entry in files table.
+8.	System: Links file to course via resource table.
+9.	Instructor: Clicks "Publish Course."
+10.	System (Logic): Checks Business Rule: Does course have at least one module?
+o	Decision: Check Result?
+	Fail: Return Error "Course is empty."
+	Pass: Update course table set visible = 1.
+11.	System: Trigger Laravel Scout to index course data into TypeSense.
+12.	End Node
+________________________________________
+3. Student Enrollment Process (FR-03)
+Goal: How a student gains access to a course.
+•	Swimlanes: Student | Backend API | Database
+1.	Start Node
+2.	Student: Browses Course Catalog and clicks "Enroll" on a course.
+3.	Backend: Check Course Attributes.
+o	Decision: Is Course Public?
+	No: Check if Student has Invitation/Payment (Future Scope). If not, Deny.
+	Yes: Proceed.
+4.	Backend: Check Existing Enrollment.
+o	Decision: Is User already in user_enrolments?
+	Yes: Return "Already Enrolled" message.
+	No: Create new row in user_enrolments (linking userid and courseid).
+5.	Backend: Assign default Role (Student) within that Course Context.
+6.	System: Trigger "Welcome Notification" Event.
+7.	Database: Store notification in notifications table.
+8.	Student: UI updates to show "Go to Course" button.
+9.	End Node
+________________________________________
+4. Assignment Submission & Grading Loop (FR-04)
+Goal: The cycle of submitting work and receiving a grade.
+•	Swimlanes: Student | Instructor | System
+1.	Start Node
+2.	Student: Opens Assignment Activity.
+3.	System: Check Time.
+o	Decision: Is Current Time > Due Date?
+	Yes: Block submission (or mark as Late based on config).
+	No: Allow upload.
+4.	Student: Uploads file and clicks "Submit."
+5.	System: Change submission status to submitted in assign_submission table.
+6.	System: Notify Instructor of new submission.
+o	--- Process Fork (Wait for Instructor) ---
+7.	Instructor: Opens Gradebook / Submission View.
+8.	Instructor: Downloads/Views Student File.
+9.	Instructor: Enters Grade (0-100) and Feedback Comments.
+10.	System: Update assign_grades table.
+11.	System: Calculate Course Total (Aggregation).
+12.	System: Send Notification to Student ("Your grade is ready").
+13.	Student: Views Grade and Feedback.
+14.	End Node
+________________________________________
+5. Search & Discovery Flow (FR-06)
+Goal: Real-time search using TypeSense.
+•	Swimlanes: User | Frontend (Next.js) | TypeSense Engine
+1.	Start Node
+2.	User: Types keyword into Global Search Bar (e.g., "History").
+3.	Frontend: Debounces input (waits 300ms to stop typing).
+4.	Frontend: Sends async query to TypeSense Endpoint.
+5.	TypeSense: Performs fuzzy search on indexed documents (Courses, Users).
+o	Parallel Activity: Apply Facet Filters (e.g., Category = "Humanities").
+6.	TypeSense: Returns ranked JSON results.
+7.	Frontend: Renders results in a dropdown or list grid.
+8.	User: Clicks a result item.
+9.	Frontend: Navigates to the specific resource page.
+10.	End Node
+________________________________________
+6. H5P Interactive Content Tracking (FR-26)
+Goal: Handling complex xAPI data from interactive content.
+•	Swimlanes: Student | H5P Player (Frontend) | Backend
+1.	Start Node
+2.	Student: Loads a lesson containing H5P content (e.g., Interactive Video).
+3.	H5P Player: Initialize content and load state (resume where left off).
+4.	Student: Interacts with content (e.g., Answers a quiz inside the video).
+5.	H5P Player: Generates an xAPI Statement (Actor, Verb, Object, Result).
+6.	Frontend: Sends xAPI statement to Backend via AJAX.
+7.	Backend: Receives statement.
+8.	Backend: Stores raw statement in h5pactivity_attempts_results.
+o	Decision: Is this a graded interaction?
+	No: Log for analytics only.
+	Yes: Extract score.
+9.	Backend: Update grade_grades table with the new score.
+10.	End Node
+________________________________________
+7. Scheduled System Maintenance (FR-25)
+Goal: Background processes that keep the system healthy.
+•	Swimlanes: System Timer (Cron) | Laravel Scheduler | Database
+1.	Start Node (Periodic Trigger)
+2.	System Timer: Fires every minute.
+3.	Laravel Scheduler: Checks task_scheduled table for tasks due.
+o	Fork (Parallel Execution)
+o	Thread A: Clean up expired Sanctum tokens.
+o	Thread B: Send queued emails (mail_queue).
+o	Thread C: Recalculate stale analytics models.
+4.	Laravel Scheduler: Lock task to prevent duplicates.
+5.	System: Execute Logic.
+o	Decision: Execution Successful?
+	Yes: Update lastruntime.
+	No: Log error to task_log and increment faildelay.
+6.	Laravel Scheduler: Release lock.
+7.	End Node
+Here is the continuation of the detailed Activity Diagrams for the remaining Functional Requirements of DarisLMS.
+________________________________________
+8. Private Messaging & Notifications (FR-07)
+Goal: The flow of sending a direct message and triggering a notification.
+•	Swimlanes: Sender (Student) | Backend API | Notification Service | Recipient (Instructor)
+1.	Start Node
+2.	Sender: Clicks "Message Instructor" and types content.
+3.	Sender: Clicks "Send."
+4.	Backend: Validates request (Is user enrolled in the same course?).
+5.	Backend: Creates record in messages table.
+6.	Backend: Triggers MessageSent Event.
+7.	Notification Service: Check Recipient Preferences.
+o	Decision: Is Recipient Online?
+	Yes: Send Real-time Push (via Polling/WebSockets).
+	No: Queue Email Notification.
+8.	Database: Insert record into notifications table.
+9.	Recipient: Receives Alert/Email.
+10.	End Node
+________________________________________
+9. Analytics & Report Generation (FR-08)
+Goal: Generating a performance report for an instructor.
+•	Swimlanes: Instructor | Frontend | Backend (Analysis Engine) | Database
+1.	Start Node
+2.	Instructor: Selects "Course Reports" from the menu.
+3.	Instructor: Chooses "Activity Completion Report" and clicks "Generate."
+4.	Frontend: Sends GET /api/reports/completion?course_id=X.
+5.	Backend: Queries user_enrolments for the student list.
+6.	Backend: Iterates through course modules.
+7.	Database: Aggregates data from course_modules_completion and grade_grades.
+8.	Backend: Formats data into JSON structure.
+9.	Frontend: Renders Data Visualization (Bar Chart).
+10.	Instructor: Clicks "Export CSV."
+11.	Backend: Generates .csv file and streams download.
+12.	End Node
+________________________________________
+10. Competency Rule Evaluation (FR-20)
+Goal: Automated awarding of skills based on grades (System-driven flow).
+•	Swimlanes: System Event Listener | Competency Engine | Database
+1.	Start Node (Triggered by Grade Update)
+2.	System: Detects change in grade_grades table.
+3.	Competency Engine: specific activity linked to a Competency? (competency_modulecomp table).
+o	Decision: Is there a link?
+	No: End Process.
+	Yes: Retrieve Competency ID.
+4.	Competency Engine: Compare Grade vs. Proficiency Threshold.
+o	Decision: Is Grade >= Threshold?
+	No: Do nothing.
+	Yes: Proceed.
+5.	Competency Engine: Update competency_usercomp table.
+o	Set proficiency = 1.
+o	Set grade = Student Grade.
+6.	System: Check if this completes a "Learning Plan."
+7.	System: Send "Competency Achieved" Notification to Student.
+8.	End Node
+________________________________________
+11. Mandatory Policy Consent (FR-24)
+Goal: Enforcing GDPR compliance upon login.
+•	Swimlanes: User | Frontend (Middleware) | Backend
+1.	Start Node
+2.	User: Logs in successfully.
+3.	Backend: Check tool_policy for the current active version ID.
+4.	Backend: Check tool_policy_acceptances for the User.
+o	Decision: Has User accepted the current version?
+	Yes: Return normal Dashboard response.
+	No: Return "Policy Consent Required" Flag (HTTP 403 or specific JSON code).
+5.	Frontend: Detects Flag. Redirects to /policy/consent page.
+6.	User: Reads Policy text.
+7.	User: Checks "I Agree" and clicks Submit.
+8.	Backend: Insert record into tool_policy_acceptances with timestamp.
+9.	Backend: Grant access token scopes for full access.
+10.	Frontend: Redirects to Dashboard.
+11.	End Node
+________________________________________
+12. Gamification - Badge Issuance (FR-21)
+Goal: Awarding a badge automatically when a course is completed.
+•	Swimlanes: System (Cron/Event) | Badge Engine | Database
+1.	Start Node (Triggered by Course Completion Event)
+2.	Badge Engine: Query badge table for active badges associated with this Course.
+3.	Badge Engine: Iterate through Badge Criteria (badge_criteria table).
+o	Decision: Are all criteria met? (e.g., Course Complete + Grade > 75%).
+	No: Stop.
+	Yes: Proceed.
+4.	Database: Create entry in badge_issued table.
+o	Generate uniquehash for verification.
+o	Set dateissued = NOW().
+5.	System: Generate Badge Image (bake metadata into PNG).
+6.	System: Send "You earned a badge!" Notification.
+7.	End Node
+________________________________________
+13. Admin - System Backup (FR-09)
+Goal: Performing a manual backup of the system for safety.
+•	Swimlanes: Administrator | Frontend | Backend | Cloud Storage
+1.	Start Node
+2.	Administrator: Navigates to Admin Panel > System > Backups.
+3.	Administrator: Clicks "Create Backup."
+4.	Backend: Dispatches Job to Queue (to prevent timeout).
+5.	Backend (Worker): Puts site in "Maintenance Mode" (Optional, based on config).
+6.	Backend: Dumps MySQL Database to SQL file.
+7.	Backend: Zips storage/app/public files.
+8.	Backend: Uploads Zip to AWS S3 / Offsite Storage.
+9.	Database: Records entry in backup_logs.
+10.	Backend: Sends "Backup Complete" email to Admin.
+11.	Frontend: Updates Backup List with new file.
+12.	End Node
+
+Here is the continuation of the detailed Activity Diagrams for the remaining complex functional workflows in DarisLMS.
+________________________________________
+14. Forum Discussion Participation (FR-19.1)
+Goal: The flow of a student engaging in a collaborative discussion.
+•	Swimlanes: User (Student) | Frontend | Backend API | Database
+1.	Start Node
+2.	User: Opens a Forum Activity within a Course.
+3.	Frontend: Fetches discussions list (GET /api/forums/{id}/discussions).
+4.	User: Clicks on a Discussion Thread.
+5.	User: Clicks "Reply" and types text (HTML/Markdown).
+6.	User: Clicks "Post Reply."
+7.	Frontend: Validates input not empty.
+8.	Backend: Receives POST request.
+9.	Backend: Checks "Post Blocking" rules (e.g., time limit).
+o	Decision: Allowed?
+	No: Return Error.
+	Yes: Proceed.
+10.	Database: Insert into forum_posts table.
+o	Set parent = [Post ID being replied to].
+11.	Backend: Check Subscription settings (forum_subscriptions table).
+12.	System: Queue emails for subscribed users.
+13.	Frontend: Appends the new post to the thread view dynamically.
+14.	End Node
+________________________________________
+15. External File Repository Linking (FR-23)
+Goal: Attaching a file from Google Drive/OneDrive without re-uploading it.
+•	Swimlanes: User | Frontend | Backend | External API (e.g., Google)
+1.	Start Node
+2.	User: Opens File Picker (e.g., in Assignment Submission).
+3.	User: Selects "Google Drive" Repository.
+4.	Backend: Checks for existing OAuth Token in oauth2_access_token table.
+o	Decision: Token Valid?
+	No: Redirect User to Google Login -> Receive Callback -> Store Token.
+	Yes: Proceed.
+5.	Backend: Requests file list from Google API.
+6.	Frontend: Displays file tree.
+7.	User: Selects a file and chooses "Create Alias/Shortcut."
+8.	Backend: Does not download the file body.
+o	Retrieves Metadata (ID, Name, Size).
+9.	Database: Creates entry in files_reference.
+o	Stores External ID and Repository ID.
+10.	Database: Creates entry in files table pointing to the reference.
+11.	Frontend: Displays the file as attached.
+12.	End Node
+________________________________________
+16. Workshop Peer Assessment Flow (FR-19.3)
+Goal: A multi-phase process where students grade each other.
+•	Swimlanes: Instructor | System | Student (Author) | Student (Reviewer)
+1.	Start Node
+2.	Instructor: Sets Workshop Status to "Submission Phase".
+3.	Student (Author): Uploads work / types text.
+4.	Instructor: Sets Status to "Assessment Phase".
+5.	System: Executes Allocation Logic (Random or Manual).
+o	Updates workshop_allocations table.
+6.	Student (Reviewer): Sees "Assigned Peers" on Dashboard.
+7.	Student (Reviewer): Opens Peer's work and fills Grading Rubric (workshopform_rubric_fillings).
+8.	Student (Reviewer): Submits Assessment.
+9.	Instructor: Sets Status to "Grading Evaluation Phase".
+10.	System: Calculates Grades.
+o	Grade for Submission (Average of peer scores).
+o	Grade for Assessment (How close reviewer was to average).
+11.	Instructor: Reviews and publishes grades.
+12.	Instructor: Sets Status to "Closed".
+13.	End Node
+________________________________________
+17. SCORM Package Interaction (FR-19.5)
+Goal: Tracking legacy e-learning packages (SCORM 1.2/2004).
+•	Swimlanes: Student | SCORM Player (IFrame) | Backend (LMS API) | Database
+1.	Start Node
+2.	Student: Launches SCORM Activity.
+3.	Backend: Returns SCORM Launch URL and initializes scorm_scoes_track.
+4.	SCORM Player: Loads the content package in an IFrame.
+5.	SCORM Player: Injects JavaScript API (LMSInitialize).
+6.	Content: User interacts (views slides, answers quiz).
+7.	Content: Calls LMSSetValue('cmi.core.score.raw', 80).
+8.	SCORM Player: Buffers data.
+9.	Content: Calls LMSCommit("").
+10.	SCORM Player: Sends async data to Backend.
+11.	Database: Updates scorm_scoes_track with new values (Score, Time, Status).
+12.	Content: Calls LMSFinish.
+13.	Backend: Calculates final grade and pushes to Gradebook.
+14.	End Node
+________________________________________
+18. Calendar Event Generation (FR-22)
+Goal: Ensuring deadlines appear on the user's schedule automatically.
+•	Swimlanes: Instructor | System | Database | Student View
+1.	Start Node
+2.	Instructor: Creates a new Assignment.
+3.	Instructor: Sets "Due Date" to [Date X] and Saves.
+4.	System: Creates Assignment Record in assign.
+5.	System (Event Observer): Detects creation of activity with a deadline.
+6.	System: Creates a record in event table.
+o	type = course.
+o	timestart = [Date X].
+o	instance = [Assignment ID].
+7.	Database: Commit changes.
+8.	Student View: Loads Dashboard.
+9.	Frontend: Fetches GET /api/calendar/events.
+10.	Frontend: Renders the Assignment on the Calendar Grid.
+11.	End Node
+This completes the Activity Diagram descriptions for all major functional areas of DarisLMS.
+

@@ -1,0 +1,52 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**repository**" as repository {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  type : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  visible : tinyint(1) DEFAULT '1' 
+  sortorder : int NOT NULL DEFAULT '0' 
+}
+
+entity "**repository_instance_config**" as repository_instance_config {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  instanceid : int NOT NULL 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**repository_instances**" as repository_instances {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  typeid : int NOT NULL 
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  contextid : bigint unsigned NOT NULL (FK)
+  username : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  password : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  timecreated : int DEFAULT NULL 
+  timemodified : int DEFAULT NULL 
+  readonly : tinyint(1) NOT NULL DEFAULT '0' 
+}
+
+entity "**repository_onedrive_access**" as repository_onedrive_access {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  timemodified : int NOT NULL 
+  timecreated : int NOT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+  permissionid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The permission id in OneDrive.' 
+  itemid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The item id in OneDrive.' 
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+repository_instances }|--|| context
+repository_instances }|--|| users
+repository_onedrive_access }|--|| users
+@enduml

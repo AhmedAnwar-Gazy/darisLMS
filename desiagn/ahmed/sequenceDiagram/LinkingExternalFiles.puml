@@ -1,0 +1,75 @@
+@startuml
+autonumber
+    participant Instructor
+    participant FilePicker
+    participant RepositoryController
+    participant ExternalRepoService
+    participant "Google Drive API" as GoogleDrive
+    participant Database
+
+    Instructor -> FilePicker: Open File Picker Dialog
+    FilePicker -> FilePicker: Show Repository Options
+    
+    Instructor -> FilePicker: Select "Google Drive"
+    FilePicker -> RepositoryController: GET /api/repository/list?repo=google_drive
+    
+    RepositoryController -> ExternalRepoService: authenticate() [OAuth Flow]
+    
+    alt No OAuth Token
+        ExternalRepoService --> RepositoryController: Return Auth URL
+        RepositoryController --> FilePicker: Return 401 {auth_url: "https://..."}
+        FilePicker -> Instructor: Redirect to Google OAuth
+        Instructor -> GoogleDrive: Grant Permissions
+        GoogleDrive --> FilePicker: Return Authorization Code
+        FilePicker -> RepositoryController: POST /api/repository/auth {code}
+        RepositoryController -> ExternalRepoService: exchangeCodeForToken(code)
+        ExternalRepoService -> GoogleDrive: Exchange Code for Access Token
+        GoogleDrive --> ExternalRepoService: Return Access Token
+        ExternalRepoService -> Database: Store token in user_repository_tokens
+        Database --> ExternalRepoService: Token Saved
+    end
+    
+    RepositoryController -> ExternalRepoService: listFiles(path="/")
+    
+    ExternalRepoService -> GoogleDrive: GET /drive/v3/files
+    GoogleDrive --> ExternalRepoService: Return File List
+    
+    ExternalRepoService -> ExternalRepoService: Normalize Response
+    ExternalRepoService --> RepositoryController: Return File List
+    
+    RepositoryController --> FilePicker: Return 200 OK with Files
+    
+    FilePicker -> FilePicker: Render File Browser UI
+    FilePicker --> Instructor: Show Google Drive Files
+    
+    Instructor -> FilePicker: Select "lecture_notes.pdf"
+    Instructor -> FilePicker: Click "Link File"
+    
+    FilePicker -> RepositoryController: POST /api/repository/link {external_id: "gd_12345", filename: "lecture.pdf"}
+    
+    RepositoryController -> Database: INSERT INTO files_reference (external_id, repository, metadata)
+    Database --> RepositoryController: Return reference_id=101
+    
+    RepositoryController -> Database: INSERT INTO files (reference_id, filename, mimetype, user_id)
+    Database --> RepositoryController: Return file_id=202
+    
+    RepositoryController -> ExternalRepoService: getDownloadUrl(external_id)
+    ExternalRepoService -> GoogleDrive: GET /drive/v3/files/{id}
+    GoogleDrive --> ExternalRepoService: Return Web Content Link
+    ExternalRepoService --> RepositoryController: Return URL
+    
+    RepositoryController -> Database: UPDATE files SET url=?, filesize=?
+    Database --> RepositoryController: File Updated
+    
+    RepositoryController --> FilePicker: Return 201 Created {file_id: 202, name: "lecture.pdf"}
+    
+    FilePicker -> FilePicker: Close Dialog
+    FilePicker -> Instructor: Show "File Linked Successfully"
+    
+    note over Database,Database: Future Access
+    Instructor -> FilePicker: Later: Student clicks file
+    FilePicker -> RepositoryController: GET /api/files/202
+    RepositoryController -> Database: Get reference URL
+    Database --> RepositoryController: Return Google Drive URL
+    RepositoryController --> FilePicker: Redirect to Google Drive
+@enduml

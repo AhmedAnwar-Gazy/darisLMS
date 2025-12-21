@@ -1,0 +1,54 @@
+@startuml
+autonumber
+    participant User
+    participant Dashboard
+    participant PolicyMiddleware
+    participant PolicyController
+    participant Database
+
+    User -> Dashboard: Navigate to /dashboard
+    
+    Dashboard -> PolicyMiddleware: GET /api/user/profile (Bearer Token)
+    
+    PolicyMiddleware -> Database: SELECT policy_version FROM tool_policy WHERE active=1
+    Database --> PolicyMiddleware: Return active_policy_id=5
+    
+    PolicyMiddleware -> Database: SELECT * FROM tool_policy_acceptances WHERE user_id=? AND policy_id=5
+    Database --> PolicyMiddleware: Return NULL (Not Accepted)
+    
+    alt Policy Not Accepted
+        PolicyMiddleware --> Dashboard: Return 403 Forbidden {code: "POLICY_REQUIRED", policy_id: 5}
+        
+        Dashboard -> Dashboard: Intercept 403 Response
+        Dashboard -> User: Redirect to /policy/accept?policy_id=5
+        
+        User -> Dashboard: Views Policy Page
+        Dashboard -> PolicyController: GET /api/policy/5
+        PolicyController -> Database: SELECT content FROM tool_policy_versions WHERE id=5
+        Database --> PolicyController: Return Policy Content
+        PolicyController --> Dashboard: Return Policy HTML/Text
+        Dashboard --> User: Display Policy Content
+        
+        User -> Dashboard: Click "I Agree"
+        Dashboard -> PolicyController: POST /api/policy/accept {policy_id: 5, user_consent: true}
+        
+        PolicyController -> Database: INSERT INTO tool_policy_acceptances (user_id, policy_id, timestamp, status)
+        Database --> PolicyController: Acceptance Recorded
+        
+        PolicyController -> Database: UPDATE users SET policy_agreed=1
+        Database --> PolicyController: User Updated
+        
+        PolicyController --> Dashboard: Return 200 OK {message: "Policy Accepted"}
+        
+        Dashboard -> User: Redirect to Original URL (/dashboard)
+        
+        Dashboard -> PolicyMiddleware: RETRY: GET /api/user/profile
+        PolicyMiddleware -> Database: Check Acceptance (Now Returns Record)
+        Database --> PolicyMiddleware: Return Acceptance Record
+        PolicyMiddleware --> Dashboard: Return 200 OK with User Data
+        Dashboard --> User: Load Dashboard Content
+    else Policy Already Accepted
+        PolicyMiddleware --> Dashboard: Return 200 OK (Normal Flow)
+        Dashboard --> User: Show Dashboard
+    end
+@enduml

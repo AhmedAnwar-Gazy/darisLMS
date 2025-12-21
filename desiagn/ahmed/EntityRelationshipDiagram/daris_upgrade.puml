@@ -1,0 +1,23 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**upgrade_log**" as upgrade_log {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  type : int NOT NULL COMMENT 'type: 0==info 
+  plugin : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  version : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'plugin or main version if known' 
+  targetversion : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'version of plugin or core specified in version.php at the time of upgrade loggging' 
+  info : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  details : text COLLATE utf8mb4_unicode_ci 
+  backtrace : text COLLATE utf8mb4_unicode_ci 
+  userid : bigint unsigned NOT NULL (FK)
+  timemodified : int NOT NULL 
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+upgrade_log }|--|| users
+@enduml

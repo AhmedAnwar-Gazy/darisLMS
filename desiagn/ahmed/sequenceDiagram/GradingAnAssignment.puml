@@ -1,0 +1,37 @@
+@startuml
+autonumber
+    participant Instructor
+    participant Gradebook
+    participant GradeController
+    participant GradeCalculator
+    participant NotificationService
+    participant Database
+
+    Instructor -> Gradebook: Enter Grade: "85" + Comment: "Good job"
+    Instructor -> Gradebook: Click "Save Grade"
+    
+    Gradebook -> GradeController: POST /api/submission/{id}/grade {grade: 85, feedback: "Good job"}
+    
+    GradeController -> Database: UPDATE assign_grades SET grade=85, grader_id=?, timemodified=NOW()
+    Database --> GradeController: Update Successful
+    
+    GradeController -> Database: INSERT INTO assignfeedback_comments (submission_id, commenttext)
+    Database --> GradeController: Insert Successful
+    
+    GradeController -> GradeCalculator: recalculateCourseTotal(student_id, course_id)
+    GradeCalculator -> Database: SELECT SUM(grade*weight)/SUM(weight) FROM assign_grades WHERE...
+    Database --> GradeCalculator: Return new_average=78.5
+    GradeCalculator -> Database: UPDATE grade_items SET finalgrade=78.5 WHERE...
+    Database --> GradeCalculator: Update Successful
+    
+    par Parallel Processing
+        GradeController -> NotificationService: notifyStudent(student_id, "Grade Posted")
+        NotificationService -> Database: INSERT INTO notifications (user_id, title, body)
+        Database --> NotificationService: Notification Queued
+    end
+    
+    GradeController --> Gradebook: Return 200 OK {message: "Grade Saved", average: 78.5}
+    
+    Gradebook -> Gradebook: Update UI: Show "Graded" Status
+    Gradebook --> Instructor: Display Success Message
+@enduml

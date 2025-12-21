@@ -1,0 +1,69 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**portfolio_instance**" as portfolio_instance {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  plugin : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'fk to plugin' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'name of plugin instance' 
+  visible : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'whether this instance is visible or not' 
+}
+
+entity "**portfolio_instance_config**" as portfolio_instance_config {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  instance : bigint unsigned NOT NULL COMMENT 'instance of plugin we''re configurating' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'config field' 
+  value : text COLLATE utf8mb4_unicode_ci COMMENT 'config value' 
+}
+
+entity "**portfolio_instance_user**" as portfolio_instance_user {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  instance : bigint unsigned NOT NULL COMMENT 'fk to instance table' (FK)
+  userid : bigint unsigned NOT NULL COMMENT 'fk to user table' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'name of config item' 
+  value : text COLLATE utf8mb4_unicode_ci COMMENT 'value of config item' 
+}
+
+entity "**portfolio_log**" as portfolio_log {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL COMMENT 'user who exported content' (FK)
+  time : int NOT NULL COMMENT 'time of transfer (in the case of a queued transfer this is the time the actual transfer ran 
+  portfolio : bigint unsigned NOT NULL COMMENT 'fk to portfolio_instance' (FK)
+  caller_class : varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'the name of the class used to create the transfer' 
+  caller_file : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'path to file to include where the class definition lives. (relative to dirroot)' 
+  caller_component : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'the component name responsible for exporting' 
+  caller_sha1 : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sha1 of exported content as far as the caller is concerned (before the portfolio plugin gets a hold of it)' 
+  tempdataid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'old id from portfolio_tempdata.  This is so that we can gracefully catch a race condition between an external system requesting a file and causing the tempdata to be deleted (FK)
+  returnurl : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'the original "returnurl" of the export - takes us to the moodle page we started from' 
+  continueurl : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'the url the external system has set to view the transfer' 
+}
+
+entity "**portfolio_mahara_queue**" as portfolio_mahara_queue {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  transferid : bigint unsigned NOT NULL COMMENT 'fk to portfolio_tempdata.id' (FK)
+  token : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'the token mahara sent us to use for this transfer.' 
+}
+
+entity "**portfolio_tempdata**" as portfolio_tempdata {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  data : text COLLATE utf8mb4_unicode_ci COMMENT 'dumping ground for portfolio callers to store their data in.' 
+  expirytime : int NOT NULL COMMENT 'time this record will expire (used for cron cleanups) - the start of export + 24 hours' 
+  userid : bigint unsigned NOT NULL COMMENT 'psuedo fk to user.  this is stored in the serialised data structure in the data field (FK)
+  instance : bigint unsigned DEFAULT '0' COMMENT 'which portfolio plugin instance is being used' (FK)
+  queued : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Value 1 means the entry should be processed in cron.' 
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+portfolio_instance_config }|--|| portfolio_instance
+portfolio_instance_user }|--|| portfolio_instance
+portfolio_instance_user }|--|| users
+portfolio_log }|--|| portfolio_instance
+portfolio_log }|--|| portfolio_tempdata
+portfolio_log }|--|| users
+portfolio_mahara_queue }|--|| portfolio_tempdata
+portfolio_tempdata }|--|| portfolio_instance
+portfolio_tempdata }|--|| users
+@enduml

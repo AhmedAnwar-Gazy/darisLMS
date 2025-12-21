@@ -1,0 +1,159 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**lti**" as lti {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' COMMENT 'Course basiclti activity belongs to' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'name field for moodle instances' 
+  intro : text COLLATE utf8mb4_unicode_ci COMMENT 'General introduction of the basiclti activity' 
+  introformat : smallint DEFAULT '0' COMMENT 'Format of the intro field (MOODLE 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  typeid : int DEFAULT NULL COMMENT 'Basic LTI type' 
+  toolurl : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Remote tool url' 
+  securetoolurl : text COLLATE utf8mb4_unicode_ci 
+  instructorchoicesendname : tinyint(1) DEFAULT NULL COMMENT 'Send user''s name' 
+  instructorchoicesendemailaddr : tinyint(1) DEFAULT NULL COMMENT 'Send user''s email' 
+  instructorchoiceallowroster : tinyint(1) DEFAULT NULL COMMENT 'Allow the roster to be retrieved' 
+  instructorchoiceallowsetting : tinyint(1) DEFAULT NULL COMMENT 'Allow a tool to store a setting' 
+  instructorcustomparameters : text COLLATE utf8mb4_unicode_ci COMMENT 'Additional custom parameters provided by the instructor' 
+  instructorchoiceacceptgrades : tinyint(1) DEFAULT NULL COMMENT 'Accept grades from tool' 
+  grade : int NOT NULL DEFAULT '100' COMMENT 'Grade scale' 
+  launchcontainer : tinyint NOT NULL DEFAULT '1' COMMENT 'Launch external tool in a pop-up' 
+  resourcekey : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  password : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  debuglaunch : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Enable the debug-style launch which pauses before auto-submit' 
+  showtitlelaunch : tinyint(1) NOT NULL DEFAULT '0' 
+  showdescriptionlaunch : tinyint(1) NOT NULL DEFAULT '0' 
+  servicesalt : varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  icon : text COLLATE utf8mb4_unicode_ci 
+  secureicon : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**lti_access_tokens**" as lti_access_tokens {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  typeid : bigint unsigned NOT NULL COMMENT 'Basic LTI type id' (FK)
+  scope : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Scope values as JSON array' 
+  token : varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'security token 
+  validuntil : int NOT NULL COMMENT 'timestamp - valid until data' 
+  timecreated : int NOT NULL COMMENT 'created timestamp' 
+  lastaccess : int DEFAULT NULL COMMENT 'last access timestamp' 
+}
+
+entity "**lti_coursevisible**" as lti_coursevisible {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  typeid : int NOT NULL 
+  courseid : int NOT NULL COMMENT 'Course ID' 
+  coursevisible : tinyint(1) NOT NULL 
+}
+
+entity "**lti_submission**" as lti_submission {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  ltiid : int NOT NULL COMMENT 'ID of the LTI tool instance' 
+  userid : int NOT NULL 
+  datesubmitted : int NOT NULL 
+  dateupdated : int NOT NULL 
+  gradepercent : decimal(10 
+  originalgrade : decimal(10 
+  launchid : int NOT NULL 
+  state : tinyint NOT NULL 
+}
+
+entity "**lti_tool_proxies**" as lti_tool_proxies {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Tool Provider' COMMENT 'Tool Provider name' 
+  regurl : text COLLATE utf8mb4_unicode_ci 
+  state : tinyint NOT NULL DEFAULT '1' COMMENT 'Configured = 1 
+  guid : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  secret : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  vendorcode : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  capabilityoffered : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'List of capabilities offered 
+  serviceoffered : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'List of services offered 
+  toolproxy : text COLLATE utf8mb4_unicode_ci COMMENT 'JSON string representing tool proxy returned by tool provider' 
+  createdby : int NOT NULL COMMENT 'ID of user which initiated the registration process' 
+  timecreated : int NOT NULL COMMENT 'Date/time at which the record was created' 
+  timemodified : int NOT NULL COMMENT 'Date/time at which the record was last modified' 
+}
+
+entity "**lti_tool_settings**" as lti_tool_settings {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  toolproxyid : bigint unsigned NOT NULL COMMENT 'Primary key of related tool proxy' (FK)
+  typeid : bigint unsigned DEFAULT NULL (FK)
+  course : bigint unsigned DEFAULT NULL COMMENT 'Primary key of course (null for system-wide settings)' (FK)
+  coursemoduleid : bigint unsigned DEFAULT NULL COMMENT 'Primary key of course module - tool link added to course (null for system-wide and context-wide settings)' (FK)
+  settings : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Setting values as JSON' 
+  timecreated : int NOT NULL COMMENT 'Date/time at which the record was created' 
+  timemodified : int NOT NULL COMMENT 'Date/time at which the record was last modified' 
+}
+
+entity "**lti_types**" as lti_types {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'basiclti Activity' COMMENT 'Activity name' 
+  baseurl : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  tooldomain : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  state : tinyint NOT NULL DEFAULT '2' COMMENT 'Active = 1 
+  course : int NOT NULL 
+  coursevisible : tinyint(1) NOT NULL DEFAULT '0' 
+  ltiversion : varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL 
+  clientid : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  toolproxyid : int DEFAULT NULL COMMENT 'Primary key of related tool proxy (null for LTI 1 tools)' 
+  enabledcapability : text COLLATE utf8mb4_unicode_ci COMMENT 'Enabled capabilities 
+  parameter : text COLLATE utf8mb4_unicode_ci COMMENT 'Launch parameters 
+  icon : text COLLATE utf8mb4_unicode_ci COMMENT 'URL to icon file' 
+  secureicon : text COLLATE utf8mb4_unicode_ci COMMENT 'Secure URL to icon file' 
+  createdby : int NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'A description of what this LTI module is.' 
+}
+
+entity "**lti_types_categories**" as lti_types_categories {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  typeid : bigint unsigned NOT NULL (FK)
+  categoryid : bigint unsigned NOT NULL (FK)
+}
+
+entity "**lti_types_config**" as lti_types_config {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  typeid : int NOT NULL COMMENT 'Basic LTI type id' 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Basic LTI param' 
+  value : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Param value' 
+}
+
+entity "**ltiservice_gradebookservices**" as ltiservice_gradebookservices {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  gradeitemid : bigint unsigned NOT NULL COMMENT 'ID of the gradeItem related.' (FK)
+  courseid : int NOT NULL COMMENT 'ID of the course related.' 
+  toolproxyid : int DEFAULT NULL COMMENT 'ID of the Tool Proxy instance.' 
+  typeid : int DEFAULT NULL COMMENT 'ID of the LTI Type if not Proxy.' 
+  baseurl : text COLLATE utf8mb4_unicode_ci COMMENT 'Lineitem URL that will be returned to the Tool provider' 
+  ltilinkid : bigint unsigned DEFAULT NULL COMMENT 'ID of the LTI element related with this lineitem.' (FK)
+  resourceid : text COLLATE utf8mb4_unicode_ci COMMENT 'Resource id for the line item' 
+  tag : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Tag type specified for the line item' 
+  subreviewurl : text COLLATE utf8mb4_unicode_ci COMMENT 'Submission review URL' 
+  subreviewparams : text COLLATE utf8mb4_unicode_ci COMMENT 'Submission review custom params' 
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**grade_items**" as grade_items <<External>> {
+  --
+}
+
+entity "**course_categories**" as course_categories <<External>> {
+  --
+}
+
+lti_access_tokens }|--|| lti_types
+lti_tool_settings }|--|| course
+lti_tool_settings }|--|| lti
+lti_tool_settings }|--|| lti_tool_proxies
+lti_tool_settings }|--|| lti_types
+lti_types_categories }|--|| course_categories
+lti_types_categories }|--|| lti_types
+ltiservice_gradebookservices }|--|| grade_items
+ltiservice_gradebookservices }|--|| lti
+@enduml

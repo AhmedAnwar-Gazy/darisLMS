@@ -1,0 +1,680 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "context" {
+  +id : Integer
+  +contextlevel : Integer
+  +instanceid : Integer
+  +path : String
+  +depth : Integer
+  +locked : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "context_temp" {
+  +id : Integer
+  +path : String
+  +depth : Integer
+  +locked : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course" {
+  +id : Integer
+  +category : Integer
+  +sortorder : Integer
+  +fullname : String
+  +shortname : String
+  +idnumber : String
+  +summary : String
+  +summaryformat : Integer
+  +format : String
+  +showgrades : Integer
+  +newsitems : Integer
+  +startdate : Integer
+  +enddate : Integer
+  +relativedatesmode : Integer
+  +marker : Integer
+  +maxbytes : Integer
+  +legacyfiles : Integer
+  +showreports : Integer
+  +visible : Integer
+  +visibleold : Integer
+  +downloadcontent : Integer
+  +groupmode : Integer
+  +groupmodeforce : Integer
+  +defaultgroupingid : Integer
+  +lang : String
+  +calendartype : String
+  +theme : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +requested : Integer
+  +enablecompletion : Integer
+  +completionnotify : Integer
+  +cacherev : Integer
+  +originalcourseid : Integer
+  +showactivitydates : Integer
+  +showcompletionconditions : Integer
+  +pdfexportfont : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_categories" {
+  +id : Integer
+  +name : String
+  +idnumber : String
+  +description : String
+  +descriptionformat : Integer
+  +parent : Integer
+  +sortorder : Integer
+  +coursecount : Integer
+  +visible : Integer
+  +visibleold : Integer
+  +timemodified : Integer
+  +depth : Integer
+  +path : String
+  +theme : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_completion_aggr_methd" {
+  +id : Integer
+  +course : Integer
+  +criteriatype : Integer
+  +method : Integer
+  +value : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_completion_crit_compl" {
+  +id : Integer
+  +userid : Integer
+  +course : Integer
+  +criteriaid : Integer
+  +gradefinal : Float
+  +unenroled : Integer
+  +timecompleted : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_completion_criteria" {
+  +id : Integer
+  +course : Integer
+  +criteriatype : Integer
+  +module : String
+  +moduleinstance : Integer
+  +courseinstance : Integer
+  +enrolperiod : Integer
+  +timeend : Integer
+  +gradepass : Float
+  +role : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_completion_defaults" {
+  +id : Integer
+  +course : Integer
+  +module : Integer
+  +completion : Integer
+  +completionview : Integer
+  +completionusegrade : Integer
+  +completionpassgrade : Integer
+  +completionexpected : Integer
+  +customrules : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_completions" {
+  +id : Integer
+  +userid : Integer
+  +course : Integer
+  +timeenrolled : Integer
+  +timestarted : Integer
+  +timecompleted : Integer
+  +reaggregate : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_format_options" {
+  +id : Integer
+  +courseid : Integer
+  +format : String
+  +sectionid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_modules" {
+  +id : Integer
+  +course : Integer
+  +module : Integer
+  +instance : Integer
+  +section : Integer
+  +idnumber : String
+  +added : Integer
+  +score : Integer
+  +indent : Integer
+  +visible : Integer
+  +visibleoncoursepage : Integer
+  +visibleold : Integer
+  +groupmode : Integer
+  +groupingid : Integer
+  +completion : Integer
+  +completiongradeitemnumber : Integer
+  +completionview : Integer
+  +completionexpected : Integer
+  +completionpassgrade : Integer
+  +showdescription : Integer
+  +availability : String
+  +deletioninprogress : Integer
+  +downloadcontent : Integer
+  +lang : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_modules_completion" {
+  +id : Integer
+  +coursemoduleid : Integer
+  +userid : Integer
+  +completionstate : Integer
+  +overrideby : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_modules_viewed" {
+  +id : Integer
+  +coursemoduleid : Integer
+  +userid : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_published" {
+  +id : Integer
+  +huburl : String
+  +courseid : Integer
+  +timepublished : Integer
+  +enrollable : Integer
+  +hubcourseid : Integer
+  +status : Integer
+  +timechecked : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_request" {
+  +id : Integer
+  +fullname : String
+  +shortname : String
+  +summary : String
+  +summaryformat : Integer
+  +category : Integer
+  +reason : String
+  +requester : Integer
+  +password : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_sections" {
+  +id : Integer
+  +course : Integer
+  +section : Integer
+  +name : String
+  +summary : String
+  +summaryformat : Integer
+  +sequence : String
+  +visible : Integer
+  +availability : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "groups" {
+  +id : Integer
+  +courseid : Integer
+  +idnumber : String
+  +name : String
+  +description : String
+  +descriptionformat : Integer
+  +enrolmentkey : String
+  +picture : Integer
+  +visibility : Integer
+  +participation : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "groups_members" {
+  +id : Integer
+  +groupid : Integer
+  +userid : Integer
+  +timeadded : Integer
+  +component : String
+  +itemid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role" {
+  +id : Integer
+  +name : String
+  +shortname : String
+  +description : String
+  +sortorder : Integer
+  +archetype : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role_allow_assign" {
+  +id : Integer
+  +roleid : Integer
+  +allowassign : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role_allow_override" {
+  +id : Integer
+  +roleid : Integer
+  +allowoverride : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role_allow_switch" {
+  +id : Integer
+  +roleid : Integer
+  +allowswitch : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role_allow_view" {
+  +id : Integer
+  +roleid : Integer
+  +allowview : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role_assignments" {
+  +id : Integer
+  +roleid : Integer
+  +contextid : Integer
+  +userid : Integer
+  +timemodified : Integer
+  +modifierid : Integer
+  +component : String
+  +itemid : Integer
+  +sortorder : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role_capabilities" {
+  +id : Integer
+  +contextid : Integer
+  +roleid : Integer
+  +capability : String
+  +permission : Integer
+  +timemodified : Integer
+  +modifierid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role_context_levels" {
+  +id : Integer
+  +roleid : Integer
+  +contextlevel : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role_names" {
+  +id : Integer
+  +roleid : Integer
+  +contextid : Integer
+  +name : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user" {
+  +id : Integer
+  +auth : String
+  +confirmed : Integer
+  +policyagreed : Integer
+  +deleted : Integer
+  +suspended : Integer
+  +mnethostid : Integer
+  +username : String
+  +password : String
+  +idnumber : String
+  +firstname : String
+  +lastname : String
+  +email : String
+  +emailstop : Integer
+  +phone1 : String
+  +phone2 : String
+  +institution : String
+  +department : String
+  +address : String
+  +city : String
+  +country : String
+  +lang : String
+  +calendartype : String
+  +theme : String
+  +timezone : String
+  +firstaccess : Integer
+  +lastaccess : Integer
+  +lastlogin : Integer
+  +currentlogin : Integer
+  +lastip : String
+  +secret : String
+  +picture : Integer
+  +description : String
+  +descriptionformat : Integer
+  +mailformat : Integer
+  +maildigest : Integer
+  +maildisplay : Integer
+  +autosubscribe : Integer
+  +trackforums : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +trustbitmask : Integer
+  +imagealt : String
+  +lastnamephonetic : String
+  +firstnamephonetic : String
+  +middlename : String
+  +alternatename : String
+  +moodlenetprofile : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_devices" {
+  +id : Integer
+  +userid : Integer
+  +appid : String
+  +name : String
+  +model : String
+  +platform : String
+  +version : String
+  +pushid : String
+  +uuid : String
+  +publickey : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_enrolments" {
+  +id : Integer
+  +status : Integer
+  +enrolid : Integer
+  +userid : Integer
+  +timestart : Integer
+  +timeend : Integer
+  +modifierid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_info_category" {
+  +id : Integer
+  +name : String
+  +sortorder : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_info_data" {
+  +id : Integer
+  +userid : Integer
+  +fieldid : Integer
+  +data : String
+  +dataformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_info_field" {
+  +id : Integer
+  +shortname : String
+  +name : String
+  +datatype : String
+  +description : String
+  +descriptionformat : Integer
+  +categoryid : Integer
+  +sortorder : Integer
+  +required : Integer
+  +locked : Integer
+  +visible : Integer
+  +forceunique : Integer
+  +signup : Integer
+  +defaultdata : String
+  +defaultdataformat : Integer
+  +param1 : String
+  +param2 : String
+  +param3 : String
+  +param4 : String
+  +param5 : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_lastaccess" {
+  +id : Integer
+  +userid : Integer
+  +courseid : Integer
+  +timeaccess : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_password_history" {
+  +id : Integer
+  +userid : Integer
+  +hash : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_password_resets" {
+  +id : Integer
+  +userid : Integer
+  +timerequested : Integer
+  +timererequested : Integer
+  +token : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_preferences" {
+  +id : Integer
+  +userid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "user_private_key" {
+  +id : Integer
+  +script : String
+  +value : String
+  +userid : Integer
+  +instance : Integer
+  +iprestriction : String
+  +validuntil : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" {
+  +id : Integer
+  +name : String
+  +email : String
+  +email_verified_at : String
+  +password : String
+  +remember_token : String
+  +created_at : String
+  +updated_at : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "modules" <<External>> {
+}
+
+class "capabilities" <<External>> {
+}
+
+class "enrol" <<External>> {
+}
+
+class "groupings" <<External>> {
+}
+
+"course" "*" --> "1" "course" : originalcourseid
+"course_categories" "*" --> "1" "course_categories" : parent
+"course_completion_defaults" "*" --> "1" "course" : course
+"course_completion_defaults" "*" --> "1" "modules" : module
+"course_format_options" "*" --> "1" "course" : courseid
+"course_modules" "*" --> "1" "groupings" : groupingid
+"course_published" "*" --> "1" "course" : courseid
+"groups" "*" --> "1" "course" : courseid
+"groups_members" "*" --> "1" "groups" : groupid
+"groups_members" "*" --> "1" "users" : userid
+"role_allow_assign" "*" --> "1" "role" : allowassign
+"role_allow_assign" "*" --> "1" "role" : roleid
+"role_allow_override" "*" --> "1" "role" : allowoverride
+"role_allow_override" "*" --> "1" "role" : roleid
+"role_allow_switch" "*" --> "1" "role" : allowswitch
+"role_allow_switch" "*" --> "1" "role" : roleid
+"role_allow_view" "*" --> "1" "role" : allowview
+"role_allow_view" "*" --> "1" "role" : roleid
+"role_assignments" "*" --> "1" "context" : contextid
+"role_assignments" "*" --> "1" "role" : roleid
+"role_assignments" "*" --> "1" "users" : userid
+"role_capabilities" "*" --> "1" "capabilities" : capability
+"role_capabilities" "*" --> "1" "context" : contextid
+"role_capabilities" "*" --> "1" "users" : modifierid
+"role_capabilities" "*" --> "1" "role" : roleid
+"role_context_levels" "*" --> "1" "role" : roleid
+"role_names" "*" --> "1" "context" : contextid
+"role_names" "*" --> "1" "role" : roleid
+"user_devices" "*" --> "1" "users" : userid
+"user_enrolments" "*" --> "1" "enrol" : enrolid
+"user_enrolments" "*" --> "1" "users" : modifierid
+"user_enrolments" "*" --> "1" "users" : userid
+"user_password_history" "*" --> "1" "users" : userid
+"user_password_resets" "*" --> "1" "users" : userid
+"user_private_key" "*" --> "1" "users" : userid
+@enduml

@@ -1,0 +1,57 @@
+@startuml
+title Private Messaging & Notifications
+skinparam activityBackgroundColor #FFF5EE
+skinparam activityBorderColor #A0522D
+
+|Sender|
+start
+:Navigate to Course Context;
+:Click "Message Instructor";
+:Compose Message;
+:Click "Send";
+
+|Frontend|
+:Validate Message Content;
+:Send POST /api/messages;
+
+|Backend|
+:Check Enrollment Status;
+if (Same Course?) then (no)
+  :Return 403 Forbidden;
+  stop
+else (yes)
+  :Create Message Record;
+endif
+
+|Database|
+:INSERT INTO messages\n(sender_id, recipient_id, content);
+:UPDATE conversation_last_activity;
+-back->
+
+|Backend|
+:Trigger MessageSent Event;
+
+|Notification Service|
+:Check Recipient Preferences;
+if (Online via WebSocket?) then (yes)
+  :Send Real-time Push;
+else (no)
+  :Queue Email Notification;
+endif
+
+|Database|
+:INSERT INTO notifications\n(type: 'message', user_id);
+-back->
+
+|Recipient|
+if (Online) then (yes)
+  :Receive Browser Notification;
+  :Play Sound Alert;
+else (no)
+  :Receive Email Later;
+endif
+
+:Read Message;
+:Optionally Reply;
+stop
+@enduml

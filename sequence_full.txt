@@ -1,0 +1,441 @@
+Here is a detailed, step-by-step description for the Sequence Diagrams of DarisLMS. 
+Sequence diagrams describe the interaction between objects in sequential order. Given the Next.js 
+(Frontend) and Laravel (Backend) architecture, these diagrams focus heavily on the API 
+Request/Response cycle and database interactions. 
+ 
+1. Sequence: User Authentication (Login) 
+Goal: Securely issuing a Sanctum Token. 
+ Participants: User, Login Page (Next.js), AuthController (Laravel), SanctumService, User Model, 
+Database. 
+1. User enters email/password and clicks "Login" -> Login Page. 
+2. Login Page dispatches Redux Thunk login(credentials) -> Redux Store. 
+3. Redux Store sends POST /api/login -> AuthController. 
+4. AuthController calls validate(request) -> Self. 
+5. AuthController calls Attempt(credentials) -> Auth Facade. 
+6. Auth Facade queries find(email) -> User Model. 
+7. User Model selects data -> Database. 
+8. Database returns User Record -> User Model. 
+9. Auth Facade hashes input password and compares -> Self. 
+10. Auth Facade returns true (success) -> AuthController. 
+11. AuthController calls createToken('auth_token') -> SanctumService. 
+12. SanctumService hashes token and stores it in personal_access_tokens table -> Database. 
+13. Database returns success -> SanctumService. 
+14. SanctumService returns plainTextToken -> AuthController. 
+15. AuthController returns JSON { token, user_role } -> Redux Store. 
+16. Redux Store updates state isAuthenticated = true -> Login Page. 
+17. Login Page redirects to /dashboard -> User. 
+ 
+2. Sequence: Global Search (TypeSense Integration) 
+Goal: Retrieving search results from the fast search engine. 
+ Participants: User, SearchBar (Component), SearchController (Laravel), Scout Engine, TypeSense 
+Service. 
+1. User types "Biology" -> SearchBar. 
+2. SearchBar (after debounce) sends GET /api/search?q=Biology -> SearchController. 
+3. SearchController calls Course::search('Biology') -> Scout Engine. 
+4. Scout Engine sends HTTP Query -> TypeSense Service. 
+5. TypeSense Service matches documents and ranks results -> Self. 
+6. TypeSense Service returns IDs [101, 205] -> Scout Engine. 
+7. Scout Engine queries whereIn('id', [101, 205]) -> Database. 
+8. Database returns Course Models -> Scout Engine. 
+9. Scout Engine returns Collection -> SearchController. 
+10. SearchController returns JSON results[] -> SearchBar. 
+11. SearchBar displays Dropdown List -> User. 
+ 
+3. Sequence: Course Enrollment (Self-Enrollment) 
+Goal: A student joining a public course. 
+ Participants: Student, CoursePage (Next.js), EnrolController (Laravel), EnrolmentService, 
+Database. 
+1. Student clicks "Enroll Now" -> CoursePage. 
+2. CoursePage sends POST /api/courses/{id}/enroll (with Bearer Token) -> EnrolController. 
+3. EnrolController calls checkPrerequisites(user, course) -> EnrolmentService. 
+4. EnrolmentService queries user_enrolments -> Database. 
+5. Database returns null (not enrolled) -> EnrolmentService. 
+6. EnrolmentService returns true -> EnrolController. 
+7. EnrolController calls enrolUser(user, course, role='student') -> EnrolmentService. 
+8. EnrolmentService creates row in user_enrolments -> Database. 
+9. EnrolmentService creates row in role_assignments -> Database. 
+10. Database returns success -> EnrolmentService. 
+11. EnrolController returns 200 OK -> CoursePage. 
+12. CoursePage refreshes data and shows "Enter Course" button -> Student. 
+ 
+4. Sequence: Assignment Submission (File Upload) 
+Goal: Submitting a file for grading. 
+ Participants: Student, AssignmentView (Frontend), AssignController (Laravel), FileStorageService 
+(S3), Database. 
+1. Student selects file "homework.pdf" -> AssignmentView. 
+2. AssignmentView sends POST /api/assign/{id}/submit (Multipart Form) -> AssignController. 
+3. AssignController validates mimes:pdf and max:10mb -> Self. 
+4. AssignController calls store(file) -> FileStorageService. 
+5. FileStorageService uploads to AWS S3 Bucket -> AWS S3. 
+6. AWS S3 returns URL/Path -> FileStorageService. 
+7. FileStorageService inserts metadata into files table -> Database. 
+8. Database returns file_id -> AssignController. 
+9. AssignController creates assign_submission record linked to file_id -> Database. 
+10. Database commits transaction -> AssignController. 
+11. AssignController triggers SubmissionEvent (for notifications) -> Event Bus. 
+12. AssignController returns JSON Success -> AssignmentView. 
+13. AssignmentView shows "Submitted for Grading" badge -> Student. 
+ 
+5. Sequence: Grading an Assignment 
+Goal: Instructor providing feedback and score. 
+ Participants: Instructor, Gradebook (Frontend), GradeController (Laravel), NotificationService, 
+Database. 
+1. Instructor enters Score "85" and Comment "Good job" -> Gradebook. 
+2. Instructor clicks "Save Grade" -> Gradebook. 
+3. Gradebook sends POST /api/submission/{id}/grade -> GradeController. 
+4. GradeController updates assign_grades table with grade and grader_id -> Database. 
+5. GradeController updates assignfeedback_comments table -> Database. 
+6. GradeController calls recalculateCourseTotal(studentId) -> GradeCalculator. 
+7. GradeCalculator aggregates all grades -> Database. 
+8. GradeController calls notifyStudent(studentId) -> NotificationService. 
+9. NotificationService inserts into notifications table -> Database. 
+10. GradeController returns 200 OK -> Gradebook. 
+11. Gradebook updates UI to show "Graded" status -> Instructor. 
+ 
+6. Sequence: Real-Time Chat (Sending a Message) 
+Goal: Instant messaging between users. 
+ Participants: Sender, ChatBox (Frontend), MessageController, WebSocket Server (Pusher/Reverb), 
+Database. 
+1. Sender types "Hello" and hits Enter -> ChatBox. 
+2. ChatBox optimistically appends message to UI -> Sender. 
+3. ChatBox sends POST /api/messages -> MessageController. 
+4. MessageController validates and saves to messages table -> Database. 
+5. MessageController broadcasts MessageSent event -> WebSocket Server. 
+6. WebSocket Server pushes event to channel private-user-{recipientId} -> Recipient's Frontend. 
+7. Recipient's Frontend receives payload -> ChatBox. 
+8. ChatBox renders new message bubble -> Recipient. 
+ 
+7. Sequence: Admin - User Ban 
+Goal: Suspending a malicious user. 
+ Participants: Admin, UserManagement (Frontend), AdminUserController, SanctumService, 
+Database. 
+1. Admin clicks "Ban User" on a profile -> UserManagement. 
+2. UserManagement sends POST /api/admin/users/{id}/suspend -> AdminUserController. 
+3. AdminUserController updates user table set suspended = 1 -> Database. 
+4. AdminUserController calls revokeAllTokens(userId) -> SanctumService. 
+5. SanctumService deletes rows from personal_access_tokens -> Database. 
+6. AdminUserController returns Success -> UserManagement. 
+7. UserManagement updates User Status column to "Suspended" -> Admin. 
+o Async Effect: If the banned user tries to click anything next, API returns 401, logging them 
+out. 
+This completes the Sequence Diagrams descriptions, covering the most critical technical interactions in the 
+DarisLMS system. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Here is the continuation of the detailed Sequence Diagrams for the remaining complex functional 
+workflows of DarisLMS. 
+These diagrams cover Communication (Forums), Advanced Assessment (Workshops), Interactive 
+Content (H5P), System Maintenance, and Policy Compliance. 
+ 
+8. Sequence: Posting to a Forum 
+Goal: A student creating a reply in a discussion thread and notifying subscribers. 
+ Participants: Student, ForumView (Frontend), ForumController (Laravel), NotificationQueue 
+(Redis), Database. 
+1. Student types reply and clicks "Post" -> ForumView. 
+2. ForumView sends POST /api/forums/{forum_id}/posts -> ForumController. 
+3. ForumController validates input and checks permissions -> Self. 
+4. ForumController inserts new row into forum_posts -> Database. 
+5. Database returns post_id -> ForumController. 
+6. ForumController queries forum_subscriptions for subscriber IDs -> Database. 
+7. Database returns list of User IDs -> ForumController. 
+8. ForumController dispatches SendForumNotification Job -> NotificationQueue. 
+9. ForumController returns JSON post_data -> ForumView. 
+10. ForumView updates the thread list dynamically -> Student. 
+o (Async) NotificationQueue processes Job and sends emails via SMTP. 
+ 
+9. Sequence: Workshop Peer Assessment 
+Goal: Allocating submissions to students for peer review (Instructor Workflow). 
+ Participants: Instructor, WorkshopPanel (Frontend), WorkshopController (Laravel), 
+AllocationEngine, Database. 
+1. Instructor selects "Switch to Assessment Phase" -> WorkshopPanel. 
+2. WorkshopPanel sends POST /api/workshops/{id}/phase -> WorkshopController. 
+3. WorkshopController updates workshop table phase = 20 -> Database. 
+4. Instructor clicks "Auto-Allocate Submissions" -> WorkshopPanel. 
+5. WorkshopPanel sends POST /api/workshops/{id}/allocate -> WorkshopController. 
+6. WorkshopController calls allocateRandomly(num_reviews=3) -> AllocationEngine. 
+7. AllocationEngine queries workshop_submissions -> Database. 
+8. Database returns list of submissions -> AllocationEngine. 
+9. AllocationEngine maps Reviewers to Authors -> Self. 
+10. AllocationEngine inserts rows into workshop_assessments -> Database. 
+11. WorkshopController returns 200 OK (Allocation Count) -> WorkshopPanel. 
+12. WorkshopPanel displays "Allocation Complete" -> Instructor. 
+ 
+10. Sequence: H5P Interaction (xAPI Tracking) 
+Goal: Tracking a student's score in an interactive video. 
+ Participants: Student, H5PPlayer (Frontend Component), H5PController (Laravel), 
+GradebookService, Database. 
+1. Student answers a question correctly in the video -> H5PPlayer. 
+2. H5PPlayer generates xAPI Statement (result: { score: 10, max: 10 }) -> Self. 
+3. H5PPlayer sends POST /api/h5p/xapi -> H5PController. 
+4. H5PController stores raw statement in h5pactivity_attempts_results -> Database. 
+5. H5PController parses score from statement -> Self. 
+6. H5PController calls updateGrade(userId, activityId, score) -> GradebookService. 
+7. GradebookService updates grade_grades table -> Database. 
+8. Database confirms update -> GradebookService. 
+9. H5PController returns 200 OK -> H5PPlayer. 
+10. H5PPlayer shows "Score Saved" toast -> Student. 
+ 
+11. Sequence: Policy Consent (Middleware Interception) 
+Goal: Forcing a user to accept updated terms before accessing the site. 
+ Participants: User, Dashboard (Frontend), PolicyMiddleware (Laravel), PolicyController, Database. 
+1. User attempts to load Dashboard -> Dashboard. 
+2. Dashboard sends GET /api/user/profile -> PolicyMiddleware. 
+3. PolicyMiddleware calls checkPendingPolicies(user) -> Database. 
+4. Database returns pending_policy_id (User hasn't accepted yet) -> PolicyMiddleware. 
+5. PolicyMiddleware aborts request with 403 Forbidden (code: POLICY_REQUIRED) -> 
+Dashboard. 
+6. Dashboard catches error and redirects to /policy/accept -> User. 
+7. User reads text and clicks "I Agree" -> Frontend. 
+8. Frontend sends POST /api/policy/accept -> PolicyController. 
+9. PolicyController inserts into tool_policy_acceptances -> Database. 
+10. PolicyController returns 200 Success -> Frontend. 
+11. Frontend redirects to Dashboard (Access now granted) -> User. 
+ 
+12. Sequence: System Backup (Admin) 
+Goal: Triggering a long-running backup process without freezing the UI. 
+ Participants: Admin, BackupPanel (Frontend), AdminController, QueueWorker, CloudStorage 
+(S3). 
+1. Admin clicks "Start Backup" -> BackupPanel. 
+2. BackupPanel sends POST /api/admin/backup -> AdminController. 
+3. AdminController dispatches SystemBackupJob -> QueueWorker. 
+4. AdminController returns 202 Accepted immediately -> BackupPanel. 
+5. BackupPanel starts polling GET /api/admin/backup/status -> AdminController. 
+o (Async) QueueWorker dumps MySQL database to file -> Local Disk. 
+o (Async) QueueWorker compresses files into ZIP -> Local Disk. 
+o (Async) QueueWorker uploads ZIP -> CloudStorage (S3). 
+o (Async) QueueWorker updates backup_logs status to "Completed" -> Database. 
+6. AdminController returns status "Completed" -> BackupPanel. 
+7. BackupPanel shows "Download" button -> Admin. 
+ 
+13. Sequence: Course Completion (Automated Logic) 
+Goal: Marking a course as complete when all conditions are met. 
+ Participants: Student, System (Event Listener), CompletionService, Database. 
+1. Student finishes the final Quiz -> System. 
+2. System updates course_modules_completion table -> Database. 
+3. System triggers ActivityCompleted Event -> CompletionService. 
+4. CompletionService checks Course Criteria (e.g., "All Activities Done?") -> Database. 
+5. Database returns true -> CompletionService. 
+6. CompletionService updates course_completions table timecompleted = NOW() -> Database. 
+7. CompletionService triggers CourseCompleted Event -> Event Bus. 
+o Fork: Event Bus triggers Badge Awarding. 
+o Fork: Event Bus sends Email Certificate. 
+8. Student sees "Course Complete 100%" on Dashboard -> Student. 
+This concludes the complete set of Sequence Diagram descriptions for DarisLMS. 
+ 
+ 
+ 
+ 
+Here is the continuation of the detailed Sequence Diagrams covering the remaining functional areas of 
+DarisLMS, specifically focusing on File Repositories, Calendar, Legacy SCORM, Competencies, and 
+Admin Auditing. 
+ 
+14. Sequence: Linking External Files (Google Drive/OneDrive) 
+Goal: Attaching a file to a course without downloading it to the server (Reference linking). 
+ Participants: Instructor, FilePicker (Frontend), RepositoryController (Laravel), 
+ExternalRepoService, Database. 
+1. Instructor opens File Picker and selects "Google Drive" -> FilePicker. 
+2. FilePicker sends GET /api/repository/list?repo=google -> RepositoryController. 
+3. RepositoryController calls listFiles() -> ExternalRepoService. 
+4. ExternalRepoService calls Google Drive API -> Google Cloud. 
+5. Google Cloud returns JSON file list -> ExternalRepoService. 
+6. ExternalRepoService returns normalized list -> FilePicker. 
+7. Instructor selects "Lecture_Notes.pdf" and clicks "Select Alias" -> FilePicker. 
+8. FilePicker sends POST /api/repository/link with external_id -> RepositoryController. 
+9. RepositoryController creates record in files_reference (stores external hash/ID) -> Database. 
+10. RepositoryController creates record in files linked to reference -> Database. 
+11. Database returns new_file_id -> RepositoryController. 
+12. RepositoryController returns Success -> FilePicker. 
+13. FilePicker closes and displays the file icon in the course -> Instructor. 
+ 
+15. Sequence: Calendar Event Retrieval 
+Goal: displaying a unified calendar view combining Course deadlines and Personal events. 
+ Participants: Student, CalendarView (Frontend), CalendarController (Laravel), EventService, 
+Database. 
+1. Student navigates to "My Calendar" -> CalendarView. 
+2. CalendarView sends GET /api/calendar/events?start=2025-10-01&end=2025-10-31 -> 
+CalendarController. 
+3. CalendarController calls getEventsForUser(userId) -> EventService. 
+4. EventService queries user_enrolments to get Student's courses -> Database. 
+5. EventService queries event table -> Database. 
+o Query: Select where courseid IN [Student's Courses] OR userid = [Student]. 
+6. Database returns Raw Event Rows -> EventService. 
+7. EventService formats data (Color coding by course) -> Self. 
+8. EventService returns JSON List -> CalendarController. 
+9. CalendarController returns 200 OK -> CalendarView. 
+10. CalendarView renders events on the grid -> Student. 
+ 
+16. Sequence: SCORM Player Interaction (Legacy) 
+Goal: Tracking progress in a standard SCORM 1.2 package. 
+ Participants: Student, SCORMPlayer (Frontend IFrame), ScormApiJS (Client Script), 
+ScormController (Backend), Database. 
+1. Student clicks "Launch" -> SCORMPlayer. 
+2. SCORMPlayer loads content index.html in IFrame -> Browser. 
+3. Content calls LMSInitialize("") -> ScormApiJS. 
+4. ScormApiJS sends async POST /api/scorm/init -> ScormController. 
+5. Student completes a quiz inside the package -> Content. 
+6. Content calls LMSSetValue("cmi.core.score.raw", "100") -> ScormApiJS. 
+7. Content calls LMSCommit("") -> ScormApiJS. 
+8. ScormApiJS sends POST /api/scorm/commit with data -> ScormController. 
+9. ScormController updates scorm_scoes_track table -> Database. 
+10. Database returns Success -> ScormController. 
+11. ScormController returns true -> ScormApiJS. 
+12. Content calls LMSFinish("") -> ScormApiJS. 
+o Async Side Effect: ScormController triggers Gradebook update. 
+ 
+17. Sequence: Automatic Competency Awarding 
+Goal: Marking a skill as "Proficient" automatically when a student passes a test. 
+ Participants: System (Event Listener), CompetencyService, Database. 
+1. System detects GradeUpdated event (e.g., Quiz Grade = 90%) -> CompetencyService. 
+2. CompetencyService queries competency_modulecomp to find linked skills -> Database. 
+o Result: This Quiz is linked to Competency "Computer Basics". 
+3. CompetencyService checks rule competency_coursecompsetting -> Self. 
+o Logic: Is 90% >= Proficiency Threshold (e.g. 80%)? Yes. 
+4. CompetencyService inserts/updates competency_usercomp -> Database. 
+o Set: proficiency = 1, grade = 90. 
+5. Database confirms write -> CompetencyService. 
+6. CompetencyService creates evidence record (Audit trail) -> Database. 
+7. CompetencyService triggers CompetencyAchieved Notification -> NotificationSystem. 
+ 
+18. Sequence: Admin Audit Log Review 
+Goal: An Administrator investigating a deleted course or suspicious activity. 
+ Participants: Administrator, LogViewer (Frontend), LogController (Laravel), TypeSense (Search 
+Engine). 
+1. Administrator filters logs for "Action: Delete" -> LogViewer. 
+2. LogViewer sends GET /api/admin/logs?action=delete&page=1 -> LogController. 
+3. LogController constructs query -> TypeSense (or Database if no search engine). 
+o Note: Logs are often high volume, so TypeSense/Elasticsearch is preferred over MySQL 
+LIKE queries. 
+4. TypeSense filters logstore_standard_log index -> Self. 
+5. TypeSense returns Paginated Results -> LogController. 
+6. LogController enriches data (resolves User IDs to Names) -> Database. 
+7. LogController returns JSON -> LogViewer. 
+8. LogViewer displays table: "User X deleted Course Y at [Time]" -> Administrator. 
+ 
+Summary of Sequence Diagram Coverage 
+With these additions, you now have a complete technical interaction map for the system: 
+1. Core Access: Auth (1), Enrollment (3), Policy (11). 
+2. Learning Flow: Search (2), Assignment (4), Grading (5), Forum (8), Workshop (9), H5P (10), 
+SCORM (16). 
+3. Management: File Linking (14), Calendar (15), Competencies (17). 
+4. System/Admin: Chat (6), Ban (7), Backup (12), Completion (13), Logs (18). 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Here are the detailed descriptions for the State Machine Diagrams (SMD) covering the Content & 
+Compliance module of DarisLMS. These diagrams define how interactive learning objects behave and how 
+legal policies are managed. 
+ 
+SMD-07: Interactive Content (SCORM/H5P) Tracking 
+Description: This diagram models the playback state of a learning package (SCORM or H5P) for a specific 
+user. It tracks the session via the scorm_scoes_track or h5pactivity_attempts tables, handling resume 
+capabilities and final grading status. 
+ Initial State: Not Attempted (User has never opened the content). 
+ Final State: Passed or Failed (Activity concluded). 
+States: 
+1. Not Attempted: The user is enrolled but has not launched the activity yet. No tracking data exists. 
+2. Initialized: The player has launched, and the API handshake (LMSInitialize) is successful. 
+3. Incomplete/Running: The user is actively engaging with the content. Data is being sent (time spent, 
+page location), but the mastery criteria haven't been met. 
+4. Suspended: The user exited the activity before finishing (clicked "Exit" or closed browser). The 
+system saves the current state (bookmark) to resume later. 
+5. Completed: The user has viewed all required slides/content or reached the end of the video, 
+regardless of the score. 
+6. Passed: The user completed the activity AND achieved a score higher than the "Mastery Score" 
+defined in the package. 
+7. Failed: The user completed the activity but achieved a score lower than the "Mastery Score." 
+Transitions: 
+ Not Attempted  
+         →User Clicks Launch\xrightarrow{\text{User Clicks 
+Launch}}User Clicks Launch 
+       
+Initialized 
+ Initialized  
+         →Content Loads\xrightarrow{\text{Content Loads}}Content Loads 
+       
+Incomplete/Running 
+ Incomplete/Running  
+         →User Exits (Save Progress)\xrightarrow{\text{User Exits (Save 
+Progress)}}User Exits (Save Progress) 
+       
+Suspended 
+ Suspended  
+         →User Resumes\xrightarrow{\text{User Resumes}}User Resumes 
+       
+Incomplete/Running 
+ Incomplete/Running  
+         →Criteria Met (No Score logic)\xrightarrow{\text{Criteria Met (No Score 
+logic)}}Criteria Met (No Score logic) 
+       
+Completed 
+ Completed  
+         →Score >= Mastery Score\xrightarrow{\text{Score >= Mastery 
+Score}}Score >= Mastery Score 
+       
+Passed 
+ Completed  
+         →Score < Mastery Score\xrightarrow{\text{Score < Mastery 
+Score}}Score < Mastery Score 
+       
+Failed 
+ 
+SMD-08: Policy Document Versioning 
+Description: This diagram models the lifecycle of a legal document (e.g., Privacy Policy, Terms of Service) 
+within the tool_policy_versions table. This ensures that users always consent to the correct, current version. 
+ Initial State: Draft (Admin creates a new policy). 
+ Final State: Archived/Deprecated (Replaced by a newer version). 
+States: 
+1. Draft: The policy is being written or edited by an Administrator. It is not visible to users, and no 
+consent is required yet. 
+2. Active: The policy is published and enforceable. 
+o Effect: Any user who has not accepted this specific version ID will be intercepted by the 
+Policy Middleware upon login and forced to agree. 
+o Constraint: Only one version of a specific policy type (e.g., "Site Terms") can be Active at a 
+time. 
+3. Archived/Deprecated: The policy has been replaced by a newer version. It remains in the database 
+for legal audit trails (to prove what a user agreed to at a specific time in the past) but is no longer 
+presented for new consent. 
+Transitions: 
+ Draft  
+         →Admin Saves Changes\xrightarrow{\text{Admin Saves 
+Changes}}Admin Saves Changes 
+       
+Draft 
+ Draft  
+         →Admin Publishes\xrightarrow{\text{Admin Publishes}}Admin Publishes 
+       
+Active 
+o (Side Effect: The previously "Active" version of this policy automatically transitions to 
+Archived). 
+ Active  
+         →New Version Published\xrightarrow{\text{New Version 
+Published}}New Version Published 
+       
+Archived/Deprecated 
+ Active  
+         →Admin Manually Retires\xrightarrow{\text{Admin Manually 
+Retires}}Admin Manually Retires 
+       
+Archived/Deprecated 
+ 

@@ -1,0 +1,249 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "badge" {
+  +id : Integer
+  +name : String
+  +description : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +usercreated : Integer
+  +usermodified : Integer
+  +issuername : String
+  +issuerurl : String
+  +issuercontact : String
+  +expiredate : Integer
+  +expireperiod : Integer
+  +type : Integer
+  +courseid : Integer
+  +message : String
+  +messagesubject : String
+  +attachment : Integer
+  +notification : Integer
+  +status : Integer
+  +nextcron : Integer
+  +version : String
+  +language : String
+  +imageauthorname : String
+  +imageauthoremail : String
+  +imageauthorurl : String
+  +imagecaption : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_alignment" {
+  +id : Integer
+  +badgeid : Integer
+  +targetname : String
+  +targeturl : String
+  +targetdescription : String
+  +targetframework : String
+  +targetcode : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_backpack" {
+  +id : Integer
+  +userid : Integer
+  +email : String
+  +backpackuid : Integer
+  +autosync : Integer
+  +password : String
+  +externalbackpackid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_backpack_oauth2" {
+  +id : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +userid : Integer
+  +issuerid : Integer
+  +externalbackpackid : Integer
+  +token : String
+  +refreshtoken : String
+  +expires : Integer
+  +scope : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_criteria" {
+  +id : Integer
+  +badgeid : Integer
+  +criteriatype : Integer
+  +method : Integer
+  +description : String
+  +descriptionformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_criteria_met" {
+  +id : Integer
+  +issuedid : Integer
+  +critid : Integer
+  +userid : Integer
+  +datemet : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_criteria_param" {
+  +id : Integer
+  +critid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_endorsement" {
+  +id : Integer
+  +badgeid : Integer
+  +issuername : String
+  +issuerurl : String
+  +issueremail : String
+  +claimid : String
+  +claimcomment : String
+  +dateissued : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_external" {
+  +id : Integer
+  +backpackid : Integer
+  +collectionid : Integer
+  +entityid : String
+  +assertion : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_external_backpack" {
+  +id : Integer
+  +backpackapiurl : String
+  +backpackweburl : String
+  +apiversion : String
+  +sortorder : Integer
+  +oauth2_issuerid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_external_identifier" {
+  +id : Integer
+  +sitebackpackid : Integer
+  +internalid : String
+  +externalid : String
+  +type : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_issued" {
+  +id : Integer
+  +badgeid : Integer
+  +userid : Integer
+  +uniquehash : String
+  +dateissued : Integer
+  +dateexpire : Integer
+  +visible : Integer
+  +issuernotified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_manual_award" {
+  +id : Integer
+  +badgeid : Integer
+  +recipientid : Integer
+  +issuerid : Integer
+  +issuerrole : Integer
+  +datemet : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "badge_related" {
+  +id : Integer
+  +badgeid : Integer
+  +relatedbadgeid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role" <<External>> {
+}
+
+class "users" <<External>> {
+}
+
+class "oauth2_issuer" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"badge" "*" --> "1" "course" : courseid
+"badge" "*" --> "1" "users" : usercreated
+"badge" "*" --> "1" "users" : usermodified
+"badge_alignment" "*" --> "1" "badge" : badgeid
+"badge_backpack" "*" --> "1" "badge_external_backpack" : externalbackpackid
+"badge_backpack" "*" --> "1" "users" : userid
+"badge_backpack_oauth2" "*" --> "1" "badge_external_backpack" : externalbackpackid
+"badge_backpack_oauth2" "*" --> "1" "oauth2_issuer" : issuerid
+"badge_backpack_oauth2" "*" --> "1" "users" : userid
+"badge_backpack_oauth2" "*" --> "1" "users" : usermodified
+"badge_criteria" "*" --> "1" "badge" : badgeid
+"badge_criteria_met" "*" --> "1" "badge_criteria" : critid
+"badge_criteria_met" "*" --> "1" "badge_issued" : issuedid
+"badge_criteria_met" "*" --> "1" "users" : userid
+"badge_criteria_param" "*" --> "1" "badge_criteria" : critid
+"badge_endorsement" "*" --> "1" "badge" : badgeid
+"badge_external" "*" --> "1" "badge_backpack" : backpackid
+"badge_external_backpack" "*" --> "1" "oauth2_issuer" : oauth2_issuerid
+"badge_external_identifier" "*" --> "1" "badge_backpack" : sitebackpackid
+"badge_issued" "*" --> "1" "badge" : badgeid
+"badge_issued" "*" --> "1" "users" : userid
+"badge_manual_award" "*" --> "1" "badge" : badgeid
+"badge_manual_award" "*" --> "1" "users" : issuerid
+"badge_manual_award" "*" --> "1" "role" : issuerrole
+"badge_manual_award" "*" --> "1" "users" : recipientid
+"badge_related" "*" --> "1" "badge" : badgeid
+"badge_related" "*" --> "1" "badge" : relatedbadgeid
+@enduml

@@ -1,0 +1,34 @@
+@startuml BusinessLogicWorkflow
+left to right direction
+
+actor "System" as system
+actor "Instructor" as instructor
+actor "Administrator" as admin
+
+rectangle "Business Logic & Workflow Rules" {
+  usecase "Validate Course Publish" as UC1201
+  usecase "Check Content" as check_content
+  usecase "Enforce Enrollment Rules" as UC1202
+  usecase "All Enrollment Attempts" as all_enrollment
+  usecase "Apply Late Submission" as UC1203
+  usecase "Grade Assignment" as grade_assignment
+  usecase "Enforce Uniqueness" as UC1204
+  usecase "Validate Ownership" as UC1205
+  usecase "Configure Late Rules" as configure_rules
+}
+
+' Actor Associations
+system --> UC1201 : **Association**
+system --> UC1202 : **Association**
+system --> UC1203 : **Association**
+system --> UC1204 : **Association**
+system --> UC1205 : **Association**
+instructor --> configure_rules : **Association**
+admin --> configure_rules : **Association**
+
+' Use Case Relationships
+UC1201 ..> check_content : **<<include>>**
+UC1202 ..> all_enrollment : **<<extend>>**
+UC1203 ..> grade_assignment : **<<extend>>**
+
+@enduml

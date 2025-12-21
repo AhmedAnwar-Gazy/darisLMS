@@ -1,0 +1,52 @@
+@startuml
+title Scheduled System Maintenance
+skinparam activityBackgroundColor #FAF0E6
+skinparam activityBorderColor #8B7355
+
+|System Timer|
+start
+:Trigger Every Minute\n(Linux Cron);
+
+|Laravel Scheduler|
+:Check task_scheduled Table;
+:Identify Due Tasks;
+
+fork
+  |Worker 1|
+  :Clean Expired Tokens;
+  :DELETE FROM personal_access_tokens\nWHERE expires_at < NOW();
+  
+fork again
+  |Worker 2|
+  :Process Email Queue;
+  :SELECT * FROM mail_queue\nWHERE status='pending';
+  :Send via SMTP;
+  :UPDATE status='sent';
+  
+fork again
+  |Worker 3|
+  :Recalculate Analytics;
+  :Aggregate Course Statistics;
+  :Update Analytics Cache;
+end fork
+
+|Laravel Scheduler|
+:Synchronize Worker Results;
+
+if (Any Task Failed?) then (yes)
+  :Log Error to task_log;
+  :Increment faildelay;
+  :Schedule Retry;
+else (no)
+  :Update lastruntime;
+endif
+
+:Release Task Locks;
+
+|Database|
+:UPDATE task_scheduled\nSET lastruntime=NOW();
+:INSERT INTO task_log\nfor audit trail;
+-back->
+
+stop
+@enduml

@@ -1,0 +1,662 @@
+
+Software Requirements Specification
+for
+DarisLMS
+Version 1.0 approved
+Prepared by Ahmed Anwar
+SE3
+2025/10/20
+
+
+
+
+
+
+
+Contents
+1. Introduction	3
+2. Overall Description	4
+3. External Interface Requirements	7
+4. System Features	9
+5. Other Nonfunctional Requirements	14
+6. Other Requirements	17
+Appendix A: Glossary	17
+Appendix B: Analysis Models	18
+Appendix C: To Be Determined (TBD) List	19
+
+Revision History
+Name	Date	Reason For Changes	Version
+created	2025/10/20	Add the intall data to the srs	1.0
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+________________________________________
+1. Introduction
+1.1 Purpose
+This document defines the Software Requirements Specification (SRS) for Daris, a Learning Management System (LMS). The system will provide a robust, scalable, and secure platform for managing online learning, courses, assessments, users, and analytics.
+The purpose of this SRS is to describe the system’s functional and non-functional requirements, interfaces, data models, and interactions between backend and frontend components. It will serve as a reference for developers, designers, testers, and stakeholders throughout the system’s development lifecycle.
+1.2 Document Conventions
+•	SRS Format: Structured according to the IEEE 830–1998 standard.
+•	Keywords:
+o	Shall denotes mandatory requirements.
+o	Should denotes recommended but not required features.
+o	May or Optional indicates features that are desirable but not essential.
+•	Technical References:
+o	Laravel 12 with Sanctum for API authentication and authorization.
+o	Laravel Scout with TypeSense and Redis  for search and indexing.
+o	Next.js 15 with Redux Toolkit and RTK Query for state and data management.
+o	Shadcn/UI for accessible, composable user interface components.
+1.3 Intended Audience and Reading Suggestions
+This document is intended for the following audiences:
+•	Software Engineers: To understand system architecture, APIs, and data structures for development.
+•	UI/UX Designers: To reference key workflows and functional requirements affecting user interfaces.
+•	Quality Assurance (QA) Team: To design and execute functional and integration tests.
+•	Project Managers: To track development milestones and ensure requirement coverage.
+•	Stakeholders & Clients: To validate the system’s scope, objectives, and intended features.
+Reading Suggestions:
+•	Sections 2–3 (Overall Description and System Features) are most relevant to management and stakeholders.
+•	Sections 4–6 (External Interface, System Architecture, and Requirements) are most relevant to technical teams.
+1.4 Product Scope
+Daris LMS aims to deliver a modern, modular, and API-driven learning platform built on a Laravel REST API backend with a Next.js frontend.
+The system will provide:
+•	Course management (creation, enrollment, categorization).
+•	User and role management (students, instructors, administrators).
+•	Assessment and grading modules (assignments, quizzes, grading workflows).
+•	Content delivery (resources, lessons, media).
+•	Search capabilities powered by TypeSense for fast retrieval across courses, users, and materials.
+•	Secure authentication and authorization via Laravel Sanctum.
+•	Rich, responsive user interfaces developed with Next.js, Redux, RTK Query, and Shadcn/UI.
+The system’s long-term vision is to offer a cloud-ready LMS with REST APIs that can integrate with mobile apps, analytics dashboards, and external educational services.
+1.5 References
+1.	IEEE Std 830–1998: IEEE Recommended Practice for Software Requirements Specifications.
+2.	Laravel 12 Documentation — https://laravel.com/docs
+3.	Laravel Sanctum Documentation — https://laravel.com/docs/sanctum
+4.	Laravel Scout Documentation — https://laravel.com/docs/scout
+5.	TypeSense Documentation — https://typesense.org/docs
+6.	Next.js Documentation — https://nextjs.org/docs
+7.	Redux Toolkit and RTK Query — https://redux-toolkit.js.org
+8.	Shadcn/UI — https://ui.shadcn.com
+9.	LMS Schema Reference (used for data model inspiration).
+
+
+________________________________________
+2. Overall Description
+2.1 Product Perspective
+Daris LMS is a modern, modular, web-based Learning Management System inspired by Blackbord and Moodle’s architecture but built from the ground up using a service-oriented and API-first design. 
+The system will expose RESTful APIs via Laravel 12 (using Sanctum for secure authentication and authorization). The frontend will be developed in Next.js using Redux Toolkit and RTK Query for efficient state and data fetching.
+Key architectural components include:
+•	Backend (Laravel + Sanctum + Scout + TypeSense):
+o	Handles user authentication, authorization, and permissions.
+o	Manages courses, assignments, quizzes, grades, and content.
+o	Provides search and filtering capabilities through TypeSense.
+o	Supports modular feature development via Laravel’s service container.
+•	Frontend (Next.js + Redux + RTK Query + Shadcn/UI):
+o	Provides responsive, accessible, and user-friendly interfaces.
+o	Communicates exclusively through the REST API.
+o	Implements client-side caching and optimistic updates via RTK Query.
+•	Database Layer:
+o	Uses a MySQL-compatible schema (daris_schema) inspired by LMS's structure.
+o	Normalized schema ensures relational integrity between users, courses, enrollments, grades, and content.
+•	Integration Layer:
+o	Provides hooks for external systems such as LTI, analytics, and reporting tools.
+o	Future support for mobile apps through the same REST endpoints.
+2.2 Product Functions
+The core functional modules of Daris LMS include:
+1.	User Management
+o	User registration, profile management, authentication (via Sanctum).
+o	Role-based access (admin, instructor, student).
+o	Group and cohort management.
+2.	Course Management
+o	Create, update, delete, and categorize courses.
+o	Manage lessons, topics, and resources (files, pages, media).
+o	Control course visibility and access rules.
+3.	Enrollment and Access Control
+o	Enroll and unenroll users from courses.
+o	Define roles and permissions per course or globally.
+o	Manage enrollment methods (manual, self, bulk import).
+4.	Assessment and Grading
+o	Create and manage assignments, quizzes, and question banks.
+o	Record submissions, feedback, and grades.
+o	Generate grade reports and analytics.
+5.	Content Management
+o	Upload and organize files, resources, and media.
+o	Version control for educational materials.
+o	Integration with file conversion and preview services.
+6.	Search and Discovery
+o	Full-text search using TypeSense via Laravel Scout.
+o	Faceted search for users, courses, and content.
+o	Intelligent ranking and filtering.
+7.	Analytics and Reports
+o	Track user activity, engagement, and performance metrics.
+o	Generate progress and attendance reports.
+o	Provide dashboards for instructors and admins.
+8.	Notifications and Communication
+o	Email and in-app notifications for course updates and submissions.
+o	Messaging system for students and instructors.
+9.	System Administration
+o	Manage global settings, plugins, and integrations.
+o	Monitor performance and logs.
+o	Backup and restore capabilities.
+2.3 User Classes and Characteristics
+User Class	Description	Technical Proficiency	Access Level
+Student	Learns through courses, submits assignments, takes quizzes, and views grades.	Basic	Limited to enrolled courses and profile.
+Instructor	Creates and manages courses, materials, and assessments.	Intermediate	Can manage courses and enrolled students.
+Administrator	Oversees all system operations, configurations, and users.	Advanced	Full system access.
+Guest	May view public courses or previews.	Minimal	Restricted to read-only public data.
+Support Staff	Handles user issues, enrollments, and reporting.	Intermediate	Limited management permissions.
+2.4 Operating Environment
+•	Backend:
+o	Laravel 12 (PHP 8.3+)
+o	MySQL 8.0+ (or compatible MariaDB)
+o	TypeSense Search Engine
+o	Nginx or Apache web server
+•	Frontend:
+o	Next.js 15 with Node.js 20+
+o	Redux Toolkit + RTK Query
+o	Shadcn/UI components
+•	Development Environment:
+o	OS: Linux/Windows/macOS
+o	Containerization via Docker (recommended)
+•	Deployment Environment:
+o	Cloud hosting (AWS, DigitalOcean, or equivalent)
+o	Load balancing and horizontal scaling support
+2.5 Design and Implementation Constraints
+•	The backend must adhere to RESTful conventions and be stateless.
+•	Authentication must use Laravel Sanctum with token-based sessions.
+•	Search and indexing must be implemented using TypeSense integrated with Laravel Scout.
+•	All API endpoints must follow JSON-based request/response formats.
+•	The system must comply with accessibility (WCAG 2.1 AA) standards via Shadcn/UI.
+•	The frontend must be compatible with major browsers (Chrome, Edge, Firefox, Safari).
+•	The architecture must support scalability for up to 50,000 concurrent users.
+•	Integration with third-party LMS systems (e.g., via LTI) should be possible in future phases.
+2.6 User Documentation
+The following documentation will be provided:
+•	User Guides:
+o	Student manual (course navigation, submissions, quizzes).
+o	Instructor manual (course creation, grading, reporting).
+o	Admin manual (user management, configuration, maintenance).
+•	Technical Documentation:
+o	REST API documentation (Swagger or Postman Collection).
+o	TypeSense index schema and search guide.
+o	Developer onboarding guide (setup, local environment, and deployment).
+o	System architecture and ER diagrams.
+All documentation will be maintained in Markdown and versioned in Git.
+2.7 Assumptions and Dependencies
+•	Users will have stable internet connections and modern browsers.
+•	The database structure (daris_schema) will remain consistent with the approved design.
+•	TypeSense will be available and operational for search functionality.
+•	External mail servers or APIs (SMTP, SendGrid) will be configured for notifications.
+•	Integration with cloud storage (e.g., AWS S3) may be used for media and files.
+•	System updates will be deployed via CI/CD pipeline to ensure continuous integration.
+•	Future mobile applications will consume the same REST API endpoints.
+•	All timestamps and logs will use UTC for consistency.
+
+________________________________________
+3. External Interface Requirements
+3.1 User Interfaces
+Daris LMS provides a responsive, accessible, and modern web-based interface developed with Next.js, Redux Toolkit, RTK Query, and Shadcn/UI components. The interface will adapt for desktop, tablet, and mobile users while maintaining consistent usability.
+3.1.1 Web Application (Next.js Frontend)
+•	Login/Registration Page:
+Users authenticate using credentials (email/password) through Sanctum-protected API endpoints.
+Features include password reset, email verification, and OAuth (future enhancement).
+•	Dashboard:
+Displays role-specific summaries (e.g., enrolled courses for students, teaching courses for instructors, analytics for admins).
+•	Course Management Interface:
+Allows instructors and admins to create, edit, and organize courses, lessons, quizzes, and resources.
+•	Learning Interface:
+Provides a content viewer for videos, documents, pages, and activities.
+Supports progress tracking, completion status, and navigation breadcrumbs.
+•	Assessment Interface:
+Allows students to submit assignments or attempt quizzes and view grades.
+Instructors can grade, provide feedback, and release results.
+•	Search Interface:
+Powered by TypeSense and integrated through RTK Query for real-time filtering of courses, users, and resources.
+•	Notification and Messaging Interface:
+Displays alerts, announcements, and direct messages between users.
+•	Administration Panel:
+Provides system configuration tools, reports, and user management features accessible only to admins.
+3.1.2 Accessibility and Usability
+•	Fully keyboard-navigable (ARIA and WCAG 2.1 AA compliant).
+•	Uses Shadcn/UI components for consistent styling, dark/light themes, and motion support.
+•	Localization and RTL (Right-to-Left) support for multilingual users (future scope).
+________________________________________
+3.2 Hardware Interfaces
+The Daris LMS is a cloud-based web application and does not depend on specific hardware devices. However, the following minimum hardware requirements are defined for optimal operation:
+3.2.1 Server Hardware
+Component	Minimum Specification	Recommended Specification
+CPU	4 cores	8+ cores
+RAM	8 GB	16+ GB
+Storage	100 GB SSD	250+ GB NVMe SSD
+Network	100 Mbps	1 Gbps with load balancer support
+3.2.2 Client Devices
+Device Type	Requirements
+Desktop/Laptop	Modern web browser, 4 GB RAM, 2 GHz CPU minimum
+Tablet	Touch-enabled, modern browser support (Chrome, Safari, Edge)
+Mobile	Responsive UI compatible with Android 10+ and iOS 14+ browsers
+________________________________________
+3.3 Software Interfaces
+Daris LMS interacts with several software components and services across backend, frontend, and integrations.
+3.3.1 Backend Software Interfaces
+•	Laravel 12 REST API:
+Provides all data operations through RESTful endpoints secured by Sanctum tokens.
+•	Database Layer:
+MySQL 8+ or MariaDB equivalent, using the daris_schema structure for relational data management.
+•	Search Engine:
+TypeSense connected via Laravel Scout for real-time indexing and search.
+•	File Storage:
+Local or cloud-based (AWS S3 or DigitalOcean Spaces) integrated with Laravel Filesystem API.
+•	Email Service:
+Configurable SMTP or API-based services (e.g., SendGrid, Mailgun) for notifications and password resets.
+•	Cache Layer:
+Redis or Memcached for session, queue, and search caching.
+3.3.2 Frontend Software Interfaces
+•	Next.js 15: Server-side rendering and routing for optimized performance.
+•	Redux Toolkit + RTK Query: State management and API data synchronization.
+•	Shadcn/UI: Provides prebuilt, accessible React components.
+•	Axios (via RTK Query base): Handles REST API requests.
+•	WebSocket Support (future): For real-time notifications and chat features.
+3.3.3 External Software Interfaces
+•	Learning Tools Interoperability (LTI): Future support for integrating with external educational tools.
+•	OAuth Providers: Future integration for SSO (Google, Microsoft, etc.).
+•	Analytics Platforms: Optional export to external dashboards (e.g., Google Data Studio, Metabase).
+________________________________________
+3.4 Communications Interfaces
+The Daris LMS components communicate primarily through secure HTTP(S) protocols using JSON data formats.
+3.4.1 Network Protocols
+•	HTTPS (TLS 1.3): All communications between frontend, backend, and external services are encrypted.
+•	HTTP/2 Support: For multiplexed and faster resource delivery.
+•	REST API Communication: Follows standard CRUD conventions with versioned endpoints (/api/v1/...).
+3.4.2 API Communication
+•	Authentication handled via Laravel Sanctum tokens or cookies (for SPAs).
+•	JSON request/response structures standardized across endpoints.
+•	Error handling with consistent HTTP status codes and messages.
+•	Pagination, filtering, and sorting parameters for all list endpoints.
+3.4.3 Email and Notification Communication
+•	SMTP or API-based mail services for system notifications (course updates, grade releases).
+•	In-app notifications through WebSocket (future) or polling via RTK Query cache invalidation.
+3.4.4 External System Integration
+•	Optional REST endpoints for integration with external systems (e.g., institutional ERP, payment gateways for certification).
+•	Webhooks for notifying external services of key system events (e.g., course creation, completion, enrollment changes).
+________________________________________
+4. System Features
+4.1 System Feature 1 — User Management
+4.1.1 Description and Priority
+This module handles user registration, authentication, profiles, and role-based permissions. It is a critical core feature, as all access control depends on it.
+4.1.2 Functional Requirements
+•	User Registration & Login
+o	The system shall allow new users to register using email and password.
+o	The system shall validate and verify emails before granting full access.
+o	The system shall authenticate users using Laravel Sanctum tokens.
+•	User Roles and Permissions
+o	The system shall define roles: Administrator, Instructor, Student, Support, and Guest.
+o	Each role shall have predefined privileges and access scopes.
+•	Profile Management
+o	Users shall view and edit personal information (name, contact, profile picture).
+o	Instructors may add professional details (qualifications, bio, expertise areas).
+•	Password and Security
+o	Users shall reset passwords via email-based verification.
+o	Sanctum tokens shall expire or be revocable for enhanced security.
+4.1.3 Inputs and Outputs
+•	Inputs: Registration form data, credentials, role assignments.
+•	Outputs: JSON responses with tokens, error codes, or success messages.
+4.1.4 Dependencies
+•	Laravel Sanctum
+•	MySQL user tables from daris_schema
+•	Mail service for password reset
+________________________________________
+4.2 System Feature 2 — Course Management
+4.2.1 Description and Priority
+Provides instructors and administrators the ability to create, organize, and manage courses. It is high priority, as courses are central to all learning activities.
+4.2.2 Functional Requirements
+•	Course Creation & Editing
+o	Instructors shall create, edit, and delete courses.
+o	Courses shall include metadata (title, category, summary, visibility).
+•	Course Categorization
+o	Admins shall organize courses by departments, subjects, or skill levels.
+•	Lesson & Module Management
+o	Courses shall contain lessons, topics, and content modules (files, videos, text pages).
+•	Course Visibility
+o	The system shall support public, private, and restricted-access courses.
+•	TypeSense Integration
+o	Courses shall be indexed and searchable using Laravel Scout + TypeSense.
+4.2.3 Inputs and Outputs
+•	Inputs: Course creation forms, file uploads, metadata.
+•	Outputs: Confirmation messages, search-indexed data objects.
+4.2.4 Dependencies
+•	courses, modules, resources tables in daris_schema
+•	TypeSense search engine
+________________________________________
+4.3 System Feature 3 — Enrollment and Access Control
+4.3.1 Description and Priority
+Controls which users can access specific courses. Critical for system security and workflow integrity.
+4.3.2 Functional Requirements
+•	Enrollments
+o	Admins and instructors shall enroll or remove students from courses.
+o	Students may self-enroll in open-access courses.
+•	Access Rules
+o	The system shall validate user roles before granting access to content.
+o	Role-per-course permissions shall override global defaults.
+•	Groups and Cohorts
+o	Instructors shall organize students into groups or cohorts for collaboration and grading.
+4.3.3 Dependencies
+•	enrol, user_enrolments, and role_assignments tables
+•	User Management module
+________________________________________
+4.4 System Feature 4 — Assessment and Grading
+4.4.1 Description and Priority
+Enables instructors to create and manage assignments, quizzes, and grade students. This is a core educational component.
+4.4.2 Functional Requirements
+•	Assignments
+o	Instructors shall create assignments with deadlines and file submissions.
+o	Students shall upload files or text submissions.
+o	System shall record timestamps and versions.
+•	Quizzes
+o	Instructors shall build quizzes from a question bank.
+o	Quizzes shall support multiple-choice, true/false, and short-answer types.
+•	Grading
+o	Grades shall be recorded automatically (for objective questions) or manually (for essays).
+o	Students shall view graded results and feedback.
+•	Analytics
+o	The system shall generate performance reports and grade averages.
+4.4.3 Dependencies
+•	assign, quiz, question_bank, and grade tables
+•	File upload service
+________________________________________
+4.5 System Feature 5 — Content Management
+4.5.1 Description and Priority
+Handles educational resources such as documents, videos, and web pages. Essential for course delivery.
+4.5.2 Functional Requirements
+•	Upload and Version Control
+o	Instructors shall upload course materials.
+o	System shall maintain version history of files.
+•	Media and Resource Types
+o	Support for text, PDFs, videos, links, and embedded content.
+•	Storage
+o	Files shall be stored in local or cloud storage (e.g., AWS S3).
+o	Metadata shall include file type, size, and owner.
+•	Search Integration
+o	All resources shall be searchable via TypeSense.
+4.5.3 Dependencies
+•	Laravel Filesystem API
+•	files and resource tables
+________________________________________
+4.6 System Feature 6 — Search and Discovery
+4.6.1 Description and Priority
+Allows users to quickly find courses, instructors, or content. High usability priority.
+4.6.2 Functional Requirements
+•	TypeSense Integration
+o	System shall index searchable data automatically via Laravel Scout.
+•	Faceted Filtering
+o	Users shall filter results by category, instructor, or difficulty.
+•	Search Results
+o	Queries shall return paginated, ranked results.
+4.6.3 Dependencies
+•	TypeSense and Laravel Scout
+•	Course, User, and Resource modules
+________________________________________
+4.7 System Feature 7 — Notifications and Communication
+4.7.1 Description and Priority
+Supports real-time and asynchronous communication between users. Important for engagement.
+4.7.2 Functional Requirements
+•	Notifications
+o	System shall notify users of new assignments, grades, or messages.
+•	Messaging
+o	Users shall send messages within enrolled courses.
+•	Email Integration
+o	Notifications shall also be sent via email for critical events.
+4.7.3 Dependencies
+•	SMTP / Mail API
+•	WebSocket or polling service (future)
+________________________________________
+4.8 System Feature 8 — Analytics and Reporting
+4.8.1 Description and Priority
+Provides insights into user progress and system performance. Medium to high priority for admin and instructor users.
+4.8.2 Functional Requirements
+•	Reports
+o	Generate progress, completion, and performance reports.
+•	Dashboards
+o	Visualize key data points (user activity, grades, attendance).
+•	Export
+o	Allow CSV or PDF export for admin use.
+4.8.3 Dependencies
+•	Database queries and precomputed analytics tables
+•	Reporting library or API
+________________________________________
+4.9 System Feature 9 — Administration and Configuration
+4.9.1 Description and Priority
+Provides system-wide settings and monitoring. High administrative priority.
+4.9.2 Functional Requirements
+•	Manage users, roles, and permissions globally.
+•	Configure system settings (mail, search, storage, integrations).
+•	Perform backups, restore data, and view logs.
+•	Manage plugins or extensions.
+4.9.3 Dependencies
+•	Laravel configuration files
+•	Admin role and access controls
+________________________________________
+4.10 System Feature 10 — API and Integration Layer
+4.10.1 Description and Priority
+Ensures interoperability and external access through secure RESTful APIs.
+4.10.2 Functional Requirements
+•	All modules shall expose endpoints under /api/v1/.
+•	API shall use JSON format and respect REST principles.
+•	Sanctum authentication tokens shall protect restricted routes.
+•	Future integration with mobile apps and third-party systems (e.g., LTI, payment gateways).
+4.10.3 Dependencies
+•	Laravel Sanctum
+•	Swagger/Postman documentation
+•	External integrations
+
+________________________________________
+5. Other Nonfunctional Requirements
+5.1 Performance Requirements
+System Responsiveness
+•	The system shall respond to standard user interactions (e.g., page navigation, API request) within 2 seconds under normal load.
+•	Search queries using TypeSense shall return results in under 500 ms for datasets up to 1 million indexed records.
+•	Course pages with multimedia content shall load in under 3 seconds on broadband connections.
+Concurrency and Scalability
+•	The backend shall support at least 5,000 concurrent active users with linear scalability.
+•	The architecture shall be horizontally scalable using load balancers and container orchestration (e.g., Docker Swarm or Kubernetes).
+•	Caching (Redis or equivalent) shall be employed to reduce repetitive queries and API latency.
+Database Performance
+•	Queries on key tables (users, courses, grades) shall be optimized with indexing and pagination.
+•	Background tasks (email dispatch, indexing) shall be handled asynchronously via Laravel Queues.
+Uptime and Availability
+•	The system shall maintain an uptime of 99.5% or greater.
+•	Scheduled maintenance periods shall be announced and minimized to under 2 hours per month.
+________________________________________
+5.2 Safety Requirements
+Data Integrity and Backup
+•	The system shall implement daily automated backups for the database and uploaded files.
+•	Backup files shall be stored in an offsite location or cloud storage for disaster recovery.
+•	Data restoration procedures shall be tested at least quarterly.
+Error Handling
+•	All server-side exceptions shall be logged and categorized (critical, warning, info).
+•	The system shall not expose internal error messages or stack traces to users.
+•	Client errors (e.g., invalid inputs) shall be displayed with user-friendly messages.
+System Failure Recovery
+•	In the event of a system crash, the application shall automatically restart via a process manager (e.g., Supervisor or PM2).
+•	The system shall be designed to resume queued or background jobs upon restart without data loss.
+Data Validation and Input Safety
+•	Input validation shall be enforced both client-side and server-side.
+•	Invalid or malformed requests shall be rejected gracefully to prevent corruption or injection attacks.
+________________________________________
+5.3 Security Requirements
+Authentication and Authorization
+•	All authentication shall use Laravel Sanctum with personal access tokens or cookie-based sessions.
+•	Role-based access control (RBAC) shall be enforced across all modules.
+•	API endpoints shall require valid tokens for all restricted operations.
+Data Protection
+•	All communications shall be encrypted via HTTPS (TLS 1.3).
+•	Sensitive data (passwords, tokens) shall be stored using salted hash algorithms (e.g., bcrypt).
+•	The system shall not log sensitive information such as credentials or tokens.
+Session Management
+•	Sanctum tokens shall be revocable and time-limited.
+•	Idle sessions shall automatically expire after 30 minutes of inactivity.
+•	Concurrent login restrictions may be implemented for security-critical accounts (optional).
+Access and Audit Logging
+•	The system shall maintain audit trails for key operations (logins, enrollments, grade changes).
+•	Logs shall include user ID, timestamp, and originating IP address.
+Compliance
+•	The system shall comply with GDPR-like data handling standards:
+o	Right to view, export, and delete user data.
+o	Explicit consent for email notifications and cookies.
+________________________________________
+5.4 Software Quality Attributes
+Reliability
+•	The system shall handle transient network failures gracefully and retry failed API calls (via RTK Query or queue retry).
+•	Laravel’s exception handling and Redis caching shall ensure fault tolerance.
+Usability
+•	The frontend shall maintain consistency through Shadcn/UI components.
+•	The UI shall follow WCAG 2.1 AA accessibility standards.
+•	The system shall provide a multilingual interface, including RTL support.
+Maintainability
+•	Code shall follow Laravel and Next.js best practices with modular architecture.
+•	Configuration shall be environment-based (.env) and version-controlled (excluding secrets).
+•	API routes and models shall be documented automatically (Swagger/Postman Collection).
+Portability
+•	The application shall run in containerized environments (Docker).
+•	The frontend shall be deployable independently via static generation or server-side rendering (SSR).
+•	Migration scripts shall ensure compatibility between versions.
+Scalability
+•	The architecture shall support distributed database read replicas.
+•	TypeSense cluster configuration shall support sharding and replication for high availability.
+Extensibility
+•	The backend shall support modular expansion (plugins or packages).
+•	The frontend shall support reusable component extensions via Shadcn and React hooks.
+________________________________________
+5.5 Business Rules
+1.	User Enrollment Rules
+o	A user must have an active account to enroll in a course.
+o	Only instructors and admins can manually enroll or remove students.
+2.	Course Publishing Rules
+o	A course must contain at least one published module or lesson before being visible to students.
+o	Draft courses cannot be enrolled in by students.
+3.	Assessment Rules
+o	Assignments must have a due date and maximum grade defined.
+o	Late submissions may be allowed based on instructor configuration.
+o	Quiz attempts shall be limited according to course settings.
+4.	Grading Rules
+o	Only instructors or admins can modify grades.
+o	Grade changes shall be logged for audit purposes.
+5.	Data Retention Rules
+o	User activity logs shall be retained for 12 months.
+o	Deleted accounts shall anonymize personally identifiable data.
+6.	Search and Indexing Rules
+o	New or updated records shall automatically trigger a TypeSense index update.
+o	Deactivated or deleted records shall be removed from search indices.
+7.	Notification Rules
+o	Critical notifications (password resets, new grades) shall also be sent by email.
+o	Users may disable non-essential notifications in their settings.
+8.	System Maintenance Rules
+o	System configuration changes must be performed by administrators.
+o	Backups shall be verified automatically and reported to the admin dashboard.
+________________________________________
+6. Other Requirements
+This section provides supporting information, definitions, analysis artifacts, and pending elements related to Daris LMS. It ensures clarity and traceability for all technical and non-technical stakeholders.
+________________________________________
+Appendix A: Glossary
+Term	Definition
+Daris LMS	The name of the Learning Management System being developed. It is designed as a modern, API-driven e-learning platform.
+LMS (Learning Management System)	A software platform for creating, delivering, tracking, and managing educational content and training programs.
+Laravel	A PHP-based backend framework used to build the RESTful API for Daris, utilizing Sanctum for authentication and Scout for search indexing.
+Sanctum	Laravel package providing API token authentication for SPAs and mobile apps.
+Scout	Laravel package used for full-text search indexing; in Daris, it integrates with TypeSense.
+TypeSense	An open-source search engine used to power real-time, faceted search for courses, users, and resources.
+Next.js	A React-based frontend framework used to build Daris’s user interface with server-side rendering and API integration.
+Redux Toolkit (RTK)	A modern state management solution for React applications, simplifying global state and API caching via RTK Query.
+RTK Query	A data-fetching and caching library that integrates with Redux to manage asynchronous API calls efficiently.
+Shadcn/UI	A collection of accessible, themeable React components used to build consistent and modern UIs in Daris.
+REST API	An architectural style for designing networked applications using stateless HTTP requests and standardized endpoints.
+Role-Based Access Control (RBAC)	A security model defining access permissions based on user roles such as Admin, Instructor, or Student.
+WCAG 2.1 AA	Accessibility standards ensuring that web content is usable by people with disabilities.
+Docker	A containerization platform used for packaging and deploying Daris LMS and its dependencies.
+CI/CD	Continuous Integration/Continuous Deployment — automated processes for building, testing, and deploying code updates.
+LTI (Learning Tools Interoperability)	A standard protocol for integrating third-party educational tools with LMS platforms.
+ER Diagram	Entity-Relationship Diagram showing database entities and their relationships.
+API Endpoint	A specific URL path exposed by the backend to handle requests and responses (e.g., /api/v1/courses).
+________________________________________
+Appendix B: Analysis Models
+This appendix summarizes the conceptual and structural models used in designing Daris LMS.
+B.1 Entity-Relationship (ER) Overview
+The data schema (daris_schema) defines the relationships between key entities, adapted from LMS schema but optimized for modern REST usage.
+Core Entities:
+•	Users — represents all individuals (students, instructors, admins).
+•	Roles and Permissions — define access control and hierarchical privileges.
+•	Courses — contain educational modules, lessons, and content.
+•	Enrollments — link users to courses and manage their participation.
+•	Assignments & Quizzes — define activities with grading rules.
+•	Grades — store evaluation results.
+•	Files & Resources — represent uploaded materials and course content.
+•	Notifications & Messages — manage communication between users.
+•	Logs & Analytics — track system usage and learner performance.
+B.2 System Architecture Model
+•	Backend Layer:
+Laravel REST API, Sanctum authentication, TypeSense search, Redis caching, and MySQL database.
+•	Frontend Layer:
+Next.js app using Redux Toolkit and RTK Query for data flow, with UI built using Shadcn components.
+•	Integration Layer:
+Exposes standardized REST endpoints (/api/v1/) for external systems (mobile apps, analytics, LTI).
+•	Deployment Model:
+Dockerized containers for backend and frontend; Nginx reverse proxy; CI/CD pipeline for versioned releases.
+B.3 Use Case Diagram (Conceptual Overview)
+Actors:
+•	Student
+•	Instructor
+•	Administrator
+Main Use Cases:
+•	Student: Enroll in course, view lessons, submit assignments, take quizzes, view grades.
+•	Instructor: Create courses, upload materials, grade submissions, send announcements.
+•	Administrator: Manage users, monitor analytics, configure system settings.
+________________________________________
+Appendix C: To Be Determined (TBD) List
+Item	Description	Status	Responsible Party
+1. Mobile App Integration	Define mobile client API specifications (React Native or Flutter).	TBD	Development Lead
+2. LTI Support	Specify interoperability requirements for integrating third-party tools.	TBD	Backend Team
+3. Real-Time WebSocket Chat	Evaluate and implement a scalable WebSocket or SSE solution.	TBD	Full Stack Team
+4. Payment Gateway Integration	Define API for paid courses, certificates, or subscriptions.	TBD	Product Owner
+5. Localization (i18n)	Define full translation system and language resource files.	TBD	Frontend Team
+6. Reporting Dashboards	Determine visualization framework for analytics (e.g., Chart.js, Recharts).	TBD	UI/UX + Analytics Team
+7. Plugin/Extension Framework	Define modular architecture for external packages or features.	TBD	System Architect
+8. AI-Powered Recommendations	Future enhancement: suggest courses and materials based on learner behavior.	TBD	Data Science Team
+9. Accessibility Auditing	Conduct formal WCAG 2.1 AA compliance audit before final release.	TBD	QA + Accessibility Lead
+10. Performance Benchmarking	Run formal load testing with 10K+ concurrent users.	TBD	DevOps Team
+
+
+
+Team members :
+•	Gamal Sadiq (front-end dev , ux design)
+•	Khaldoun Al-Khawlani (front-end dev , ui design)
+•	Mubarak Ashraf  (back-end dev , logicl design)
+•	Ahmed Anwar (back-end dev , sysem design  )
+

@@ -1,0 +1,36 @@
+@startuml UserManagement
+left to right direction
+
+actor "Guest" as guest
+actor "Authenticated User" as auth_user
+actor "Administrator" as admin
+actor "System (SMTP)" as smtp_system
+
+rectangle "User Management System" {
+  usecase "Register Account" as UC0101
+  usecase "Send Verification Email" as send_verify
+  usecase "Login" as UC0102
+  usecase "Generate Token" as generate_token
+  usecase "Reset Password" as UC0103
+  usecase "Manage Profile" as UC0104
+  usecase "Validate Input" as validate_input
+  usecase "Ban User" as UC0105
+  usecase "Logout All Devices" as UC0106
+}
+
+' Actor Associations
+guest --> UC0101 : **Association**
+guest --> UC0102 : **Association**
+auth_user --> UC0103 : **Association**
+auth_user --> UC0104 : **Association**
+auth_user --> UC0106 : **Association**
+admin --> UC0105 : **Association**
+smtp_system --> send_verify : **Association**
+
+' Use Case Relationships
+UC0101 ..> send_verify : **<<include>>**
+UC0102 ..> generate_token : **<<include>>**
+UC0103 ..> UC0102 : **<<extend>>**
+UC0104 ..> validate_input : **<<include>>**
+
+@enduml

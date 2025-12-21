@@ -1,0 +1,17 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "my_pages" {
+  +id : Integer
+  +userid : Integer
+  +name : String
+  +private : Integer
+  +sortorder : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+@enduml

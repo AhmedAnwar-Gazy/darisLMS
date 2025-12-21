@@ -1,0 +1,207 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**assign**" as assign {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of the instance of the assignment. Displayed at the top of each page.' 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The description of the assignment. This field is used by feature MOD_INTRO.' 
+  introformat : smallint NOT NULL DEFAULT '0' COMMENT 'The format of the description field of the assignment. This field is used by feature MOD_INTRO.' 
+  alwaysshowdescription : tinyint NOT NULL DEFAULT '0' COMMENT 'If false the assignment intro will only be displayed after the allowsubmissionsfrom date. If true it will always be displayed.' 
+  nosubmissions : tinyint NOT NULL DEFAULT '0' COMMENT 'This field is a cache for is_any_submission_plugin_enabled() which allows Moodle pages to distinguish offline assignment types without loading the assignment class.' 
+  submissiondrafts : tinyint NOT NULL DEFAULT '0' COMMENT 'If true 
+  sendnotifications : tinyint NOT NULL DEFAULT '0' COMMENT 'Allows the disabling of email notifications in the assign module.' 
+  sendlatenotifications : tinyint NOT NULL DEFAULT '0' COMMENT 'Allows separate enabling of notifications for late assignment submissions.' 
+  duedate : int NOT NULL DEFAULT '0' COMMENT 'The due date for the assignment. Displayed to students.' 
+  allowsubmissionsfromdate : int NOT NULL DEFAULT '0' COMMENT 'If set 
+  grade : int NOT NULL DEFAULT '0' COMMENT 'The maximum grade for this assignment. Can be negative to indicate the use of a scale.' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'The time the settings for this assign module instance were last modified.' 
+  requiresubmissionstatement : tinyint NOT NULL DEFAULT '0' COMMENT 'Forces the student to accept a submission statement when submitting an assignment' 
+  completionsubmit : tinyint NOT NULL DEFAULT '0' COMMENT 'If this field is set to 1 
+  cutoffdate : int NOT NULL DEFAULT '0' COMMENT 'The final date after which submissions will no longer be accepted for this assignment without an extensions.' 
+  gradingduedate : int NOT NULL DEFAULT '0' COMMENT 'The expected date for marking the submissions.' 
+  teamsubmission : tinyint NOT NULL DEFAULT '0' COMMENT 'Do students submit in teams?' 
+  requireallteammemberssubmit : tinyint NOT NULL DEFAULT '0' COMMENT 'If enabled 
+  teamsubmissiongroupingid : int NOT NULL DEFAULT '0' COMMENT 'A grouping id to get groups for team submissions' 
+  blindmarking : tinyint NOT NULL DEFAULT '0' COMMENT 'Hide student/grader identities until the reveal identities action is performed' 
+  hidegrader : tinyint NOT NULL DEFAULT '0' COMMENT 'Hide the grader''s identity from students. The opposite of blind marking.' 
+  revealidentities : tinyint NOT NULL DEFAULT '0' COMMENT 'Show identities for a blind marking assignment' 
+  attemptreopenmethod : varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'none' COMMENT 'How to determine when students are allowed to open a new submission. Valid options are none 
+  maxattempts : int NOT NULL DEFAULT '-1' COMMENT 'What is the maximum number of student attempts allowed for this assignment? -1 means unlimited.' 
+  markingworkflow : tinyint NOT NULL DEFAULT '0' COMMENT 'If enabled 
+  markingallocation : tinyint NOT NULL DEFAULT '0' COMMENT 'If enabled 
+  sendstudentnotifications : tinyint NOT NULL DEFAULT '1' COMMENT 'Default for send student notifications checkbox when grading.' 
+  preventsubmissionnotingroup : tinyint NOT NULL DEFAULT '0' COMMENT 'If enabled a user will be unable to make a submission unless they are a member of a group.' 
+  activity : text COLLATE utf8mb4_unicode_ci 
+  activityformat : smallint NOT NULL DEFAULT '0' 
+  timelimit : int NOT NULL DEFAULT '0' 
+  submissionattachments : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**assign_grades**" as assign_grades {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assignment : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'The time the assignment submission was first modified by a grader.' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'The most recent modification time for the assignment submission by a grader.' 
+  grader : int NOT NULL DEFAULT '0' 
+  grade : decimal(10 
+  attemptnumber : int NOT NULL DEFAULT '0' COMMENT 'The attempt number that this grade relates to' 
+}
+
+entity "**assign_overrides**" as assign_overrides {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assignid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Foreign key references assign.id' (FK)
+  groupid : bigint unsigned DEFAULT NULL COMMENT 'Foreign key references groups.id.  Can be null if this is a per-user override.' (FK)
+  userid : bigint unsigned DEFAULT NULL COMMENT 'Foreign key references user.id.  Can be null if this is a per-group override.' (FK)
+  sortorder : int DEFAULT NULL COMMENT 'Rank for sorting overrides.' 
+  allowsubmissionsfromdate : int DEFAULT NULL COMMENT 'Time at which students may start attempting this assign. Can be null 
+  duedate : int DEFAULT NULL COMMENT 'Time by which students must have completed their attempt.  Can be null 
+  cutoffdate : int DEFAULT NULL COMMENT 'Time by which students must have completed their attempt.  Can be null 
+  timelimit : int DEFAULT NULL COMMENT 'Time limit in seconds. Can be null 
+}
+
+entity "**assign_plugin_config**" as assign_plugin_config {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assignment : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  plugin : varchar(28) COLLATE utf8mb4_unicode_ci NOT NULL 
+  subtype : varchar(28) COLLATE utf8mb4_unicode_ci NOT NULL 
+  name : varchar(28) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : text COLLATE utf8mb4_unicode_ci COMMENT 'The value of the config setting. Stored as text but can be interpreted by the plugin however it likes.' 
+}
+
+entity "**assign_submission**" as assign_submission {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assignment : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'The time of the first student submission to this assignment.' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'The last time this assignment submission was modified by a student.' 
+  timestarted : int DEFAULT NULL COMMENT 'The time when the student stared the submission.' 
+  status : varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The status of this assignment submission. The current statuses are DRAFT and SUBMITTED.' 
+  groupid : int NOT NULL DEFAULT '0' COMMENT 'The group id for team submissions' 
+  attemptnumber : int NOT NULL DEFAULT '0' COMMENT 'Used to track attempts for an assignment' 
+  latest : tinyint NOT NULL DEFAULT '0' COMMENT 'Greatly simplifies queries wanting to know information about only the latest attempt.' 
+}
+
+entity "**assign_user_flags**" as assign_user_flags {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'The id of the user these flags apply to.' (FK)
+  assignment : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'The assignment these flags apply to.' (FK)
+  locked : int NOT NULL DEFAULT '0' COMMENT 'Student cannot make any changes to their submission if this flag is set.' 
+  mailed : smallint NOT NULL DEFAULT '0' COMMENT 'Has the student been sent a notification about this grade update?' 
+  extensionduedate : int NOT NULL DEFAULT '0' COMMENT 'An extension date assigned to an individual student.' 
+  workflowstate : varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The current workflow state of the grade' 
+  allocatedmarker : int NOT NULL DEFAULT '0' COMMENT 'The allocated marker to this submission' 
+}
+
+entity "**assign_user_mapping**" as assign_user_mapping {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assignment : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+}
+
+entity "**assignfeedback_comments**" as assignfeedback_comments {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assignment : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  grade : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  commenttext : text COLLATE utf8mb4_unicode_ci COMMENT 'The feedback text' 
+  commentformat : smallint NOT NULL DEFAULT '0' COMMENT 'The feedback text format' 
+}
+
+entity "**assignfeedback_editpdf_annot**" as assignfeedback_editpdf_annot {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  gradeid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  pageno : int NOT NULL DEFAULT '0' COMMENT 'The page in the PDF that this annotation appears on' 
+  x : int DEFAULT '0' COMMENT 'x-position of the start of the annotation (in pixels - image resolution is set to 100 pixels per inch)' 
+  y : int DEFAULT '0' COMMENT 'y-position of the start of the annotation (in pixels - image resolution is set to 100 pixels per inch)' 
+  endx : int DEFAULT '0' COMMENT 'x-position of the end of the annotation' 
+  endy : int DEFAULT '0' COMMENT 'y-position of the end of the annotation' 
+  path : text COLLATE utf8mb4_unicode_ci COMMENT 'SVG path describing the freehand line' 
+  type : varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT 'line' COMMENT 'line 
+  colour : varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT 'black' COMMENT 'Can be red 
+  draft : tinyint NOT NULL DEFAULT '1' COMMENT 'Is this a draft annotation?' 
+}
+
+entity "**assignfeedback_editpdf_cmnt**" as assignfeedback_editpdf_cmnt {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  gradeid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  x : int DEFAULT '0' COMMENT 'x-position of the top-left corner of the comment (in pixels - image resolution is set to 100 pixels per inch)' 
+  y : int DEFAULT '0' COMMENT 'y-position of the top-left corner of the comment (in pixels - image resolution is set to 100 pixels per inch)' 
+  width : int DEFAULT '120' COMMENT 'width 
+  rawtext : text COLLATE utf8mb4_unicode_ci COMMENT 'Raw text of the comment' 
+  pageno : int NOT NULL DEFAULT '0' COMMENT 'The page in the PDF that this comment appears on' 
+  colour : varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT 'black' COMMENT 'Can be red 
+  draft : tinyint NOT NULL DEFAULT '1' COMMENT 'Is this a draft comment?' 
+}
+
+entity "**assignfeedback_editpdf_quick**" as assignfeedback_editpdf_quick {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  rawtext : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  width : int NOT NULL DEFAULT '120' 
+  colour : varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT 'yellow' 
+}
+
+entity "**assignfeedback_editpdf_rot**" as assignfeedback_editpdf_rot {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  gradeid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  pageno : int NOT NULL DEFAULT '0' COMMENT 'Page number' 
+  pathnamehash : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'File path hash of the rotated page' 
+  isrotated : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the page is rotated or not' 
+  degree : int NOT NULL DEFAULT '0' COMMENT 'Rotation degree' 
+}
+
+entity "**assignfeedback_file**" as assignfeedback_file {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assignment : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  grade : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  numfiles : int NOT NULL DEFAULT '0' COMMENT 'The number of files uploaded by a grader.' 
+}
+
+entity "**assignsubmission_file**" as assignsubmission_file {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assignment : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  submission : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  numfiles : int NOT NULL DEFAULT '0' COMMENT 'The number of files the student submitted.' 
+}
+
+entity "**assignsubmission_onlinetext**" as assignsubmission_onlinetext {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assignment : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  submission : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  onlinetext : text COLLATE utf8mb4_unicode_ci COMMENT 'The text for this online text submission.' 
+  onlineformat : smallint NOT NULL DEFAULT '0' COMMENT 'The format for this online text submission.' 
+}
+
+entity "**groups**" as groups <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+assign_grades }|--|| assign
+assign_overrides }|--|| assign
+assign_overrides }|--|| groups
+assign_overrides }|--|| users
+assign_plugin_config }|--|| assign
+assign_submission }|--|| assign
+assign_user_flags }|--|| assign
+assign_user_flags }|--|| users
+assign_user_mapping }|--|| assign
+assign_user_mapping }|--|| users
+assignfeedback_comments }|--|| assign
+assignfeedback_comments }|--|| assign_grades
+assignfeedback_editpdf_annot }|--|| assign_grades
+assignfeedback_editpdf_cmnt }|--|| assign_grades
+assignfeedback_editpdf_quick }|--|| users
+assignfeedback_editpdf_rot }|--|| assign_grades
+assignfeedback_file }|--|| assign
+assignfeedback_file }|--|| assign_grades
+assignsubmission_file }|--|| assign
+assignsubmission_file }|--|| assign_submission
+assignsubmission_onlinetext }|--|| assign
+assignsubmission_onlinetext }|--|| assign_submission
+@enduml

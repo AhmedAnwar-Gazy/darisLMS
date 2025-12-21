@@ -1,0 +1,54 @@
+@startuml
+title Gamification - Badge Issuance
+skinparam activityBackgroundColor #FFE4E1
+skinparam activityBorderColor #FF4500
+
+|Event System|
+start
+:Detect Trigger Event\n(Course Completion, Activity Mastery);
+
+|Badge Engine|
+:Query Eligible Badges;
+
+|Database|
+:SELECT * FROM badge\nWHERE status='active' AND (course_id=? OR sitewide=1);
+:SELECT criteria FROM badge_criteria\nWHERE badge_id=?;
+-back->
+
+|Badge Engine|
+:Evaluate Each Criterion;
+
+fork
+  :Check Course Completion;
+fork again
+  :Check Grade Threshold;
+fork again
+  :Check Activity Participation;
+fork again
+  :Check Profile Completion;
+end fork
+
+:Determine Criteria Satisfaction;
+
+if (All Criteria Met?) then (no)
+  :Do Not Award Badge;
+  stop
+else (yes)
+  :Award Badge;
+endif
+
+|Database|
+:INSERT INTO badge_issued\n(user_id, badge_id, dateissued, uniquehash);
+:UPDATE user SET badge_count=badge_count+1;
+-back->
+
+|Badge Engine|
+:Generate Badge Image\n(with embedded metadata);
+:Store Badge Image in Storage;
+
+|Notification System|
+:Send "Badge Earned" Notification;
+:Update User Profile Display;
+
+stop
+@enduml

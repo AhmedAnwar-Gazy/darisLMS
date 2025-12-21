@@ -1,0 +1,305 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**enrol**" as enrol {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  enrol : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  status : int NOT NULL DEFAULT '0' COMMENT '0..9 are system constants 
+  courseid : bigint unsigned NOT NULL (FK)
+  sortorder : int NOT NULL DEFAULT '0' COMMENT 'order of enrol plugins in each course' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Optional instance name' 
+  enrolperiod : int DEFAULT '0' COMMENT 'Custom - enrolment duration' 
+  enrolstartdate : int DEFAULT '0' COMMENT 'Custom - start of self enrolment' 
+  enrolenddate : int DEFAULT '0' COMMENT 'Custom - end of enrolment' 
+  expirynotify : tinyint(1) DEFAULT '0' COMMENT 'Custom - notify users before expiration' 
+  expirythreshold : int DEFAULT '0' COMMENT 'Custom - when should be the participants notified' 
+  notifyall : tinyint(1) DEFAULT '0' COMMENT 'Custom - Notify both participant and person responsible for enrolments' 
+  password : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Custom - enrolment or access password' 
+  cost : varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Custom - enrolment cost' 
+  currency : varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Custom - cost currency' 
+  roleid : bigint unsigned DEFAULT '0' COMMENT 'Custom - the default role given to participants who self-enrol' (FK)
+  customint1 : int DEFAULT NULL COMMENT 'Custom - general int' 
+  customint2 : int DEFAULT NULL COMMENT 'Custom - general int' 
+  customint3 : int DEFAULT NULL COMMENT 'Custom - general int' 
+  customint4 : int DEFAULT NULL COMMENT 'Custom - general int' 
+  customint5 : int DEFAULT NULL COMMENT 'Custom - general int' 
+  customint6 : int DEFAULT NULL COMMENT 'Custom - general int' 
+  customint7 : int DEFAULT NULL COMMENT 'Custom - general int' 
+  customint8 : int DEFAULT NULL COMMENT 'Custom - general int' 
+  customchar1 : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Custom - general short name' 
+  customchar2 : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Custom - general short name' 
+  customchar3 : text COLLATE utf8mb4_unicode_ci COMMENT 'Custom - general short name' 
+  customdec1 : decimal(12 
+  customdec2 : decimal(12 
+  customtext1 : text COLLATE utf8mb4_unicode_ci COMMENT 'Custom - general text' 
+  customtext2 : text COLLATE utf8mb4_unicode_ci COMMENT 'Custom - general text' 
+  customtext3 : text COLLATE utf8mb4_unicode_ci COMMENT 'Custom - general text' 
+  customtext4 : text COLLATE utf8mb4_unicode_ci COMMENT 'Custom - general text' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**enrol_flatfile**" as enrol_flatfile {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  action : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+  roleid : bigint unsigned NOT NULL (FK)
+  userid : bigint unsigned NOT NULL (FK)
+  courseid : bigint unsigned NOT NULL (FK)
+  timestart : int NOT NULL DEFAULT '0' 
+  timeend : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**enrol_lti_app_registration**" as enrol_lti_app_registration {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Common name to identify this platform to users' 
+  platformid : text COLLATE utf8mb4_unicode_ci COMMENT 'The issuer URL' 
+  clientid : text COLLATE utf8mb4_unicode_ci COMMENT 'The clientid string 
+  uniqueid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'A unique local id 
+  platformclienthash : varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'SHA256 hash of the platformid (issuer) and clientid' 
+  platformuniqueidhash : varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'SHA256 hash of the platformid (issuer) and uniqueid' 
+  authenticationrequesturl : text COLLATE utf8mb4_unicode_ci COMMENT 'The authorisation endpoint of the platform' 
+  jwksurl : text COLLATE utf8mb4_unicode_ci COMMENT 'The JSON Web Key Set URL for the platform' 
+  accesstokenurl : text COLLATE utf8mb4_unicode_ci 
+  status : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Status of the registration 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**enrol_lti_context**" as enrol_lti_context {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The id of the context on the platform' 
+  ltideploymentid : bigint unsigned NOT NULL COMMENT 'The id of the enrol_lti_deployment record containing the deployment information.' (FK)
+  type : text COLLATE utf8mb4_unicode_ci COMMENT 'The type of the context on the platform' 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**enrol_lti_deployment**" as enrol_lti_deployment {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'A short name identifying the tool deployment to users' 
+  deploymentid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The id of the deployment 
+  platformid : bigint unsigned NOT NULL COMMENT 'The platformid to which this deployment belongs' (FK)
+  legacyconsumerkey : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The legacy consumer key mapped to this deployment 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**enrol_lti_lti2_consumer**" as enrol_lti_lti2_consumer {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  consumerkey256 : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  consumerkey : text COLLATE utf8mb4_unicode_ci 
+  secret : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  ltiversion : varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  consumername : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  consumerversion : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  consumerguid : text COLLATE utf8mb4_unicode_ci 
+  profile : text COLLATE utf8mb4_unicode_ci 
+  toolproxy : text COLLATE utf8mb4_unicode_ci 
+  settings : text COLLATE utf8mb4_unicode_ci 
+  protected : tinyint(1) NOT NULL 
+  enabled : tinyint(1) NOT NULL 
+  enablefrom : int DEFAULT NULL 
+  enableuntil : int DEFAULT NULL 
+  lastaccess : int DEFAULT NULL 
+  created : int NOT NULL 
+  updated : int NOT NULL 
+}
+
+entity "**enrol_lti_lti2_context**" as enrol_lti_lti2_context {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  consumerid : bigint unsigned NOT NULL (FK)
+  lticontextkey : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  type : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  settings : text COLLATE utf8mb4_unicode_ci 
+  created : int NOT NULL 
+  updated : int NOT NULL 
+}
+
+entity "**enrol_lti_lti2_nonce**" as enrol_lti_lti2_nonce {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  consumerid : bigint unsigned NOT NULL (FK)
+  value : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL 
+  expires : int NOT NULL 
+}
+
+entity "**enrol_lti_lti2_resource_link**" as enrol_lti_lti2_resource_link {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : bigint unsigned DEFAULT NULL (FK)
+  consumerid : bigint unsigned DEFAULT NULL (FK)
+  ltiresourcelinkkey : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  settings : text COLLATE utf8mb4_unicode_ci 
+  primaryresourcelinkid : bigint unsigned DEFAULT NULL (FK)
+  shareapproved : tinyint(1) DEFAULT NULL 
+  created : int NOT NULL 
+  updated : int NOT NULL 
+}
+
+entity "**enrol_lti_lti2_share_key**" as enrol_lti_lti2_share_key {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  sharekey : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL 
+  resourcelinkid : bigint NOT NULL 
+  autoapprove : tinyint(1) NOT NULL 
+  expires : int NOT NULL 
+}
+
+entity "**enrol_lti_lti2_tool_proxy**" as enrol_lti_lti2_tool_proxy {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  toolproxykey : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL 
+  consumerid : bigint unsigned NOT NULL (FK)
+  toolproxy : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  created : int NOT NULL 
+  updated : int NOT NULL 
+}
+
+entity "**enrol_lti_lti2_user_result**" as enrol_lti_lti2_user_result {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  resourcelinkid : bigint unsigned NOT NULL (FK)
+  ltiuserkey : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  ltiresultsourcedid : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  created : int NOT NULL 
+  updated : int NOT NULL 
+}
+
+entity "**enrol_lti_resource_link**" as enrol_lti_resource_link {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  resourcelinkid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The platform-and-deployment-unique id of the resource link' 
+  ltideploymentid : bigint unsigned NOT NULL COMMENT 'The id of the enrol_lti_deployment record containing the deployment information.' (FK)
+  resourceid : int NOT NULL COMMENT 'The id of the local enrol_lti_tools record containing information about the published resource to which this resource link relates.' 
+  lticontextid : bigint unsigned DEFAULT NULL COMMENT 'The id of the enrol_lti_context record containing information about the context from which this resource link originates.' (FK)
+  lineitemsservice : text COLLATE utf8mb4_unicode_ci COMMENT 'The URL for the line items service for this resource link' 
+  lineitemservice : text COLLATE utf8mb4_unicode_ci COMMENT 'The URL for the line item service (if only one line item present).' 
+  lineitemscope : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The ags line items authorization scope' 
+  resultscope : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The ags result authorization scope' 
+  scorescope : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The ags score items authorization scope' 
+  contextmembershipsurl : text COLLATE utf8mb4_unicode_ci COMMENT 'The NRPS membership URL' 
+  nrpsserviceversions : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The NRPS supported service versions' 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**enrol_lti_tool_consumer_map**" as enrol_lti_tool_consumer_map {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  toolid : bigint unsigned NOT NULL COMMENT 'The tool ID.' (FK)
+  consumerid : bigint unsigned NOT NULL COMMENT 'The consumer ID.' (FK)
+}
+
+entity "**enrol_lti_tools**" as enrol_lti_tools {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  enrolid : bigint unsigned NOT NULL (FK)
+  contextid : bigint unsigned NOT NULL (FK)
+  ltiversion : varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'LTI-1p3' 
+  institution : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  lang : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'en' 
+  timezone : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '99' 
+  maxenrolled : int NOT NULL DEFAULT '0' 
+  maildisplay : tinyint NOT NULL DEFAULT '2' 
+  city : varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL 
+  country : varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL 
+  gradesync : tinyint(1) NOT NULL DEFAULT '0' 
+  gradesynccompletion : tinyint(1) NOT NULL DEFAULT '0' 
+  membersync : tinyint(1) NOT NULL DEFAULT '0' 
+  membersyncmode : tinyint(1) NOT NULL DEFAULT '0' 
+  roleinstructor : int NOT NULL 
+  rolelearner : int NOT NULL 
+  secret : text COLLATE utf8mb4_unicode_ci 
+  uuid : varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  provisioningmodelearner : tinyint DEFAULT NULL 
+  provisioningmodeinstructor : tinyint DEFAULT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**enrol_lti_user_resource_link**" as enrol_lti_user_resource_link {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  ltiuserid : bigint unsigned NOT NULL COMMENT 'The id of the enrol_lti_users record' (FK)
+  resourcelinkid : bigint unsigned NOT NULL COMMENT 'The id of the enrol_lti_resource_link record.' (FK)
+}
+
+entity "**enrol_lti_users**" as enrol_lti_users {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  toolid : bigint unsigned NOT NULL (FK)
+  serviceurl : text COLLATE utf8mb4_unicode_ci 
+  sourceid : text COLLATE utf8mb4_unicode_ci 
+  ltideploymentid : bigint unsigned DEFAULT NULL (FK)
+  consumerkey : text COLLATE utf8mb4_unicode_ci 
+  consumersecret : text COLLATE utf8mb4_unicode_ci 
+  membershipsurl : text COLLATE utf8mb4_unicode_ci 
+  membershipsid : text COLLATE utf8mb4_unicode_ci 
+  lastgrade : decimal(10 
+  lastaccess : int DEFAULT NULL COMMENT 'The time the user last accessed' 
+  timecreated : int DEFAULT NULL COMMENT 'The time the user was created' 
+}
+
+entity "**enrol_paypal**" as enrol_paypal {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  business : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  receiver_email : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  receiver_id : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  item_name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  courseid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  instanceid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  memo : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  tax : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  option_name1 : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  option_selection1_x : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  option_name2 : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  option_selection2_x : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  payment_status : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  pending_reason : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  reason_code : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+  txn_id : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  parent_txn_id : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  payment_type : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timeupdated : int NOT NULL DEFAULT '0' 
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+entity "**role**" as role <<External>> {
+  --
+}
+
+enrol }|--|| course
+enrol }|--|| role
+enrol_flatfile }|--|| course
+enrol_flatfile }|--|| role
+enrol_flatfile }|--|| users
+enrol_lti_context }|--|| enrol_lti_deployment
+enrol_lti_deployment }|--|| enrol_lti_app_registration
+enrol_lti_lti2_context }|--|| enrol_lti_lti2_consumer
+enrol_lti_lti2_nonce }|--|| enrol_lti_lti2_consumer
+enrol_lti_lti2_resource_link }|--|| enrol_lti_lti2_consumer
+enrol_lti_lti2_resource_link }|--|| enrol_lti_lti2_context
+enrol_lti_lti2_resource_link }|--|| enrol_lti_lti2_resource_link
+enrol_lti_lti2_tool_proxy }|--|| enrol_lti_lti2_consumer
+enrol_lti_lti2_user_result }|--|| enrol_lti_lti2_resource_link
+enrol_lti_resource_link }|--|| enrol_lti_context
+enrol_lti_resource_link }|--|| enrol_lti_deployment
+enrol_lti_tool_consumer_map }|--|| enrol_lti_lti2_consumer
+enrol_lti_tool_consumer_map }|--|| enrol_lti_tools
+enrol_lti_tools }|--|| context
+enrol_lti_tools }|--|| enrol
+enrol_lti_user_resource_link }|--|| enrol_lti_users
+enrol_lti_user_resource_link }|--|| enrol_lti_resource_link
+enrol_lti_users }|--|| enrol_lti_deployment
+enrol_lti_users }|--|| enrol_lti_tools
+enrol_lti_users }|--|| users
+enrol_paypal }|--|| course
+enrol_paypal }|--|| enrol
+enrol_paypal }|--|| users
+@enduml

@@ -1,0 +1,67 @@
+@startuml
+title External File Repository Linking
+skinparam activityBackgroundColor #E6E6FA
+skinparam activityBorderColor #9370DB
+
+|User|
+start
+:Open File Picker Dialog\n(Assignment, Resource, Profile);
+:Select "External Repository";
+:Choose Repository Type\n(Google Drive, OneDrive, Dropbox);
+
+|File Picker|
+:Check OAuth Token Status;
+
+if (Token Valid & Not Expired?) then (no)
+  :Initiate OAuth Flow;
+  :Redirect to Provider;
+  :User Grants Permissions;
+  :Receive Authorization Code;
+  :Exchange Code for Token;
+  :Store Token Securely;
+endif
+
+:Request File Listing;
+
+|Repository Service|
+:Call External API;
+
+|External API|
+:Return File/Folder List;
+-back->
+
+|File Picker|
+:Display File Browser Interface;
+
+|User|
+:Navigate Folder Structure;
+:Select Target File;
+:Choose "Link File" Option;
+
+|Repository Service|
+:Retrieve File Metadata\n(Not file content);
+:Create Reference Record;
+
+|Database|
+:INSERT INTO files_reference\n(external_id, repository, metadata);
+:INSERT INTO files\n(reference_id, filename, filesize);
+-back->
+
+|File Picker|
+:Close Dialog;
+:Show Linked File Icon;
+
+|User|
+:Continue with Workflow\n(Submit, Save, etc.);
+
+stop
+
+Note over User,Database : **Future Access Flow**
+When file is accessed:
+1. User clicks file link
+2. System checks permissions
+3. Generates temporary access URL
+4. Redirects to external provider
+5. Provider serves file directly
+@end note
+@enduml

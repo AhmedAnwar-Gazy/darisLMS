@@ -1,0 +1,40 @@
+@startuml
+autonumber
+    participant Student
+    participant AssignmentView
+    participant AssignController
+    participant FileStorageService
+    participant "AWS S3" as AWS_S3
+    participant Database
+    participant "Event Bus" as EventBus
+
+    Student -> AssignmentView: Select File "homework.pdf"
+    Student -> AssignmentView: Click "Submit Assignment"
+    
+    AssignmentView -> AssignController: POST /api/assign/{id}/submit (multipart/form-data)
+    
+    AssignController -> AssignController: validate(['file' => 'mimes:pdf|max:10240'])
+    
+    alt Validation Failed
+        AssignController --> AssignmentView: Return 422 Validation Error
+        AssignmentView --> Student: Show Error Message
+    else Validation Passed
+        AssignController -> FileStorageService: store(file)
+        FileStorageService -> AWS_S3: PUT Object homework.pdf
+        AWS_S3 --> FileStorageService: Return S3 URL
+        
+        FileStorageService -> Database: INSERT INTO files (url, size, type)
+        Database --> FileStorageService: Return file_id=789
+        
+        FileStorageService --> AssignController: Return file_id
+        
+        AssignController -> Database: INSERT INTO assign_submissions (user_id, assignment_id, file_id, status)
+        Database --> AssignController: Return submission_id
+        
+        AssignController -> EventBus: dispatch(SubmissionCreated::class)
+        
+        AssignController --> AssignmentView: Return 201 Created
+        AssignmentView -> AssignmentView: Update UI
+        AssignmentView --> Student: Show "Submitted for Grading" Badge
+    end
+@enduml

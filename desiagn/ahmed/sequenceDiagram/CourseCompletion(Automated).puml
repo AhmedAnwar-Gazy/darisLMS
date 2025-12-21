@@ -1,0 +1,64 @@
+@startuml
+autonumber
+    participant "Event System" as System
+    participant CompletionService
+    participant Database
+    participant EventBus
+    participant BadgeService
+    participant CertificateService
+    participant Student
+
+    note over System,Database: Trigger: Student completes final quiz
+    
+    System -> Database: INSERT INTO course_modules_completion (user_id, module_id, completed, timestamp)
+    Database --> System: Record Saved
+    
+    System -> EventBus: dispatch(ActivityCompleted::class, [user_id, module_id, course_id])
+    
+    EventBus -> CompletionService: Handle ActivityCompleted Event
+    
+    CompletionService -> Database: Check Completion Criteria
+    note right of CompletionService: SELECT\n  COUNT(*) as completed,\n  COUNT(*) as total,\n  completion_requirements\nFROM course_modules\nWHERE course_id=?
+    
+    Database --> CompletionService: Return: completed=15, total=15, requires_all=true
+    
+    alt Criteria Met (All activities completed)
+        CompletionService -> Database: UPDATE course_completions SET timecompleted=NOW(), status=50 WHERE user_id=? AND course_id=?
+        Database --> CompletionService: Completion Recorded
+        
+        CompletionService -> EventBus: dispatch(CourseCompleted::class, [user_id, course_id, grade])
+        
+        par Parallel Post-Completion Actions
+            EventBus -> BadgeService: Award "Course Master" Badge
+            BadgeService -> Database: INSERT INTO badge_issued (user_id, badge_id, course_id)
+            Database --> BadgeService: Badge Awarded
+            BadgeService -> EventBus: dispatch(BadgeAwarded::class)
+            
+            EventBus -> CertificateService: Generate Completion Certificate
+            CertificateService -> CertificateService: Create PDF Certificate
+            CertificateService -> Database: Store certificate_url in user_certificates
+            Database --> CertificateService: Certificate Saved
+            CertificateService -> EventBus: dispatch(CertificateGenerated::class)
+            
+            EventBus -> CompletionService: Trigger Grade Finalization
+            CompletionService -> Database: Calculate final grade average
+            Database --> CompletionService: Final Grade: 87.5%
+        end
+        
+        CompletionService -> Database: UPDATE grade_items SET locked=1 (Prevent further changes)
+        Database --> CompletionService: Grades Locked
+        
+        CompletionService -> Database: INSERT INTO completion_notifications (user_id, course_id, type)
+        Database --> CompletionService: Notification Queued
+        
+        note over Student,Database: Student Experience Update
+        
+        Database -> Student: Next Dashboard Load Shows "Course Complete 100%"
+        Database -> Student: Badge Appears on Profile
+        Database -> Student: Certificate Available for Download
+        
+    else Criteria Not Met
+        CompletionService -> Database: UPDATE course_completions SET progress=93% (Partial)
+        Database --> CompletionService: Progress Updated
+    end
+@enduml

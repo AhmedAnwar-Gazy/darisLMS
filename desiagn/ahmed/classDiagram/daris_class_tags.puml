@@ -1,0 +1,91 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "tag" {
+  +id : Integer
+  +userid : Integer
+  +tagcollid : Integer
+  +name : String
+  +rawname : String
+  +isstandard : Integer
+  +description : String
+  +descriptionformat : Integer
+  +flag : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tag_area" {
+  +id : Integer
+  +component : String
+  +itemtype : String
+  +enabled : Integer
+  +tagcollid : Integer
+  +callback : String
+  +callbackfile : String
+  +showstandard : Integer
+  +multiplecontexts : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tag_coll" {
+  +id : Integer
+  +name : String
+  +isdefault : Integer
+  +component : String
+  +sortorder : Integer
+  +searchable : Integer
+  +customurl : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tag_correlation" {
+  +id : Integer
+  +tagid : Integer
+  +correlatedtags : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tag_instance" {
+  +id : Integer
+  +tagid : Integer
+  +component : String
+  +itemtype : String
+  +itemid : Integer
+  +contextid : Integer
+  +tiuserid : Integer
+  +ordering : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+"tag" "*" --> "1" "tag_coll" : tagcollid
+"tag" "*" --> "1" "users" : userid
+"tag_area" "*" --> "1" "tag_coll" : tagcollid
+"tag_correlation" "*" --> "1" "tag" : tagid
+"tag_instance" "*" --> "1" "context" : contextid
+"tag_instance" "*" --> "1" "tag" : tagid
+@enduml

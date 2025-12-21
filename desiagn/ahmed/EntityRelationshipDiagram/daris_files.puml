@@ -1,0 +1,69 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**file_conversion**" as file_conversion {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  usermodified : bigint unsigned NOT NULL (FK)
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  sourcefileid : bigint unsigned NOT NULL (FK)
+  targetformat : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  status : int DEFAULT '0' 
+  statusmessage : text COLLATE utf8mb4_unicode_ci 
+  converter : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  destfileid : bigint unsigned DEFAULT NULL (FK)
+  data : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**files**" as files {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contenthash : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sha1 hash of file content' 
+  pathnamehash : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'complete file path sha1 hash - unique for each file' 
+  contextid : bigint unsigned NOT NULL COMMENT 'The context id defined in context table - identifies the instance of plugin owning the file' (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Full name of the component owning the area' 
+  filearea : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Like "coursefiles". "submission" 
+  itemid : int NOT NULL COMMENT 'Optional - some plugin specific item id (eg. forum post 
+  filepath : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Optional - relative path to file from module content root 
+  filename : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The full Unicode name of this file (case sensitive) - some chars are not allowed though' 
+  userid : bigint unsigned DEFAULT NULL COMMENT 'Optional - general userid field - meaning depending on plugin' (FK)
+  filesize : int NOT NULL 
+  mimetype : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'type of file - jpeg image 
+  status : int NOT NULL DEFAULT '0' COMMENT 'number greater than 0 means something is wrong with this file (virus 
+  source : text COLLATE utf8mb4_unicode_ci COMMENT 'contains the reference if the file is imported from external sites' 
+  author : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The original author of the file' 
+  license : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'license of the file to guide reuse' 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  sortorder : int NOT NULL DEFAULT '0' COMMENT 'order of files' 
+  referencefileid : bigint unsigned DEFAULT NULL COMMENT 'Use to indicate file is a proxy for repository file' (FK)
+}
+
+entity "**files_reference**" as files_reference {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  repositoryid : bigint unsigned NOT NULL (FK)
+  lastsync : int DEFAULT NULL COMMENT 'Last time the proxy file was synced with repository' 
+  reference : text COLLATE utf8mb4_unicode_ci COMMENT 'Identification of the external file. Repository plugins are interpreting it to locate the external file.' 
+  referencehash : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Internal implementation detail 
+}
+
+entity "**repository_instances**" as repository_instances <<External>> {
+  --
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+file_conversion }|--|| files
+file_conversion }|--|| files
+file_conversion }|--|| users
+files }|--|| context
+files }|--|| files_reference
+files }|--|| users
+files_reference }|--|| repository_instances
+@enduml

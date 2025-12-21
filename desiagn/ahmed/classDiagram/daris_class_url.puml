@@ -1,0 +1,22 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "url" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +externalurl : String
+  +display : Integer
+  +displayoptions : String
+  +parameters : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+@enduml

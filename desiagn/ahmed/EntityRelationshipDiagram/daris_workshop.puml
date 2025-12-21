@@ -1,0 +1,204 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**workshop**" as workshop {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : bigint unsigned NOT NULL COMMENT 'ID of the parent course' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name of the activity' 
+  intro : text COLLATE utf8mb4_unicode_ci COMMENT 'The introduction or description of the activity' 
+  introformat : tinyint NOT NULL DEFAULT '0' COMMENT 'The format of the intro field' 
+  instructauthors : text COLLATE utf8mb4_unicode_ci COMMENT 'Instructions for the submission phase' 
+  instructauthorsformat : tinyint NOT NULL DEFAULT '0' 
+  instructreviewers : text COLLATE utf8mb4_unicode_ci COMMENT 'Instructions for the assessment phase' 
+  instructreviewersformat : tinyint NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL COMMENT 'The timestamp when the module was modified' 
+  phase : tinyint DEFAULT '0' COMMENT 'The current phase of workshop (0 = not available 
+  useexamples : tinyint DEFAULT '0' COMMENT 'optional feature: students practise evaluating on example submissions from teacher' 
+  usepeerassessment : tinyint DEFAULT '0' COMMENT 'optional feature: students perform peer assessment of others'' work' 
+  useselfassessment : tinyint DEFAULT '0' COMMENT 'optional feature: students perform self assessment of their own work' 
+  grade : decimal(10 
+  gradinggrade : decimal(10 
+  strategy : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The type of the current grading strategy used in this workshop' 
+  evaluation : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The recently used grading evaluation method' 
+  gradedecimals : tinyint DEFAULT '0' COMMENT 'Number of digits that should be shown after the decimal point when displaying grades' 
+  submissiontypetext : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Can students enter text for their submissions? 0 for no 
+  submissiontypefile : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Can students attach files for their submissions? 0 for no 
+  nattachments : tinyint DEFAULT '1' COMMENT 'Maximum number of submission attachments' 
+  submissionfiletypes : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'comma separated list of file extensions' 
+  latesubmissions : tinyint DEFAULT '0' COMMENT 'Allow submitting the work after the deadline' 
+  maxbytes : int DEFAULT '100000' COMMENT 'Maximum size of the one attached file' 
+  examplesmode : tinyint DEFAULT '0' COMMENT '0 = example assessments are voluntary 
+  submissionstart : int DEFAULT '0' COMMENT '0 = will be started manually 
+  submissionend : int DEFAULT '0' COMMENT '0 = will be closed manually 
+  assessmentstart : int DEFAULT '0' COMMENT '0 = will be started manually 
+  assessmentend : int DEFAULT '0' COMMENT '0 = will be closed manually 
+  phaseswitchassessment : tinyint NOT NULL DEFAULT '0' COMMENT 'Automatically switch to the assessment phase after the submissions deadline' 
+  conclusion : text COLLATE utf8mb4_unicode_ci COMMENT 'A text to be displayed at the end of the workshop.' 
+  conclusionformat : tinyint NOT NULL DEFAULT '1' COMMENT 'The format of the conclusion field content.' 
+  overallfeedbackmode : tinyint DEFAULT '1' COMMENT 'Mode of the overall feedback support.' 
+  overallfeedbackfiles : tinyint DEFAULT '0' COMMENT 'Number of allowed attachments to the overall feedback.' 
+  overallfeedbackfiletypes : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'comma separated list of file extensions' 
+  overallfeedbackmaxbytes : int DEFAULT '100000' COMMENT 'Maximum size of one file attached to the overall feedback.' 
+}
+
+entity "**workshop_aggregations**" as workshop_aggregations {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : bigint unsigned NOT NULL COMMENT 'the id of the workshop instance' (FK)
+  userid : bigint unsigned NOT NULL COMMENT 'The id of the user which aggregated grades are calculated for' (FK)
+  gradinggrade : decimal(10 
+  timegraded : int DEFAULT NULL COMMENT 'The timestamp of when the participant''s gradinggrade was recently aggregated.' 
+}
+
+entity "**workshop_assessments**" as workshop_assessments {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  submissionid : bigint unsigned NOT NULL COMMENT 'The id of the assessed submission' (FK)
+  reviewerid : bigint unsigned NOT NULL COMMENT 'The id of the reviewer who makes this assessment' (FK)
+  weight : int NOT NULL DEFAULT '1' COMMENT 'The weight of the assessment for the purposes of aggregation' 
+  timecreated : int DEFAULT '0' COMMENT 'If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the first time' 
+  timemodified : int DEFAULT '0' COMMENT 'If 0 then the assessment was allocated but the reviewer has not assessed yet. If greater than 0 then the timestamp of when the reviewer assessed for the last time' 
+  grade : decimal(10 
+  gradinggrade : decimal(10 
+  gradinggradeover : decimal(10 
+  gradinggradeoverby : bigint unsigned DEFAULT NULL COMMENT 'The id of the user who has overridden the grade for submission.' (FK)
+  feedbackauthor : text COLLATE utf8mb4_unicode_ci COMMENT 'The comment/feedback from the reviewer for the author.' 
+  feedbackauthorformat : tinyint DEFAULT '0' 
+  feedbackauthorattachment : tinyint DEFAULT '0' COMMENT 'Are there some files attached to the feedbackauthor field? Sets to 1 by file_postupdate_standard_filemanager().' 
+  feedbackreviewer : text COLLATE utf8mb4_unicode_ci COMMENT 'The comment/feedback from the teacher for the reviewer. For example the reason why the grade for assessment was overridden' 
+  feedbackreviewerformat : tinyint DEFAULT '0' 
+}
+
+entity "**workshop_grades**" as workshop_grades {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  assessmentid : bigint unsigned NOT NULL COMMENT 'Part of which assessment this grade is of' (FK)
+  strategy : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+  dimensionid : int NOT NULL COMMENT 'Foreign key. References dimension id in one of the grading strategy tables.' 
+  grade : decimal(10 
+  peercomment : text COLLATE utf8mb4_unicode_ci COMMENT 'Reviewer''s comment to the grade value.' 
+  peercommentformat : tinyint DEFAULT '0' COMMENT 'The format of peercomment field' 
+}
+
+entity "**workshop_submissions**" as workshop_submissions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : bigint unsigned NOT NULL COMMENT 'the id of the workshop instance' (FK)
+  example : tinyint DEFAULT '0' COMMENT 'Is this submission an example from teacher' 
+  authorid : bigint unsigned NOT NULL COMMENT 'The author of the submission' (FK)
+  timecreated : int NOT NULL COMMENT 'Timestamp when the work was submitted for the first time' 
+  timemodified : int NOT NULL COMMENT 'Timestamp when the submission has been updated' 
+  title : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The submission title' 
+  content : text COLLATE utf8mb4_unicode_ci COMMENT 'Submission text' 
+  contentformat : tinyint NOT NULL DEFAULT '0' COMMENT 'The format of submission text' 
+  contenttrust : tinyint NOT NULL DEFAULT '0' COMMENT 'The trust mode of the data' 
+  attachment : tinyint DEFAULT '0' COMMENT 'Used by File API file_postupdate_standard_filemanager' 
+  grade : decimal(10 
+  gradeover : decimal(10 
+  gradeoverby : bigint unsigned DEFAULT NULL COMMENT 'The id of the user who has overridden the grade for submission.' (FK)
+  feedbackauthor : text COLLATE utf8mb4_unicode_ci COMMENT 'Teacher comment/feedback for the author of the submission 
+  feedbackauthorformat : tinyint DEFAULT '0' 
+  timegraded : int DEFAULT NULL COMMENT 'The timestamp when grade or gradeover was recently modified' 
+  published : tinyint DEFAULT '0' COMMENT 'Shall the submission be available to other when the workshop is closed' 
+  late : tinyint NOT NULL DEFAULT '0' COMMENT 'Has this submission been submitted after the deadline or during the assessment phase?' 
+}
+
+entity "**workshopallocation_scheduled**" as workshopallocation_scheduled {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : int NOT NULL COMMENT 'workshop id we are part of' 
+  enabled : tinyint NOT NULL DEFAULT '0' COMMENT 'Is the scheduled allocation enabled' 
+  submissionend : int NOT NULL COMMENT 'What was the workshop''s submissionend when this record was created or modified' 
+  timeallocated : int DEFAULT NULL COMMENT 'When was the last scheduled allocation executed' 
+  settings : text COLLATE utf8mb4_unicode_ci COMMENT 'The pre-defined settings for the underlying random allocation to run it with' 
+  resultstatus : int DEFAULT NULL COMMENT 'The resulting status of the most recent execution' 
+  resultmessage : text COLLATE utf8mb4_unicode_ci COMMENT 'Optional short message describing the resulting status' 
+  resultlog : text COLLATE utf8mb4_unicode_ci COMMENT 'The log of the most recent execution' 
+}
+
+entity "**workshopeval_best_settings**" as workshopeval_best_settings {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : int NOT NULL 
+  comparison : tinyint DEFAULT '5' COMMENT 'Here we store the recently set factor of comparison of assessment in the given workshop. Reasonable values are from 1 to 10 or so. Default to 5.' 
+}
+
+entity "**workshopform_accumulative**" as workshopform_accumulative {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : bigint unsigned NOT NULL COMMENT 'Workshop ID' (FK)
+  sort : int DEFAULT '0' COMMENT 'Defines the dimension order within the assessment form' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'The description of the dimension' 
+  descriptionformat : tinyint DEFAULT '0' COMMENT 'The format of the description field' 
+  grade : int NOT NULL COMMENT 'If greater than 0 
+  weight : smallint DEFAULT '1' COMMENT 'The weigh of the dimension' 
+}
+
+entity "**workshopform_comments**" as workshopform_comments {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : bigint unsigned NOT NULL COMMENT 'Workshop ID' (FK)
+  sort : int DEFAULT '0' COMMENT 'Defines the dimension order within the assessment form' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'The description of the dimension' 
+  descriptionformat : tinyint DEFAULT '0' COMMENT 'The format of the description field' 
+}
+
+entity "**workshopform_numerrors**" as workshopform_numerrors {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : bigint unsigned NOT NULL COMMENT 'Workshop ID' (FK)
+  sort : int DEFAULT '0' COMMENT 'Defines the dimension order within the assessment form' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'The description of the dimension' 
+  descriptionformat : tinyint DEFAULT '0' COMMENT 'The format of the description field' 
+  descriptiontrust : int DEFAULT NULL 
+  grade0 : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The word describing the negative evaluation (like Poor 
+  grade1 : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'A word for possitive evaluation (like Good 
+  weight : smallint DEFAULT '1' COMMENT 'Weight of this dimension' 
+}
+
+entity "**workshopform_numerrors_map**" as workshopform_numerrors_map {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : bigint unsigned NOT NULL COMMENT 'The id of the workshop' (FK)
+  nonegative : int NOT NULL COMMENT 'Number of negative responses given by the reviewer' 
+  grade : decimal(10 
+}
+
+entity "**workshopform_rubric**" as workshopform_rubric {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : bigint unsigned NOT NULL COMMENT 'Workshop ID' (FK)
+  sort : int DEFAULT '0' COMMENT 'Defines the dimension order within the assessment form' 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'The description of the dimension' 
+  descriptionformat : tinyint DEFAULT '0' COMMENT 'The format of the description field' 
+}
+
+entity "**workshopform_rubric_config**" as workshopform_rubric_config {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  workshopid : int NOT NULL COMMENT 'The id of workshop this configuartion applies for' 
+  layout : varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT 'list' COMMENT 'How should the rubric be displayed for reviewers' 
+}
+
+entity "**workshopform_rubric_levels**" as workshopform_rubric_levels {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  dimensionid : bigint unsigned NOT NULL COMMENT 'Which criterion this level is part of' (FK)
+  grade : decimal(10 
+  definition : text COLLATE utf8mb4_unicode_ci COMMENT 'The definition of this level' 
+  definitionformat : tinyint DEFAULT '0' COMMENT 'The format of the definition field' 
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+workshop }|--|| course
+workshop_aggregations }|--|| users
+workshop_aggregations }|--|| workshop
+workshop_assessments }|--|| users
+workshop_assessments }|--|| users
+workshop_assessments }|--|| workshop_submissions
+workshop_grades }|--|| workshop_assessments
+workshop_submissions }|--|| users
+workshop_submissions }|--|| users
+workshop_submissions }|--|| workshop
+workshopform_accumulative }|--|| workshop
+workshopform_comments }|--|| workshop
+workshopform_numerrors }|--|| workshop
+workshopform_numerrors_map }|--|| workshop
+workshopform_rubric }|--|| workshop
+workshopform_rubric_levels }|--|| workshopform_rubric
+@enduml

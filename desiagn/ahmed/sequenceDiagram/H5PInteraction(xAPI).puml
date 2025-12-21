@@ -1,0 +1,45 @@
+@startuml
+autonumber
+    participant Student
+    participant H5PPlayer
+    participant H5PController
+    participant GradebookService
+    participant Database
+
+    Student -> H5PPlayer: Answer Question in Interactive Video
+    
+    H5PPlayer -> H5PPlayer: Generate xAPI Statement
+    note right of H5PPlayer: {\n  "actor": "student_123",\n  "verb": "answered",\n  "object": "question_456",\n  "result": {\n    "score": {\n      "raw": 10,\n      "max": 10\n    },\n    "success": true\n  }\n}
+    
+    H5PPlayer -> H5PController: POST /api/h5p/xapi {statement}
+    
+    H5PController -> H5PController: Validate xAPI Statement Format
+    
+    H5PController -> Database: INSERT INTO h5pactivity_attempts_results (attempt_id, interaction, raw_score, max_score)
+    Database --> H5PController: Record Saved (id=999)
+    
+    H5PController -> H5PController: Parse Score: raw=10, max=10 → percentage=100%
+    
+    H5PController -> GradebookService: updateGrade(user_id=123, activity_id=456, score=100)
+    
+    GradebookService -> Database: SELECT grade_item_id FROM grade_items WHERE iteminstance=456
+    Database --> GradebookService: Return grade_item_id=789
+    
+    GradebookService -> Database: UPDATE grade_grades SET finalgrade=100 WHERE itemid=789 AND userid=123
+    Database --> GradebookService: Grade Updated
+    
+    GradebookService -> Database: UPDATE grade_grades SET timemodified=NOW()
+    Database --> GradebookService: Timestamp Updated
+    
+    GradebookService --> H5PController: Return Success
+    
+    H5PController --> H5PPlayer: Return 200 OK
+    
+    H5PPlayer -> H5PPlayer: Show "Score Saved" Toast Notification
+    H5PPlayer --> Student: Visual Feedback: Checkmark + Score
+    
+    note over Database,Database: Background Processing
+    
+    H5PController -> Database: Trigger Recalculation of Course Total (Async)
+    Database -> Database: Recalculate Weighted Average
+@enduml

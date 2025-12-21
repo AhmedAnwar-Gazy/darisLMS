@@ -1,0 +1,25 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "page" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +content : String
+  +contentformat : Integer
+  +legacyfiles : Integer
+  +legacyfileslast : Integer
+  +display : Integer
+  +displayoptions : String
+  +revision : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+@enduml

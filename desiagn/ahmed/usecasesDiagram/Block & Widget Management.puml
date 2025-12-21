@@ -1,0 +1,35 @@
+@startuml BlockWidgetManagement
+left to right direction
+
+actor "Administrator" as admin
+actor "User" as user
+actor "System" as system
+actor "Frontend Application" as frontend
+
+rectangle "Block & Widget Management" {
+  usecase "Configure Block" as UC1601
+  usecase "Validate Position" as validate_position
+  usecase "Render Block" as UC1602
+  usecase "Load Block Data" as load_block_data
+  usecase "Manage Block Visibility" as UC1603
+  usecase "Update Block Content" as UC1604
+  usecase "API Block List" as UC1605
+  usecase "Check Permissions" as check_permissions
+  usecase "View Block" as view_block
+}
+
+' Actor Associations
+admin --> UC1601 : **Association**
+admin --> UC1603 : **Association**
+user --> view_block : **Association**
+system --> UC1602 : **Association**
+system --> UC1604 : **Association**
+frontend --> UC1605 : **Association**
+
+' Use Case Relationships
+UC1601 ..> validate_position : **<<include>>**
+UC1602 ..> load_block_data : **<<include>>**
+UC1604 ..> UC1602 : **<<extend>>**
+UC1605 ..> check_permissions : **<<include>>**
+
+@enduml

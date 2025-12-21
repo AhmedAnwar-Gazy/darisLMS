@@ -1,0 +1,47 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "auth_lti_linked_login" {
+  +id : Integer
+  +userid : Integer
+  +issuer : String
+  +issuer256 : String
+  +sub : String
+  +sub256 : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "auth_oauth2_linked_login" {
+  +id : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +userid : Integer
+  +issuerid : Integer
+  +username : String
+  +email : String
+  +confirmtoken : String
+  +confirmtokenexpires : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "oauth2_issuer" <<External>> {
+}
+
+"auth_lti_linked_login" "*" --> "1" "users" : userid
+"auth_oauth2_linked_login" "*" --> "1" "oauth2_issuer" : issuerid
+"auth_oauth2_linked_login" "*" --> "1" "users" : userid
+"auth_oauth2_linked_login" "*" --> "1" "users" : usermodified
+@enduml

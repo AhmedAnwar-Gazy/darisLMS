@@ -1,0 +1,107 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "wiki" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : Integer
+  +introformat : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +firstpagetitle : String
+  +wikimode : String
+  +defaultformat : String
+  +forceformat : Integer
+  +editbegin : Integer
+  +editend : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "wiki_links" {
+  +id : Integer
+  +subwikiid : Integer
+  +frompageid : Integer
+  +topageid : Integer
+  +tomissingpage : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "wiki_locks" {
+  +id : Integer
+  +pageid : Integer
+  +sectionname : String
+  +userid : Integer
+  +lockedat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "wiki_pages" {
+  +id : Integer
+  +subwikiid : Integer
+  +title : String
+  +cachedcontent : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +timerendered : Integer
+  +userid : Integer
+  +pageviews : Integer
+  +readonly : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "wiki_subwikis" {
+  +id : Integer
+  +wikiid : Integer
+  +groupid : Integer
+  +userid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "wiki_synonyms" {
+  +id : Integer
+  +subwikiid : Integer
+  +pageid : Integer
+  +pagesynonym : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "wiki_versions" {
+  +id : Integer
+  +pageid : Integer
+  +content : String
+  +contentformat : String
+  +version : Integer
+  +timecreated : Integer
+  +userid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+"wiki_links" "*" --> "1" "wiki_pages" : frompageid
+"wiki_links" "*" --> "1" "wiki_subwikis" : subwikiid
+"wiki_pages" "*" --> "1" "wiki_subwikis" : subwikiid
+"wiki_subwikis" "*" --> "1" "wiki" : wikiid
+"wiki_versions" "*" --> "1" "wiki_pages" : pageid
+@enduml

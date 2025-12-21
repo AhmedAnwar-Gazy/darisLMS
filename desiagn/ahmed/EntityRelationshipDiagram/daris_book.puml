@@ -1,0 +1,38 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**book**" as book {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  numbering : smallint NOT NULL DEFAULT '0' 
+  navstyle : smallint NOT NULL DEFAULT '1' 
+  customtitles : tinyint NOT NULL DEFAULT '0' 
+  revision : int NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**book_chapters**" as book_chapters {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  bookid : int NOT NULL DEFAULT '0' 
+  pagenum : int NOT NULL DEFAULT '0' 
+  subchapter : int NOT NULL DEFAULT '0' 
+  title : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  content : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  contentformat : smallint NOT NULL DEFAULT '0' 
+  hidden : tinyint NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  importsrc : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+book }|--|| course
+@enduml

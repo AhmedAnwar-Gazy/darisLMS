@@ -1,0 +1,95 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**oauth2_access_token**" as oauth2_access_token {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  timecreated : int NOT NULL COMMENT 'Time this record was created.' 
+  timemodified : int NOT NULL COMMENT 'Time this record was modified.' 
+  usermodified : bigint unsigned NOT NULL COMMENT 'The user who modified this record.' (FK)
+  issuerid : int NOT NULL COMMENT 'Corresponding oauth2 issuer' 
+  token : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'access token' 
+  expires : int NOT NULL COMMENT 'Expiry timestamp (according to the issuer)' 
+  scope : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**oauth2_endpoint**" as oauth2_endpoint {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  timecreated : int NOT NULL COMMENT 'The time this record was created.' 
+  timemodified : int NOT NULL COMMENT 'The time this record was modified.' 
+  usermodified : bigint unsigned NOT NULL COMMENT 'The user who modified this record.' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The service name.' 
+  url : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The url to the endpoint' 
+  issuerid : bigint unsigned NOT NULL COMMENT 'The identity provider this service belongs to.' (FK)
+}
+
+entity "**oauth2_issuer**" as oauth2_issuer {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  timecreated : int NOT NULL COMMENT 'Time this record was created.' 
+  timemodified : int NOT NULL COMMENT 'Time this record was modified.' 
+  usermodified : int NOT NULL COMMENT 'The user who modified this record' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of this identity issuer' 
+  image : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  baseurl : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The base url to the issuer' 
+  clientid : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The client id used to connect to this oauth2 service.' 
+  clientsecret : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The secret used to connect to this oauth2 service.' 
+  loginscopes : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The scopes requested for a normal login attempt.' 
+  loginscopesoffline : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The scopes requested for a login attempt to generate a refresh token.' 
+  loginparams : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Additional parameters sent for a login attempt.' 
+  loginparamsoffline : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Additional parameters sent for a login attempt to generate a refresh token.' 
+  alloweddomains : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Allowed domains for this issuer.' 
+  scopessupported : text COLLATE utf8mb4_unicode_ci COMMENT 'The list of scopes this service supports.' 
+  enabled : tinyint NOT NULL DEFAULT '1' 
+  showonloginpage : tinyint NOT NULL DEFAULT '1' 
+  basicauth : tinyint NOT NULL DEFAULT '0' COMMENT 'Use HTTP Basic authentication scheme when sending client ID and password' 
+  sortorder : int NOT NULL COMMENT 'The defined sort order.' 
+  requireconfirmation : tinyint NOT NULL DEFAULT '1' 
+  servicetype : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Issuer service type 
+  loginpagename : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**oauth2_refresh_token**" as oauth2_refresh_token {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  timecreated : int NOT NULL COMMENT 'Time this record was created.' 
+  timemodified : int NOT NULL COMMENT 'Time this record was modified.' 
+  userid : bigint unsigned NOT NULL COMMENT 'The user to whom this refresh token belongs.' (FK)
+  issuerid : bigint unsigned NOT NULL COMMENT 'Corresponding oauth2 issuer' (FK)
+  token : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'refresh token' 
+  scopehash : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sha1 hash of the scopes used when requesting the refresh token' 
+}
+
+entity "**oauth2_system_account**" as oauth2_system_account {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  timecreated : int NOT NULL COMMENT 'Time this record was created.' 
+  timemodified : int NOT NULL COMMENT 'Time this record was modified.' 
+  usermodified : bigint unsigned NOT NULL COMMENT 'The user who modified this record.' (FK)
+  issuerid : int NOT NULL COMMENT 'The id of the oauth 2 identity issuer' 
+  refreshtoken : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The refresh token used to request access tokens.' 
+  grantedscopes : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The scopes that this system account has been granted access to.' 
+  email : text COLLATE utf8mb4_unicode_ci COMMENT 'The email that was connected to this issuer.' 
+  username : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The username that was connected as a system account to this issue.' 
+}
+
+entity "**oauth2_user_field_mapping**" as oauth2_user_field_mapping {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  timemodified : int NOT NULL COMMENT 'The time this record was modified' 
+  timecreated : int NOT NULL COMMENT 'The time this record was created.' 
+  usermodified : bigint unsigned NOT NULL COMMENT 'The user who modified this record.' (FK)
+  issuerid : bigint unsigned NOT NULL COMMENT 'The oauth issuer.' (FK)
+  externalfield : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The fieldname returned by the userinfo endpoint.' 
+  internalfield : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of the Moodle field this user field maps to.' 
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+oauth2_access_token }|--|| users
+oauth2_endpoint }|--|| oauth2_issuer
+oauth2_endpoint }|--|| users
+oauth2_refresh_token }|--|| oauth2_issuer
+oauth2_refresh_token }|--|| users
+oauth2_system_account }|--|| users
+oauth2_user_field_mapping }|--|| oauth2_issuer
+oauth2_user_field_mapping }|--|| users
+@enduml

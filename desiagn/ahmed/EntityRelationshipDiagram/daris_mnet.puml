@@ -1,0 +1,154 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**mnet_application**" as mnet_application {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  display_name : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  xmlrpc_server_url : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sso_land_url : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sso_jump_url : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**mnet_host**" as mnet_host {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  deleted : tinyint(1) NOT NULL DEFAULT '0' 
+  wwwroot : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  ip_address : varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL 
+  name : varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL 
+  public_key : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  public_key_expires : int NOT NULL DEFAULT '0' 
+  transport : tinyint NOT NULL DEFAULT '0' 
+  portno : smallint NOT NULL DEFAULT '0' 
+  last_connect_time : int NOT NULL DEFAULT '0' 
+  last_log_id : int NOT NULL DEFAULT '0' 
+  force_theme : tinyint(1) NOT NULL DEFAULT '0' 
+  theme : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  applicationid : bigint unsigned NOT NULL DEFAULT '1' (FK)
+  sslverification : tinyint(1) NOT NULL DEFAULT '0' 
+}
+
+entity "**mnet_host2service**" as mnet_host2service {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  hostid : int NOT NULL DEFAULT '0' 
+  serviceid : int NOT NULL DEFAULT '0' 
+  publish : tinyint(1) NOT NULL DEFAULT '0' 
+  subscribe : tinyint(1) NOT NULL DEFAULT '0' 
+}
+
+entity "**mnet_log**" as mnet_log {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  hostid : int NOT NULL DEFAULT '0' COMMENT 'Unique host ID' 
+  remoteid : int NOT NULL DEFAULT '0' 
+  time : int NOT NULL DEFAULT '0' 
+  userid : int NOT NULL DEFAULT '0' 
+  ip : varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL 
+  course : int NOT NULL DEFAULT '0' 
+  coursename : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  module : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  cmid : int NOT NULL DEFAULT '0' 
+  action : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  url : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  info : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**mnet_remote_rpc**" as mnet_remote_rpc {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  functionname : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  xmlrpcpath : varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL 
+  plugintype : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  pluginname : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enabled : tinyint(1) NOT NULL 
+}
+
+entity "**mnet_remote_service2rpc**" as mnet_remote_service2rpc {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  serviceid : int NOT NULL DEFAULT '0' COMMENT 'Unique service ID' 
+  rpcid : int NOT NULL DEFAULT '0' COMMENT 'Unique Function ID' 
+}
+
+entity "**mnet_rpc**" as mnet_rpc {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  functionname : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  xmlrpcpath : varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL 
+  plugintype : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  pluginname : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enabled : tinyint(1) NOT NULL DEFAULT '0' 
+  help : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  profile : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Method signature' 
+  filename : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  classname : varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  static : tinyint(1) DEFAULT NULL 
+}
+
+entity "**mnet_service**" as mnet_service {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  apiversion : varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL 
+  offer : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Do we even offer this service?' 
+}
+
+entity "**mnet_service2rpc**" as mnet_service2rpc {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  serviceid : int NOT NULL DEFAULT '0' COMMENT 'Unique service ID' 
+  rpcid : int NOT NULL DEFAULT '0' COMMENT 'Unique Function ID' 
+}
+
+entity "**mnet_session**" as mnet_session {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Unique user ID' (FK)
+  username : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Unique username' 
+  token : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Unique SHA1 Token' 
+  mnethostid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Unique remote host ID' (FK)
+  useragent : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'SHA1 hash of User Agent' 
+  confirm_timeout : int NOT NULL DEFAULT '0' COMMENT 'UNIX timestamp for expiry of session' 
+  session_id : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The PHP Session ID' 
+  expires : int NOT NULL DEFAULT '0' COMMENT 'Expire time of session on peer' 
+}
+
+entity "**mnet_sso_access_control**" as mnet_sso_access_control {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  username : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Username' 
+  mnet_host_id : int NOT NULL DEFAULT '0' COMMENT 'id of mnet host' 
+  accessctrl : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'allow' COMMENT 'Whether or not this user/host can login' 
+}
+
+entity "**mnetservice_enrol_courses**" as mnetservice_enrol_courses {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  hostid : int NOT NULL COMMENT 'The id of the remote MNet host' 
+  remoteid : int NOT NULL COMMENT 'ID of course on its home server' 
+  categoryid : int NOT NULL COMMENT 'The id of the category on the remote server' 
+  categoryname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sortorder : int NOT NULL DEFAULT '0' 
+  fullname : varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL 
+  shortname : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  idnumber : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  summary : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  summaryformat : tinyint DEFAULT '0' COMMENT 'Format of the summary field' 
+  startdate : int NOT NULL 
+  roleid : int NOT NULL COMMENT 'The ID of the role at the remote server that our users will get when we enrol them there' 
+  rolename : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of the role at the remote server that our users will get when we enrol them there' 
+}
+
+entity "**mnetservice_enrol_enrolments**" as mnetservice_enrol_enrolments {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  hostid : bigint unsigned NOT NULL COMMENT 'ID of the remote MNet host' (FK)
+  userid : bigint unsigned NOT NULL COMMENT 'ID of our local user on this server' (FK)
+  remotecourseid : int NOT NULL COMMENT 'ID of the course at  the remote server. Note that this may and may not be cached in our mnetservice_enrol_courses table 
+  rolename : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enroltime : int NOT NULL DEFAULT '0' 
+  enroltype : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of the enrol plugin at the remote server that was used to enrol our student into their course' 
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+mnet_host }|--|| mnet_application
+mnet_session }|--|| mnet_host
+mnet_session }|--|| users
+mnetservice_enrol_enrolments }|--|| mnet_host
+mnetservice_enrol_enrolments }|--|| users
+@enduml

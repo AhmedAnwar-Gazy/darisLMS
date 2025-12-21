@@ -1,0 +1,147 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**forum**" as forum {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  type : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'general' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  introformat : smallint NOT NULL DEFAULT '0' COMMENT 'text format of intro field' 
+  duedate : int NOT NULL DEFAULT '0' COMMENT 'A due date to show in the calendar. Not used for grading.' 
+  cutoffdate : int NOT NULL DEFAULT '0' COMMENT 'The final date after which forum posts will no longer be accepted for this forum.' 
+  assessed : int NOT NULL DEFAULT '0' 
+  assesstimestart : int NOT NULL DEFAULT '0' 
+  assesstimefinish : int NOT NULL DEFAULT '0' 
+  scale : int NOT NULL DEFAULT '0' 
+  grade_forum : int NOT NULL DEFAULT '0' 
+  grade_forum_notify : smallint NOT NULL DEFAULT '0' 
+  maxbytes : int NOT NULL DEFAULT '0' 
+  maxattachments : int NOT NULL DEFAULT '1' COMMENT 'Number of attachments allowed per post' 
+  forcesubscribe : tinyint(1) NOT NULL DEFAULT '0' 
+  trackingtype : tinyint NOT NULL DEFAULT '1' 
+  rsstype : tinyint NOT NULL DEFAULT '0' 
+  rssarticles : tinyint NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  warnafter : int NOT NULL DEFAULT '0' 
+  blockafter : int NOT NULL DEFAULT '0' 
+  blockperiod : int NOT NULL DEFAULT '0' 
+  completiondiscussions : int NOT NULL DEFAULT '0' COMMENT 'Nonzero if a certain number of posts are required to mark this forum completed for a user.' 
+  completionreplies : int NOT NULL DEFAULT '0' COMMENT 'Nonzero if a certain number of replies are required to mark this forum complete for a user.' 
+  completionposts : int NOT NULL DEFAULT '0' COMMENT 'Nonzero if a certain number of posts or replies (total) are required to mark this forum complete for a user.' 
+  displaywordcount : tinyint(1) NOT NULL DEFAULT '0' 
+  lockdiscussionafter : int NOT NULL DEFAULT '0' 
+}
+
+entity "**forum_digests**" as forum_digests {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  forum : bigint unsigned NOT NULL (FK)
+  maildigest : tinyint(1) NOT NULL DEFAULT '-1' 
+}
+
+entity "**forum_discussion_subs**" as forum_discussion_subs {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  forum : bigint unsigned NOT NULL (FK)
+  userid : bigint unsigned NOT NULL (FK)
+  discussion : bigint unsigned NOT NULL (FK)
+  preference : int NOT NULL DEFAULT '1' 
+}
+
+entity "**forum_discussions**" as forum_discussions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  forum : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  firstpost : int NOT NULL DEFAULT '0' 
+  userid : int NOT NULL DEFAULT '0' 
+  groupid : int NOT NULL DEFAULT '-1' 
+  assessed : tinyint(1) NOT NULL DEFAULT '1' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timestart : int NOT NULL DEFAULT '0' 
+  timeend : int NOT NULL DEFAULT '0' 
+  pinned : tinyint(1) NOT NULL DEFAULT '0' 
+  timelocked : int NOT NULL DEFAULT '0' 
+}
+
+entity "**forum_grades**" as forum_grades {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  forum : bigint unsigned NOT NULL COMMENT 'The ID of the forum that this grade relates to' (FK)
+  itemnumber : int NOT NULL COMMENT 'The grade itemnumber' 
+  userid : int NOT NULL COMMENT 'The user who was graded' 
+  grade : decimal(10 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**forum_posts**" as forum_posts {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  discussion : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  parent : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  created : int NOT NULL DEFAULT '0' 
+  modified : int NOT NULL DEFAULT '0' 
+  mailed : tinyint NOT NULL DEFAULT '0' 
+  subject : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  message : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  messageformat : tinyint NOT NULL DEFAULT '0' 
+  messagetrust : tinyint NOT NULL DEFAULT '0' 
+  attachment : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  totalscore : smallint NOT NULL DEFAULT '0' 
+  mailnow : int NOT NULL DEFAULT '0' 
+  deleted : tinyint(1) NOT NULL DEFAULT '0' 
+  privatereplyto : int NOT NULL DEFAULT '0' 
+  wordcount : bigint DEFAULT NULL 
+  charcount : bigint DEFAULT NULL 
+}
+
+entity "**forum_queue**" as forum_queue {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL DEFAULT '0' 
+  discussionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  postid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'The modified time of the original post' 
+}
+
+entity "**forum_read**" as forum_read {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL DEFAULT '0' 
+  forumid : int NOT NULL DEFAULT '0' 
+  discussionid : int NOT NULL DEFAULT '0' 
+  postid : int NOT NULL DEFAULT '0' 
+  firstread : int NOT NULL DEFAULT '0' 
+  lastread : int NOT NULL DEFAULT '0' 
+}
+
+entity "**forum_subscriptions**" as forum_subscriptions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL DEFAULT '0' 
+  forum : bigint unsigned NOT NULL DEFAULT '0' (FK)
+}
+
+entity "**forum_track_prefs**" as forum_track_prefs {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL DEFAULT '0' 
+  forumid : int NOT NULL DEFAULT '0' 
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+forum_digests }|--|| forum
+forum_digests }|--|| users
+forum_discussion_subs }|--|| forum_discussions
+forum_discussion_subs }|--|| forum
+forum_discussion_subs }|--|| users
+forum_discussions }|--|| forum
+forum_discussions }|--|| users
+forum_grades }|--|| forum
+forum_posts }|--|| forum_discussions
+forum_posts }|--|| forum_posts
+forum_queue }|--|| forum_discussions
+forum_queue }|--|| forum_posts
+forum_subscriptions }|--|| forum
+@enduml

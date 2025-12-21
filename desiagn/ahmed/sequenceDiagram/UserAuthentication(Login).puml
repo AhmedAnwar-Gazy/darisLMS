@@ -1,0 +1,32 @@
+@startuml
+autonumber
+    participant User
+    participant "Login Page (Next.js)" as LoginPage
+    participant AuthController
+    participant UserModel
+    participant SanctumService
+    participant Database
+
+    User -> LoginPage: Enter Email/Password + Click "Login"
+    LoginPage -> AuthController: POST /api/login {credentials}
+    
+    AuthController -> AuthController: validate(request)
+    AuthController -> UserModel: findUserByEmail(email)
+    UserModel -> Database: SELECT * FROM users WHERE email = ?
+    Database --> UserModel: Return User Record
+    UserModel --> AuthController: Return User Object
+    
+    alt Invalid Credentials
+        AuthController --> LoginPage: Return 401 Unauthorized
+        LoginPage --> User: Show Error Message
+    else Valid Credentials
+        AuthController -> SanctumService: createToken(user, 'auth_token')
+        SanctumService -> Database: INSERT INTO personal_access_tokens
+        Database --> SanctumService: Token Created Successfully
+        SanctumService --> AuthController: Return Plain Text Token
+        
+        AuthController --> LoginPage: Return 200 OK {token, user_role}
+        LoginPage -> LoginPage: Store Token in Redux/LocalStorage
+        LoginPage -> User: Redirect to /dashboard
+    end
+@enduml

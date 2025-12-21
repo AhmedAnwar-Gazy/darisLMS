@@ -1,0 +1,123 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**reportbuilder_audience**" as reportbuilder_audience {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  reportid : bigint unsigned NOT NULL (FK)
+  heading : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  classname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  configdata : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  usercreated : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**reportbuilder_column**" as reportbuilder_column {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  reportid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  uniqueidentifier : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  aggregation : varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  heading : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  columnorder : int NOT NULL 
+  sortenabled : tinyint(1) NOT NULL DEFAULT '0' 
+  sortdirection : tinyint(1) NOT NULL 
+  sortorder : int DEFAULT NULL 
+  usercreated : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**reportbuilder_filter**" as reportbuilder_filter {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  reportid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  uniqueidentifier : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  heading : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  iscondition : tinyint(1) NOT NULL DEFAULT '0' 
+  filterorder : int NOT NULL 
+  usercreated : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**reportbuilder_report**" as reportbuilder_report {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  source : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  type : tinyint NOT NULL DEFAULT '0' 
+  uniquerows : tinyint(1) NOT NULL DEFAULT '0' 
+  conditiondata : text COLLATE utf8mb4_unicode_ci 
+  settingsdata : text COLLATE utf8mb4_unicode_ci 
+  contextid : bigint unsigned NOT NULL (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  area : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  itemid : int NOT NULL DEFAULT '0' 
+  usercreated : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**reportbuilder_schedule**" as reportbuilder_schedule {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  reportid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enabled : tinyint(1) NOT NULL DEFAULT '1' 
+  audiences : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  format : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  subject : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  message : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  messageformat : int NOT NULL 
+  userviewas : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timescheduled : int NOT NULL DEFAULT '0' 
+  recurrence : int NOT NULL DEFAULT '0' 
+  reportempty : int NOT NULL DEFAULT '0' 
+  timelastsent : int NOT NULL DEFAULT '0' 
+  timenextsend : int NOT NULL DEFAULT '0' 
+  usercreated : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**reportbuilder_user_filter**" as reportbuilder_user_filter {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  reportid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  filterdata : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  usercreated : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : bigint unsigned NOT NULL DEFAULT '0' 
+  timemodified : bigint unsigned NOT NULL DEFAULT '0' 
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+reportbuilder_audience }|--|| reportbuilder_report
+reportbuilder_audience }|--|| users
+reportbuilder_audience }|--|| users
+reportbuilder_column }|--|| reportbuilder_report
+reportbuilder_column }|--|| users
+reportbuilder_column }|--|| users
+reportbuilder_filter }|--|| reportbuilder_report
+reportbuilder_filter }|--|| users
+reportbuilder_filter }|--|| users
+reportbuilder_report }|--|| context
+reportbuilder_report }|--|| users
+reportbuilder_report }|--|| users
+reportbuilder_schedule }|--|| reportbuilder_report
+reportbuilder_schedule }|--|| users
+reportbuilder_schedule }|--|| users
+reportbuilder_schedule }|--|| users
+reportbuilder_user_filter }|--|| reportbuilder_report
+reportbuilder_user_filter }|--|| users
+reportbuilder_user_filter }|--|| users
+@enduml

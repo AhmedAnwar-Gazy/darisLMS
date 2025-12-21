@@ -1,0 +1,186 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "forum" {
+  +id : Integer
+  +course : Integer
+  +type : String
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +duedate : Integer
+  +cutoffdate : Integer
+  +assessed : Integer
+  +assesstimestart : Integer
+  +assesstimefinish : Integer
+  +scale : Integer
+  +grade_forum : Integer
+  +grade_forum_notify : Integer
+  +maxbytes : Integer
+  +maxattachments : Integer
+  +forcesubscribe : Integer
+  +trackingtype : Integer
+  +rsstype : Integer
+  +rssarticles : Integer
+  +timemodified : Integer
+  +warnafter : Integer
+  +blockafter : Integer
+  +blockperiod : Integer
+  +completiondiscussions : Integer
+  +completionreplies : Integer
+  +completionposts : Integer
+  +displaywordcount : Integer
+  +lockdiscussionafter : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "forum_digests" {
+  +id : Integer
+  +userid : Integer
+  +forum : Integer
+  +maildigest : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "forum_discussion_subs" {
+  +id : Integer
+  +forum : Integer
+  +userid : Integer
+  +discussion : Integer
+  +preference : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "forum_discussions" {
+  +id : Integer
+  +course : Integer
+  +forum : Integer
+  +name : String
+  +firstpost : Integer
+  +userid : Integer
+  +groupid : Integer
+  +assessed : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +timestart : Integer
+  +timeend : Integer
+  +pinned : Integer
+  +timelocked : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "forum_grades" {
+  +id : Integer
+  +forum : Integer
+  +itemnumber : Integer
+  +userid : Integer
+  +grade : Float
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "forum_posts" {
+  +id : Integer
+  +discussion : Integer
+  +parent : Integer
+  +userid : Integer
+  +created : Integer
+  +modified : Integer
+  +mailed : Integer
+  +subject : String
+  +message : String
+  +messageformat : Integer
+  +messagetrust : Integer
+  +attachment : String
+  +totalscore : Integer
+  +mailnow : Integer
+  +deleted : Integer
+  +privatereplyto : Integer
+  +wordcount : Integer
+  +charcount : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "forum_queue" {
+  +id : Integer
+  +userid : Integer
+  +discussionid : Integer
+  +postid : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "forum_read" {
+  +id : Integer
+  +userid : Integer
+  +forumid : Integer
+  +discussionid : Integer
+  +postid : Integer
+  +firstread : Integer
+  +lastread : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "forum_subscriptions" {
+  +id : Integer
+  +userid : Integer
+  +forum : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "forum_track_prefs" {
+  +id : Integer
+  +userid : Integer
+  +forumid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+"forum_digests" "*" --> "1" "forum" : forum
+"forum_digests" "*" --> "1" "users" : userid
+"forum_discussion_subs" "*" --> "1" "forum_discussions" : discussion
+"forum_discussion_subs" "*" --> "1" "forum" : forum
+"forum_discussion_subs" "*" --> "1" "users" : userid
+"forum_discussions" "*" --> "1" "forum" : forum
+"forum_discussions" "*" --> "1" "users" : usermodified
+"forum_grades" "*" --> "1" "forum" : forum
+"forum_posts" "*" --> "1" "forum_discussions" : discussion
+"forum_posts" "*" --> "1" "forum_posts" : parent
+"forum_queue" "*" --> "1" "forum_discussions" : discussionid
+"forum_queue" "*" --> "1" "forum_posts" : postid
+"forum_subscriptions" "*" --> "1" "forum" : forum
+@enduml

@@ -1,0 +1,64 @@
+@startuml
+title Mandatory Policy Consent
+skinparam activityBackgroundColor #FFFFF0
+skinparam activityBorderColor #B8860B
+
+|User|
+start
+:Submit Login Credentials;
+:Complete Authentication;
+
+|Frontend|
+:Request Protected Resource\n(GET /api/user/profile);
+
+|Policy Middleware|
+:Intercept API Request;
+:Check Active Policy Version;
+
+|Database|
+:SELECT id FROM tool_policy\nWHERE active=1 AND type='privacy';
+-back->
+
+|Policy Middleware|
+:Check User Acceptance;
+
+|Database|
+:SELECT * FROM tool_policy_acceptances\nWHERE user_id=? AND policy_id=?;
+-back->
+
+if (Accepted Current Version?) then (yes)
+  :Allow Request;
+  ->[Proceed] Frontend;
+  :Load Dashboard;
+  stop
+else (no)
+  :Block Request\n(403 POLICY_REQUIRED);
+endif
+
+|Frontend|
+:Redirect to /policy/consent;
+
+|User|
+:View Policy Document;
+:Scroll to Read Content;
+:Check "I Agree" Box;
+:Click "Accept";
+
+|Backend|
+:Record User Consent;
+
+|Database|
+:INSERT INTO tool_policy_acceptances\n(user_id, policy_id, timestamp);
+:UPDATE users SET policy_agreed=1;
+-back->
+
+|Backend|
+:Grant Full Access Token;
+
+|Frontend|
+:Redirect to Original Request;
+
+|User|
+:Access Protected Resource;
+stop
+@enduml

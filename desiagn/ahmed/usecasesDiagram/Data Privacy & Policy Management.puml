@@ -1,0 +1,40 @@
+@startuml DataPrivacyPolicyManagement
+left to right direction
+
+actor "User" as user
+actor "Administrator" as admin
+actor "System" as system
+actor "Data Protection Officer" as dpo
+
+rectangle "Data Privacy & Policy Management" {
+  usecase "Require Policy Consent" as UC2401
+  usecase "Display Policy" as display_policy
+  usecase "Update Policy" as UC2402
+  usecase "Version Control" as version_control
+  usecase "Track Consent" as UC2403
+  usecase "Record Timestamp" as record_timestamp
+  usecase "Monitor Compliance" as UC2404
+  usecase "Generate Report" as generate_report
+  usecase "Handle Data Request" as UC2405
+  usecase "Anonymize Data" as anonymize_personal_data
+  usecase "Enforce Retention" as UC2406
+  usecase "Agree to Policy" as agree_to_policy
+}
+
+' Actor Associations
+user --> agree_to_policy : **Association**
+admin --> UC2402 : **Association**
+system --> UC2401 : **Association**
+system --> UC2403 : **Association**
+admin --> UC2404 : **Association**
+system --> UC2405 : **Association**
+dpo --> UC2404 : **Association**
+
+' Use Case Relationships
+UC2401 ..> display_policy : **<<include>>**
+UC2402 ..> version_control : **<<include>>**
+UC2403 ..> record_timestamp : **<<include>>**
+UC2404 ..> generate_report : **<<include>>**
+UC2405 ..> anonymize_personal_data : **<<include>>**
+
+@enduml

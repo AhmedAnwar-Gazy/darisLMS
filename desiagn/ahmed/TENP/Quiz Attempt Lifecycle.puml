@@ -1,0 +1,48 @@
+@startuml QuizAttemptLifecycle
+title Quiz Attempt Lifecycle (SMD-05)
+hide empty description
+
+state "Null" as quiz_null
+state "In Progress" as in_progress
+state "Overdue" as overdue
+state "Submitted" as quiz_submitted
+state "Abandoned" as abandoned
+state "Finished (Graded)" as finished
+
+[*] --> quiz_null
+
+quiz_null --> in_progress : Start Quiz()
+in_progress --> quiz_submitted : User Clicks Finish()
+in_progress --> quiz_submitted : Time Expires() \n(Auto-submit enabled)
+in_progress --> overdue : Time Expires() \n(Grace period enabled)
+overdue --> quiz_submitted : User Clicks Submit()
+overdue --> abandoned : Grace Period Expires()
+quiz_submitted --> finished : System Calculates Score()
+
+finished --> [*]
+
+note right of in_progress
+  Timer is running
+  Student navigating pages
+  Answering questions
+end note
+
+note right of overdue
+  Time limit expired
+  In grace period
+  Can submit but not answer new questions
+end note
+
+note right of abandoned
+  Connection lost/timeout
+  Grace period expired
+  No successful submission
+end note
+
+note right of finished
+  Auto-graded complete
+  or Manual grading done
+  Grade calculated
+end note
+
+@enduml

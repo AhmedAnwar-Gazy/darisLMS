@@ -1,0 +1,48 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "resource" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +tobemigrated : Integer
+  +legacyfiles : Integer
+  +legacyfileslast : Integer
+  +display : Integer
+  +displayoptions : String
+  +filterfiles : Integer
+  +revision : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "resource_old" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +type : String
+  +reference : String
+  +intro : String
+  +introformat : Integer
+  +alltext : String
+  +popup : String
+  +options : String
+  +timemodified : Integer
+  +oldid : Integer
+  +cmid : Integer
+  +newmodule : String
+  +newid : Integer
+  +migrated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+@enduml

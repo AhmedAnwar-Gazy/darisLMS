@@ -1,0 +1,54 @@
+@startuml StudentEnrollmentStatus
+title Student Enrollment Status (SMD-03)
+hide empty description
+
+state "Pending" as pending
+note right of pending
+The user has requested to join a private 
+course and is waiting for 
+Instructor/Admin approval. Content 
+access is denied. 
+end note
+
+state "Active" as active
+note right of active
+The user is fully enrolled. They can 
+view content, submit assignments, and 
+receive grades. 
+end note
+
+state "Suspended" as suspended
+note right of suspended
+The enrollment is locked (e.g., 
+non-payment or behavioral issue in this 
+specific course). The user cannot access 
+this course, though their account 
+remains active elsewhere. 
+end note
+
+state "Expired" as expired
+note right of expired
+The enrollment duration (e.g., 6 months) 
+has passed. Access is restricted or 
+read-only. 
+end note
+
+state "Completed" as completed
+note right of completed
+The user has met all course completion 
+criteria (grades/activities). They 
+retain read-only access to their 
+certificate. 
+end note
+
+null --> pending : Request Access()
+null --> active : Self Enroll (Public Course)
+pending --> active : Instructor Approves()
+active --> suspended : Admin Suspends()
+suspended --> active : Admin Unsuspends()
+active --> expired : Time Limit Reached()
+expired --> active : Extend/Renew()
+active --> completed : Requirements Met()
+any_state --> unenrolled : Drop Course()
+
+@enduml

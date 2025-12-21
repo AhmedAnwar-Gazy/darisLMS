@@ -1,0 +1,28 @@
+@startuml SearchDiscovery
+left to right direction
+
+actor "All Users" as all_users
+actor "Administrator" as admin
+actor "System (TypeSense)" as typesense
+
+rectangle "Search & Discovery System" {
+  usecase "Global Search" as UC0601
+  usecase "Query TypeSense" as query_typesense
+  usecase "Filter Results" as UC0602
+  usecase "Reindex Content" as UC0603
+  usecase "Update Index" as update_index
+  usecase "View Search Analytics" as UC0604
+}
+
+' Actor Associations
+all_users --> UC0601 : **Association**
+all_users --> UC0602 : **Association**
+admin --> UC0604 : **Association**
+typesense --> UC0603 : **Association**
+
+' Use Case Relationships
+UC0601 ..> query_typesense : **<<include>>**
+UC0602 ..> UC0601 : **<<extend>>**
+UC0603 ..> update_index : **<<include>>**
+
+@enduml

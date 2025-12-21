@@ -1,0 +1,122 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**h5p**" as h5p {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  jsoncontent : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The content in json format' 
+  mainlibraryid : bigint unsigned NOT NULL COMMENT 'The library we first instanciate for this node' (FK)
+  displayoptions : smallint DEFAULT NULL COMMENT 'H5P Button display options' 
+  pathnamehash : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Defines the complete unique hash for the file path where the H5P content was added.' 
+  contenthash : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Defines the hash for the file content.' 
+  filtered : text COLLATE utf8mb4_unicode_ci COMMENT 'Filtered version of json_content' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**h5p_contents_libraries**" as h5p_contents_libraries {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  h5pid : bigint unsigned NOT NULL COMMENT 'Identifier for the h5p content' (FK)
+  libraryid : bigint unsigned NOT NULL COMMENT 'The identifier of a H5P library this content uses' (FK)
+  dependencytype : varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'dynamic 
+  dropcss : tinyint(1) NOT NULL COMMENT '1 if the preloaded css from the dependency is to be excluded' 
+  weight : int NOT NULL COMMENT 'Determines the order in which the preloaded libraries will be loaded' 
+}
+
+entity "**h5p_libraries**" as h5p_libraries {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  machinename : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The library machine name' 
+  title : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The human readable name of this library' 
+  majorversion : smallint NOT NULL 
+  minorversion : smallint NOT NULL 
+  patchversion : smallint NOT NULL 
+  runnable : tinyint(1) NOT NULL COMMENT 'Can this library be started by the module? i.e. not a dependency.' 
+  fullscreen : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Display fullscreen button' 
+  embedtypes : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'List of supported embed types' 
+  preloadedjs : text COLLATE utf8mb4_unicode_ci COMMENT 'Comma separated list of scripts to load.' 
+  preloadedcss : text COLLATE utf8mb4_unicode_ci COMMENT 'Comma separated list of stylesheets to load.' 
+  droplibrarycss : text COLLATE utf8mb4_unicode_ci COMMENT 'List of libraries that should not have CSS included if this library is used. Comma separated list.' 
+  semantics : text COLLATE utf8mb4_unicode_ci COMMENT 'The semantics definition in json format' 
+  addto : text COLLATE utf8mb4_unicode_ci COMMENT 'Plugin configuration data' 
+  coremajor : smallint DEFAULT NULL COMMENT 'H5P core API major version required' 
+  coreminor : smallint DEFAULT NULL COMMENT 'H5P core API minor version required' 
+  metadatasettings : text COLLATE utf8mb4_unicode_ci COMMENT 'Library metadata settings' 
+  tutorial : text COLLATE utf8mb4_unicode_ci COMMENT 'Tutorial URL' 
+  example : text COLLATE utf8mb4_unicode_ci COMMENT 'Example URL' 
+  enabled : tinyint(1) DEFAULT '1' COMMENT 'Defines if this library is enabled (1) or not (0)' 
+}
+
+entity "**h5p_libraries_cachedassets**" as h5p_libraries_cachedassets {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  libraryid : bigint unsigned NOT NULL (FK)
+  hash : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Cache hash key that this library is part of.' 
+}
+
+entity "**h5p_library_dependencies**" as h5p_library_dependencies {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  libraryid : bigint unsigned NOT NULL COMMENT 'The id of a H5P library.' (FK)
+  requiredlibraryid : bigint unsigned NOT NULL COMMENT 'The dependent library to load' (FK)
+  dependencytype : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'preloaded 
+}
+
+entity "**h5pactivity**" as h5pactivity {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : bigint unsigned NOT NULL COMMENT 'ID of the course this activity is part of.' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of the activity module instance' 
+  timecreated : int NOT NULL COMMENT 'Timestamp of when the instance was added to the course.' 
+  timemodified : int NOT NULL COMMENT 'Timestamp of when the instance was last modified.' 
+  intro : text COLLATE utf8mb4_unicode_ci COMMENT 'Activity description.' 
+  introformat : smallint NOT NULL DEFAULT '0' COMMENT 'The format of the intro field.' 
+  grade : int DEFAULT '0' 
+  displayoptions : smallint NOT NULL DEFAULT '0' COMMENT 'H5P Button display options' 
+  enabletracking : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Enable xAPI tracking' 
+  grademethod : smallint NOT NULL DEFAULT '1' COMMENT 'Which H5P attempt is used for grading' 
+  reviewmode : smallint DEFAULT '1' 
+}
+
+entity "**h5pactivity_attempts**" as h5pactivity_attempts {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  h5pactivityid : bigint unsigned NOT NULL COMMENT 'H5P activity ID' (FK)
+  userid : bigint NOT NULL COMMENT 'Attempt user ID' 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+  attempt : int NOT NULL DEFAULT '1' COMMENT 'Attempt number' 
+  rawscore : int DEFAULT '0' 
+  maxscore : int DEFAULT '0' 
+  scaled : decimal(10 
+  duration : int DEFAULT '0' COMMENT 'Number of second inverted in that attempt (provided by the statement)' 
+  completion : tinyint(1) DEFAULT NULL COMMENT 'Store the xAPI tracking completion result.' 
+  success : tinyint(1) DEFAULT NULL COMMENT 'Store the xAPI tracking success result.' 
+}
+
+entity "**h5pactivity_attempts_results**" as h5pactivity_attempts_results {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  attemptid : bigint unsigned NOT NULL COMMENT 'h5pactivity_attempts ID' (FK)
+  subcontent : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  timecreated : int NOT NULL 
+  interactiontype : varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  description : text COLLATE utf8mb4_unicode_ci 
+  correctpattern : text COLLATE utf8mb4_unicode_ci COMMENT 'Correct Pattern in xAPI format' 
+  response : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'User response data in xAPI format' 
+  additionals : text COLLATE utf8mb4_unicode_ci COMMENT 'Extra subcontent information in JSON format' 
+  rawscore : int NOT NULL DEFAULT '0' 
+  maxscore : int NOT NULL DEFAULT '0' 
+  duration : int DEFAULT '0' COMMENT 'Seconds inverted in this result (exctracted directly from statement)' 
+  completion : tinyint(1) DEFAULT NULL COMMENT 'Store the xAPI tracking completion result.' 
+  success : tinyint(1) DEFAULT NULL COMMENT 'Store the xAPI tracking success result.' 
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+h5p }|--|| h5p_libraries
+h5p_contents_libraries }|--|| h5p
+h5p_contents_libraries }|--|| h5p_libraries
+h5p_libraries_cachedassets }|--|| h5p_libraries
+h5p_library_dependencies }|--|| h5p_libraries
+h5p_library_dependencies }|--|| h5p_libraries
+h5pactivity }|--|| course
+h5pactivity_attempts }|--|| h5pactivity
+h5pactivity_attempts_results }|--|| h5pactivity_attempts
+@enduml

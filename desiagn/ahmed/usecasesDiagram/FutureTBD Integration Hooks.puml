@@ -1,0 +1,37 @@
+@startuml FutureIntegrationHooks
+left to right direction
+
+actor "Mobile App" as mobile_app
+actor "External Tool" as external_tool
+actor "Payment Gateway" as payment_gateway
+actor "System" as system
+actor "Administrator" as admin
+
+rectangle "Future Integration Hooks" {
+  usecase "Check API Version" as UC1801
+  usecase "Compare Versions" as compare_versions
+  usecase "Process LTI Launch" as UC1802
+  usecase "Authenticate User" as authenticate_user
+  usecase "Initialize Payment" as UC1803
+  usecase "Create Transaction" as create_transaction
+  usecase "Send Webhook Event" as UC1804
+  usecase "Format Payload" as format_payload
+  usecase "Validate Integration" as UC1805
+  usecase "Configure Integration" as configure_integration
+}
+
+' Actor Associations
+mobile_app --> UC1801 : **Association**
+external_tool --> UC1802 : **Association**
+payment_gateway --> UC1803 : **Association**
+system --> UC1804 : **Association**
+system --> UC1805 : **Association**
+admin --> configure_integration : **Association**
+
+' Use Case Relationships
+UC1801 ..> compare_versions : **<<include>>**
+UC1802 ..> authenticate_user : **<<include>>**
+UC1803 ..> create_transaction : **<<include>>**
+UC1804 ..> format_payload : **<<include>>**
+
+@enduml

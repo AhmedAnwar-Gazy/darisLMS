@@ -1,0 +1,61 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**chat**" as chat {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  introformat : smallint NOT NULL DEFAULT '0' COMMENT 'text format of intro field' 
+  keepdays : bigint NOT NULL DEFAULT '0' 
+  studentlogs : smallint NOT NULL DEFAULT '0' 
+  chattime : int NOT NULL DEFAULT '0' 
+  schedule : smallint NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**chat_messages**" as chat_messages {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  chatid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  groupid : int NOT NULL DEFAULT '0' 
+  issystem : tinyint(1) NOT NULL DEFAULT '0' 
+  message : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timestamp : int NOT NULL DEFAULT '0' 
+}
+
+entity "**chat_messages_current**" as chat_messages_current {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  chatid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  groupid : int NOT NULL DEFAULT '0' 
+  issystem : tinyint(1) NOT NULL DEFAULT '0' 
+  message : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timestamp : int NOT NULL DEFAULT '0' 
+}
+
+entity "**chat_users**" as chat_users {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  chatid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : bigint NOT NULL DEFAULT '0' 
+  groupid : bigint NOT NULL DEFAULT '0' 
+  version : varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL 
+  ip : varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL 
+  firstping : int NOT NULL DEFAULT '0' 
+  lastping : int NOT NULL DEFAULT '0' 
+  lastmessageping : int NOT NULL DEFAULT '0' 
+  sid : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL 
+  course : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  lang : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+chat_messages }|--|| chat
+chat_messages_current }|--|| chat
+chat_users }|--|| chat
+chat_users }|--|| course
+@enduml

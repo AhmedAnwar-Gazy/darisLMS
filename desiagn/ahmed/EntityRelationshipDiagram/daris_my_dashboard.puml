@@ -1,0 +1,13 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**my_pages**" as my_pages {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int DEFAULT '0' COMMENT 'The user who owns this page or 0 for system defaults' 
+  name : varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The page name (freeform text)' 
+  private : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Whether or not the page is private (dashboard) or public (profile)' 
+  sortorder : int NOT NULL DEFAULT '0' COMMENT 'The order of the pages for a user' 
+}
+
+@enduml

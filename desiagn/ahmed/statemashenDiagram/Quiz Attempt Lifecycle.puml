@@ -1,0 +1,50 @@
+@startuml QuizAttemptLifecycle
+title Quiz Attempt Lifecycle (SMD-05)
+hide empty description
+
+state "In Progress" as in_progress
+note right of in_progress
+The timer is running. The student is 
+navigating pages and answering 
+questions. 
+end note
+
+state "Overdue" as overdue
+note right of overdue
+The time limit has expired, but the 
+attempt hasn't been submitted yet. This 
+state exists during a "Grace Period" if 
+configured (where students can submit 
+what they have done but not answer new 
+questions). 
+end note
+
+state "Submitted" as submitted
+note right of submitted
+The attempt has been sent to the server 
+for processing. 
+end note
+
+state "Abandoned" as abandoned
+note right of abandoned
+The student lost connection or logged 
+out, and the time limit (plus any grace 
+period) expired without a successful 
+submission. 
+end note
+
+state "Finished (Graded)" as finished_graded
+note right of finished_graded
+The system has auto-graded the attempt, 
+or manual grading is complete. 
+end note
+
+null --> in_progress : Start Quiz
+in_progress --> submitted : User Clicks Finish
+in_progress --> submitted : Time Expires (Auto-submit enabled)
+in_progress --> overdue : Time Expires (Grace period enabled)
+overdue --> submitted : User Clicks Submit
+overdue --> abandoned : Grace Period Expires
+submitted --> finished_graded : System Calculates Score
+
+@enduml

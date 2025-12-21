@@ -1,0 +1,49 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**survey**" as survey {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  template : int NOT NULL DEFAULT '0' 
+  days : int NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  introformat : smallint NOT NULL DEFAULT '0' COMMENT 'intro text field format' 
+  questions : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  completionsubmit : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'If this field is set to 1 
+}
+
+entity "**survey_analysis**" as survey_analysis {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  survey : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  notes : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**survey_answers**" as survey_answers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL DEFAULT '0' 
+  survey : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  question : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  time : int NOT NULL DEFAULT '0' 
+  answer1 : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  answer2 : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**survey_questions**" as survey_questions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  text : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  shorttext : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL 
+  multi : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  type : tinyint NOT NULL DEFAULT '0' 
+  options : text COLLATE utf8mb4_unicode_ci 
+}
+
+survey_analysis }|--|| survey
+survey_answers }|--|| survey_questions
+survey_answers }|--|| survey
+@enduml

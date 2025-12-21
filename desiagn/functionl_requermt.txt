@@ -1,0 +1,183 @@
+Based on the DarisLMS Software Requirements Specification (SRS) PDF provided, combined with the structural context from the Moodle database schema (XML) which inspired the data model, here is the comprehensive list of Functional Requirements.
+These are organized by the system features defined in the SRS.
+1. User Management (FR-01)
+Description: Handles registration, authentication, and role management.
+•	FR-01.1: The system shall allow users to register an account providing an email address, password, and full name.
+•	FR-01.2: The system shall validate email addresses via a verification link sent through an SMTP service before granting active status.
+•	FR-01.3: The system shall authenticate users via the REST API using Laravel Sanctum tokens.
+•	FR-01.4: The system shall support five distinct user roles: Administrator, Instructor, Student, Support, and Guest.
+•	FR-01.5: The system shall enforce Role-Based Access Control (RBAC) on all API endpoints.
+•	FR-01.6: Users shall be able to view and edit their profile details (Avatar, Bio, Qualifications).
+•	FR-01.7: Users shall be able to request a password reset via email.
+•	FR-01.8: Administrators shall have the ability to ban or suspend user accounts.
+2. Course Management (FR-02)
+Description: Allows for the creation, organization, and delivery of learning content.
+•	FR-02.1: Instructors and Administrators shall be able to Create, Read, Update, and Delete (CRUD) courses.
+•	FR-02.2: The system shall require course metadata including Title, Category, Summary, and Visibility status (Draft/Published).
+•	FR-02.3: Administrators shall be able to create and manage Course Categories (e.g., Departments, Subjects).
+•	FR-02.4: Instructors shall be able to structure courses into Sections/Topics and Lessons.
+•	FR-02.5: The system shall index course content using Laravel Scout and TypeSense immediately upon creation or update.
+•	FR-02.6: The system shall support "Private" (invite only) and "Public" (open enrollment) course visibility settings.
+3. Enrollment and Access Control (FR-03)
+Description: Manages the linkage between users and courses.
+•	FR-03.1: Administrators and Instructors shall be able to manually enroll users into courses.
+•	FR-03.2: The system shall allow Students to self-enroll in courses marked as "Open" or "Public."
+•	FR-03.3: The system shall validate a user's enrollment status before serving protected course content.
+•	FR-03.4: Instructors shall be able to organize enrolled students into Groups or Cohorts.
+•	FR-03.5: Administrators shall be able to bulk-enroll users via CSV import.
+4. Assessment and Grading (FR-04)
+Description: Tools for evaluating student performance.
+•	FR-04.1: Instructors shall be able to create Assignments with specific due dates and submission types (File Upload or Online Text).
+•	FR-04.2: Instructors shall be able to create Quizzes using a Question Bank.
+•	FR-04.3: The system shall support Multiple Choice, True/False, and Short Answer question types.
+•	FR-04.4: The system shall automatically grade objective questions (MCQ, True/False) immediately upon submission.
+•	FR-04.5: Instructors shall be able to manually grade assignments and essay questions and provide textual feedback.
+•	FR-04.6: Students shall be able to view their grades and instructor feedback via the Gradebook interface.
+•	FR-04.7: The system shall calculate course grade averages based on weighted items.
+5. Content Management (FR-05)
+Description: Manages files and educational resources.
+•	FR-05.1: Instructors shall be able to upload educational resources (PDFs, Images, Videos).
+•	FR-05.2: The system shall store file metadata (Size, Type, Uploader) in the database and the physical file in storage (Local or AWS S3).
+•	FR-05.3: The system shall maintain version control for uploaded resources, allowing instructors to revert to previous versions.
+•	FR-05.4: The system shall provide embed codes or streaming links for video content.
+6. Search and Discovery (FR-06)
+Description: Powered by TypeSense for fast retrieval of data.
+•	FR-06.1: The system shall provide a global search bar accessible from the frontend.
+•	FR-06.2: Search results shall be capable of returning Courses, Users, and Resource materials.
+•	FR-06.3: The system shall allow users to filter search results by Facets (e.g., Course Category, Instructor Name, Date Added).
+•	FR-06.4: Search queries shall return results in under 500ms (Non-functional performance requirement impacting function).
+7. Notifications and Communication (FR-07)
+Description: Real-time and asynchronous alerts.
+•	FR-07.1: The system shall generate internal notifications for events: New Assignment, Grade Posted, Course Enrollment.
+•	FR-07.2: The system shall send email notifications for critical events (Password Reset, Welcome Email).
+•	FR-07.3: The system shall provide a private messaging interface between Students and Instructors within a course context.
+•	FR-07.4: Users shall be able to configure their notification preferences (e.g., opt-out of non-critical emails).
+8. Analytics and Reporting (FR-08)
+Description: Data visualization for progress and system usage.
+•	FR-08.1: Instructors shall have access to a dashboard showing student progress (completion rates) and attendance.
+•	FR-08.2: Administrators shall have a dashboard showing system health, total user count, and active courses.
+•	FR-08.3: The system shall allow authorized users to export gradebooks and activity logs as CSV or PDF files.
+9. Administration and Configuration (FR-09)
+Description: System-wide control panel.
+•	FR-09.1: Administrators shall be able to configure global system settings (Site Name, Default Language, Mail Server settings).
+•	FR-09.2: Administrators shall be able to trigger manual backups of the database.
+•	FR-09.3: Administrators shall be able to view system audit logs (Who logged in, Who deleted a course).
+•	FR-09.4: Administrators shall be able to manage installed plugins or extensions.
+10. API and Integration Layer (FR-10)
+Description: The interface for the Frontend and external apps.
+•	FR-10.1: The Backend shall expose a RESTful API at /api/v1/ for all supported resources.
+•	FR-10.2: All API responses shall be formatted in JSON.
+•	FR-10.3: The system shall support specific webhooks to notify external systems of course completions.
+•	FR-10.4: (Future) The system shall support LTI (Learning Tools Interoperability) to connect with external tools.
+11. Frontend Interactions (User Interface)
+Description: Requirements specific to the Next.js/React frontend.
+•	FR-11.1: The User Interface shall be fully responsive (Desktop, Tablet, Mobile).
+•	FR-11.2: The Dashboard shall display a summary of "My Courses" and "Upcoming Deadlines" upon login.
+•	FR-11.3: The Course Player interface shall provide a sidebar for navigation between lessons and a main content area for the resource.
+•	FR-11.4: The interface shall support Dark Mode and Light Mode themes (using Shadcn/UI).
+•	FR-11.5: Forms shall implement client-side validation (e.g., required fields, email format) before submitting to the API.
+
+
+Continuing from the previous list, here are the additional Functional Requirements for DarisLMS.
+These requirements are derived from the Business Rules (SRS Section 5.5), Non-Functional Requirements that necessitate functional logic, and specific data structures found in the provided database schema (XML) (such as Contexts, Blocks, and Logs).
+12. Business Logic & Workflow Rules (FR-12)
+Description: Specific logic constraints defined in the SRS to ensure data integrity and proper workflow.
+•	FR-12.1: The system shall prevent a course from being published or visible to students unless it contains at least one published lesson or module.
+•	FR-12.2: The system shall strictly prevent Students from enrolling in courses marked as "Draft."
+•	FR-12.3: The system shall allow instructors to configure assignment "Late Submission" rules (Allow/Deny/Deduct points).
+•	FR-12.4: The system shall enforce a unique constraint on User Emails and Usernames (as seen in the user table index in XML).
+•	FR-12.5: The system shall prevent the deletion of a User if they are the sole instructor of an active course; ownership must be transferred first.
+13. Security and Compliance Functions (FR-13)
+Description: Features required to meet the security standards outlined in SRS Section 5.3.
+•	FR-13.1: The system shall automatically expire user sessions (Sanctum tokens) after 30 minutes of inactivity.
+•	FR-13.2: The system shall provide a "Logout All Devices" function that revokes all active Sanctum tokens for a specific user.
+•	FR-13.3: The system shall hash all passwords using Bcrypt before storage in the database.
+•	FR-13.4: The system shall provide a "Download My Data" feature for students to export their profile and grade data (GDPR compliance).
+•	FR-13.5: The system shall allow users to delete their account, triggering a soft-delete (setting the deleted flag in the user table to 1) rather than immediate permanent erasure, to preserve audit trails for 12 months.
+14. System Logging and Auditing (FR-14)
+Description: Based on SRS Section 5.2 and the log and logstore_standard_log tables in the XML.
+•	FR-14.1: The system shall automatically record an audit log entry for every: User Login, Grade Change, Course Deletion, and Role Assignment change.
+•	FR-14.2: Each log entry shall record: userid, courseid, ip_address, timestamp, and the specific action performed.
+•	FR-14.3: The system shall make these logs accessible to Administrators via the Admin Panel for filtering and review.
+15. Context and Hierarchy Management (FR-15)
+Description: Derived from the Moodle-style context table in the XML, essential for the permission system mentioned in SRS 4.3.
+•	FR-15.1: The system shall maintain a hierarchical context tree where permissions cascade (System 
+•	        →\rightarrow→
+      
+Course Category 
+        →\rightarrow→
+      
+Course 
+        →\rightarrow→
+      
+Module/Lesson).
+•	FR-15.2: The system shall allow an Administrator to override permissions at a specific context level (e.g., granting a Student "Instructor" rights only for a specific Course Context, without changing their global role).
+16. Block and Widget Management (FR-16)
+Description: Based on the block and block_instances tables in the XML, allowing for a modular UI.
+•	FR-16.1: The system shall allow Administrators to position functional "Blocks" (e.g., Calendar, Recent Activity, Online Users) on the Dashboard or Course sidebars.
+•	FR-16.2: The API shall return a list of active blocks for a specific page route so the Frontend (Next.js) can render them dynamically.
+17. Localization and Accessibility (FR-17)
+Description: Supporting diverse user bases as per SRS Appendix C.
+•	FR-17.1: The system API shall accept a Locale header to return error messages and system strings in the user's preferred language (English or Arabic).
+•	FR-17.2: The Frontend shall support Right-to-Left (RTL) layout mirroring when the language is set to Arabic.
+•	FR-17.3: All interactive elements (buttons, inputs) shall include ARIA labels to ensure screen reader compatibility (WCAG 2.1 AA).
+18. Future/TBD Integration Hooks (FR-18)
+Description: Preparation for features listed in SRS Appendix C (To Be Determined).
+•	FR-18.1: The system shall expose a specific endpoint for Mobile App initialization to check the API version status.
+•	FR-18.2: The system architecture shall support LTI 1.3 standards (using tables like enrol_lti_tools in the schema) to allow future connection to external tools like Turnitin or Zoom.
+•	FR-18.3: The system shall be capable of integrating with payment gateways (using the payments and payment_accounts tables structure) for future paid course features.
+
+
+Continuing from the previous sections, here are the remaining Functional Requirements for DarisLMS.
+These requirements focus on specific Educational Activity Modules, Gamification, Competencies, and System Utilities found in the install.xml database schema. While the SRS provided high-level goals, the database schema reveals a much richer set of intended functionalities that the system must support to match the "Moodle-inspired" architecture.
+19. Advanced Learning Activities (FR-19)
+Description: Specific interactive modules beyond simple assignments and quizzes, derived from the schema tables (e.g., forum, workshop, wiki, scorm).
+•	FR-19.1 (Forums): The system shall allow Instructors to create discussion forums where users can post topics and reply to threads.
+o	Constraint: The system shall support "Pinned" posts and "Subscription" modes (Forced, Optional, Auto).
+•	FR-19.2 (Wikis): The system shall provide a Wiki module allowing collaborative editing of content pages by students within a course.
+o	Constraint: The system must maintain a history of page versions to allow rollbacks (as per wiki_versions table).
+•	FR-19.3 (Workshops/Peer Review): The system shall support a "Workshop" activity enabling peer assessment, where students submit work and grade other students based on an instructor-defined rubric.
+o	Logic: The workflow must support distinct phases: Setup, Submission, Assessment, Grading/Evaluation, and Closed.
+•	FR-19.4 (Glossaries): The system shall allow the creation of course-specific Glossaries (dictionaries of terms) that can be auto-linked within other course content.
+•	FR-19.5 (SCORM/IMS Packages): The system shall be capable of importing, launching, and tracking standard SCORM 1.2/2004 and IMSCP learning packages.
+o	Data: The system must track interaction data such as "Time Spent," "Score," and "Completion Status" (as per scorm_scoes_track logic).
+20. Competency-Based Learning (FR-20)
+Description: Managing learning plans and skill frameworks, based on the competency_* tables.
+•	FR-20.1: Administrators shall be able to define Competency Frameworks (hierarchies of skills or standards).
+•	FR-20.2: Instructors shall be able to map specific Course Activities (Quizzes, Assignments) to specific Competencies.
+•	FR-20.3: The system shall automatically mark a competency as "Achieved" for a student when connected activity grades meet a defined threshold.
+•	FR-20.4: The system shall support "Learning Plans" which group specific competencies required for a student to complete a program.
+21. Gamification and Badges (FR-21)
+Description: Motivation mechanics based on the badge_* tables.
+•	FR-21.1: The system shall allow Administrators (Site-level) and Instructors (Course-level) to create Badges.
+•	FR-21.2: The system shall support automated Badge issuance based on criteria (e.g., Course Completion, Activity Completion, or Profile Completion).
+•	FR-21.3: Users shall be able to display their earned badges on their User Profile.
+•	FR-21.4: (Future) The system shall support "Backpack" integration to export badges to external Open Badge verifiers.
+22. Calendar and Scheduling (FR-22)
+Description: Time management features based on the event tables.
+•	FR-22.1: The system shall generate a global Calendar for every user aggregating events from all enrolled courses.
+•	FR-22.2: The system shall automatically create Calendar Events when an Activity (Assignment/Quiz) has a "Due Date" or "Open Date."
+•	FR-22.3: Users shall be able to create personal private events on their calendar.
+•	FR-22.4: The system shall allow users to export their calendar via an iCal (.ics) feed url.
+23. File Repositories and Storage (FR-23)
+Description: Managing external file sources based on repository_* tables.
+•	FR-23.1: The system shall provide a unified "File Picker" interface for uploading content throughout the application.
+•	FR-23.2: The system shall support "Private Files" areas for users to store draft documents before submission.
+•	FR-23.3: The architecture shall support Repository Plugins to allow browsing and picking files directly from external services (e.g., Google Drive, OneDrive, Dropbox) without leaving the interface.
+24. Data Privacy and Policy Management (FR-24)
+Description: Compliance tools based on tool_policy and tool_dataprivacy tables.
+•	FR-24.1: The system shall force users to agree to the "Site Policy" and "Privacy Policy" upon their first login.
+•	FR-24.2: The system shall track versioning of policies; if a policy is updated, users must re-consent upon next login.
+•	FR-24.3: Administrators shall be able to view a list of users who have not yet agreed to the current policies.
+25. System Health and Task Scheduling (FR-25)
+Description: Background processing based on task_scheduled and task_adhoc tables.
+•	FR-25.1: The system shall utilize a Cron scheduler (via Laravel Scheduling) to run periodic maintenance tasks (e.g., sending queued emails, calculating analytics, cleaning up temp files).
+•	FR-25.2: The system shall support "Adhoc Tasks" for immediate background processing (e.g., grading a large quiz, backing up a course) to prevent browser timeouts for the user.
+•	FR-25.3: Administrators shall be able to view the "Task Log" to verify that background jobs are running successfully or debug failures.
+26. Content Bank and H5P (FR-26)
+Description: Interactive rich content management based on h5p and contentbank tables.
+•	FR-26.1: The system shall provide a "Content Bank" for instructors to store reusable interactive content.
+•	FR-26.2: The system shall support the display and tracking of H5P (HTML5 Package) interactive content (e.g., interactive videos, drag-and-drop questions).
+•	FR-26.3: The system shall allow H5P content to write grades back to the main Course Gradebook.
+This concludes the comprehensive Functional Requirements list based on the provided DarisLMS SRS and the detailed database schema.
+

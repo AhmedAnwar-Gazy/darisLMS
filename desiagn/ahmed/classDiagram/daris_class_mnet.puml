@@ -1,0 +1,205 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "mnet_application" {
+  +id : Integer
+  +name : String
+  +display_name : String
+  +xmlrpc_server_url : String
+  +sso_land_url : String
+  +sso_jump_url : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_host" {
+  +id : Integer
+  +deleted : Integer
+  +wwwroot : String
+  +ip_address : String
+  +name : String
+  +public_key : String
+  +public_key_expires : Integer
+  +transport : Integer
+  +portno : Integer
+  +last_connect_time : Integer
+  +last_log_id : Integer
+  +force_theme : Integer
+  +theme : String
+  +applicationid : Integer
+  +sslverification : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_host2service" {
+  +id : Integer
+  +hostid : Integer
+  +serviceid : Integer
+  +publish : Integer
+  +subscribe : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_log" {
+  +id : Integer
+  +hostid : Integer
+  +remoteid : Integer
+  +time : Integer
+  +userid : Integer
+  +ip : String
+  +course : Integer
+  +coursename : String
+  +module : String
+  +cmid : Integer
+  +action : String
+  +url : String
+  +info : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_remote_rpc" {
+  +id : Integer
+  +functionname : String
+  +xmlrpcpath : String
+  +plugintype : String
+  +pluginname : String
+  +enabled : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_remote_service2rpc" {
+  +id : Integer
+  +serviceid : Integer
+  +rpcid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_rpc" {
+  +id : Integer
+  +functionname : String
+  +xmlrpcpath : String
+  +plugintype : String
+  +pluginname : String
+  +enabled : Integer
+  +help : String
+  +profile : String
+  +filename : String
+  +classname : String
+  +static : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_service" {
+  +id : Integer
+  +name : String
+  +description : String
+  +apiversion : String
+  +offer : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_service2rpc" {
+  +id : Integer
+  +serviceid : Integer
+  +rpcid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_session" {
+  +id : Integer
+  +userid : Integer
+  +username : String
+  +token : String
+  +mnethostid : Integer
+  +useragent : String
+  +confirm_timeout : Integer
+  +session_id : String
+  +expires : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnet_sso_access_control" {
+  +id : Integer
+  +username : String
+  +mnet_host_id : Integer
+  +accessctrl : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnetservice_enrol_courses" {
+  +id : Integer
+  +hostid : Integer
+  +remoteid : Integer
+  +categoryid : Integer
+  +categoryname : String
+  +sortorder : Integer
+  +fullname : String
+  +shortname : String
+  +idnumber : String
+  +summary : String
+  +summaryformat : Integer
+  +startdate : Integer
+  +roleid : Integer
+  +rolename : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "mnetservice_enrol_enrolments" {
+  +id : Integer
+  +hostid : Integer
+  +userid : Integer
+  +remotecourseid : Integer
+  +rolename : String
+  +enroltime : Integer
+  +enroltype : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+"mnet_host" "*" --> "1" "mnet_application" : applicationid
+"mnet_session" "*" --> "1" "mnet_host" : mnethostid
+"mnet_session" "*" --> "1" "users" : userid
+"mnetservice_enrol_enrolments" "*" --> "1" "mnet_host" : hostid
+"mnetservice_enrol_enrolments" "*" --> "1" "users" : userid
+@enduml

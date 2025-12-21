@@ -1,0 +1,73 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**tag**" as tag {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  tagcollid : bigint unsigned NOT NULL (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  rawname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The raw 
+  isstandard : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether this tag is standard' 
+  description : text COLLATE utf8mb4_unicode_ci 
+  descriptionformat : tinyint NOT NULL DEFAULT '0' 
+  flag : smallint DEFAULT '0' COMMENT 'a tag can be ''flagged'' as inappropriate' 
+  timemodified : int DEFAULT NULL 
+}
+
+entity "**tag_area**" as tag_area {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  itemtype : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  enabled : tinyint(1) NOT NULL DEFAULT '1' 
+  tagcollid : bigint unsigned NOT NULL (FK)
+  callback : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  callbackfile : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  showstandard : tinyint(1) NOT NULL DEFAULT '0' 
+  multiplecontexts : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether the tag area allows tag instances to be created in multiple contexts.' 
+}
+
+entity "**tag_coll**" as tag_coll {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  isdefault : tinyint NOT NULL DEFAULT '0' 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  sortorder : smallint NOT NULL DEFAULT '0' 
+  searchable : tinyint NOT NULL DEFAULT '1' COMMENT 'Whether the tag collection is searchable' 
+  customurl : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Custom URL for the tag page instead of /tag/index.php' 
+}
+
+entity "**tag_correlation**" as tag_correlation {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  tagid : bigint unsigned NOT NULL (FK)
+  correlatedtags : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**tag_instance**" as tag_instance {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  tagid : bigint unsigned NOT NULL (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Defines the Moodle component which the tag was added to' 
+  itemtype : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  itemid : int NOT NULL 
+  contextid : bigint unsigned DEFAULT NULL COMMENT 'The context id of the item that was tagged' (FK)
+  tiuserid : int NOT NULL DEFAULT '0' 
+  ordering : int DEFAULT NULL COMMENT 'Maintains the order of the tag instances of an item' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'timemodified' 
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+tag }|--|| tag_coll
+tag }|--|| users
+tag_area }|--|| tag_coll
+tag_correlation }|--|| tag
+tag_instance }|--|| context
+tag_instance }|--|| tag
+@enduml

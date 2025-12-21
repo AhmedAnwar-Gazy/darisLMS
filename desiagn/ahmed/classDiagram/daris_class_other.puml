@@ -1,0 +1,1590 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "adminpresets" {
+  +id : Integer
+  +userid : Integer
+  +name : String
+  +comments : String
+  +site : String
+  +author : String
+  +moodleversion : String
+  +moodlerelease : String
+  +iscore : Integer
+  +timecreated : Integer
+  +timeimported : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "adminpresets_app" {
+  +id : Integer
+  +adminpresetid : Integer
+  +userid : Integer
+  +time : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "adminpresets_app_it" {
+  +id : Integer
+  +adminpresetapplyid : Integer
+  +configlogid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "adminpresets_app_it_a" {
+  +id : Integer
+  +adminpresetapplyid : Integer
+  +configlogid : Integer
+  +itemname : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "adminpresets_app_plug" {
+  +id : Integer
+  +adminpresetapplyid : Integer
+  +plugin : String
+  +name : String
+  +value : Integer
+  +oldvalue : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "adminpresets_it" {
+  +id : Integer
+  +adminpresetid : Integer
+  +plugin : String
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "adminpresets_it_a" {
+  +id : Integer
+  +itemid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "adminpresets_plug" {
+  +id : Integer
+  +adminpresetid : Integer
+  +plugin : String
+  +name : String
+  +enabled : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "ai_action_explain_text" {
+  +id : Integer
+  +prompt : String
+  +responseid : String
+  +fingerprint : String
+  +generatedcontent : String
+  +finishreason : String
+  +prompttokens : Integer
+  +completiontoken : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "ai_action_generate_image" {
+  +id : Integer
+  +prompt : String
+  +numberimages : Integer
+  +quality : String
+  +aspectratio : String
+  +style : String
+  +sourceurl : String
+  +revisedprompt : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "ai_action_generate_text" {
+  +id : Integer
+  +prompt : String
+  +responseid : String
+  +fingerprint : String
+  +generatedcontent : String
+  +finishreason : String
+  +prompttokens : Integer
+  +completiontoken : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "ai_action_register" {
+  +id : Integer
+  +actionname : String
+  +actionid : Integer
+  +success : Integer
+  +userid : Integer
+  +contextid : Integer
+  +provider : String
+  +errorcode : Integer
+  +errormessage : String
+  +timecreated : Integer
+  +timecompleted : Integer
+  +model : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "ai_action_summarise_text" {
+  +id : Integer
+  +prompt : String
+  +responseid : String
+  +fingerprint : String
+  +generatedcontent : String
+  +finishreason : String
+  +prompttokens : Integer
+  +completiontoken : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "ai_policy_register" {
+  +id : Integer
+  +userid : Integer
+  +contextid : Integer
+  +timeaccepted : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "ai_providers" {
+  +id : Integer
+  +name : String
+  +provider : String
+  +enabled : Integer
+  +config : String
+  +actionconfig : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "bigbluebuttonbn" {
+  +id : Integer
+  +type : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +meetingid : String
+  +moderatorpass : String
+  +viewerpass : String
+  +wait : Integer
+  +record : Integer
+  +recordallfromstart : Integer
+  +recordhidebutton : Integer
+  +welcome : String
+  +voicebridge : Integer
+  +openingtime : Integer
+  +closingtime : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +presentation : String
+  +participants : String
+  +userlimit : Integer
+  +recordings_html : Integer
+  +recordings_deleted : Integer
+  +recordings_imported : Integer
+  +recordings_preview : Integer
+  +clienttype : Integer
+  +muteonstart : Integer
+  +disablecam : Integer
+  +disablemic : Integer
+  +disableprivatechat : Integer
+  +disablepublicchat : Integer
+  +disablenote : Integer
+  +hideuserlist : Integer
+  +completionattendance : Integer
+  +completionengagementchats : Integer
+  +completionengagementtalks : Integer
+  +completionengagementraisehand : Integer
+  +completionengagementpollvotes : Integer
+  +completionengagementemojis : Integer
+  +guestallowed : Integer
+  +mustapproveuser : Integer
+  +guestlinkuid : String
+  +guestpassword : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "bigbluebuttonbn_logs" {
+  +id : Integer
+  +courseid : Integer
+  +bigbluebuttonbnid : Integer
+  +userid : Integer
+  +timecreated : Integer
+  +meetingid : String
+  +log : String
+  +meta : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "bigbluebuttonbn_recordings" {
+  +id : Integer
+  +courseid : Integer
+  +bigbluebuttonbnid : Integer
+  +groupid : Integer
+  +recordingid : String
+  +headless : Integer
+  +imported : Integer
+  +status : Integer
+  +importeddata : String
+  +timecreated : Integer
+  +usermodified : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "block" {
+  +id : Integer
+  +name : String
+  +cron : Integer
+  +lastcron : Integer
+  +visible : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "blog_association" {
+  +id : Integer
+  +contextid : Integer
+  +blogid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "blog_external" {
+  +id : Integer
+  +userid : Integer
+  +name : String
+  +description : String
+  +url : String
+  +filtertags : String
+  +failedlastsync : Integer
+  +timemodified : Integer
+  +timefetched : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "cache" {
+  +key : String
+  +value : String
+  +expiration : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "capabilities" {
+  +id : Integer
+  +name : String
+  +captype : String
+  +contextlevel : Integer
+  +component : String
+  +riskbitmask : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "cohort" {
+  +id : Integer
+  +contextid : Integer
+  +name : String
+  +idnumber : String
+  +description : String
+  +descriptionformat : Integer
+  +visible : Integer
+  +component : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +theme : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "cohort_members" {
+  +id : Integer
+  +cohortid : Integer
+  +userid : Integer
+  +timeadded : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "comments" {
+  +id : Integer
+  +contextid : Integer
+  +component : String
+  +commentarea : String
+  +itemid : Integer
+  +content : String
+  +format : Integer
+  +userid : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "communication" {
+  +id : Integer
+  +contextid : Integer
+  +instanceid : Integer
+  +component : String
+  +instancetype : String
+  +provider : String
+  +roomname : String
+  +avatarfilename : String
+  +active : Integer
+  +avatarsynced : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "communication_customlink" {
+  +id : Integer
+  +commid : Integer
+  +url : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "communication_user" {
+  +id : Integer
+  +commid : Integer
+  +userid : Integer
+  +synced : Integer
+  +deleted : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "config" {
+  +id : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "config_log" {
+  +id : Integer
+  +userid : Integer
+  +timemodified : Integer
+  +plugin : String
+  +name : String
+  +value : String
+  +oldvalue : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "config_plugins" {
+  +id : Integer
+  +plugin : String
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "contentbank_content" {
+  +id : Integer
+  +name : String
+  +contenttype : String
+  +contextid : Integer
+  +visibility : Integer
+  +instanceid : Integer
+  +configdata : String
+  +usercreated : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "customfield_category" {
+  +id : Integer
+  +name : String
+  +description : String
+  +descriptionformat : Integer
+  +sortorder : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +component : String
+  +area : String
+  +itemid : Integer
+  +contextid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "customfield_data" {
+  +id : Integer
+  +fieldid : Integer
+  +instanceid : Integer
+  +intvalue : Integer
+  +decvalue : Float
+  +shortcharvalue : String
+  +charvalue : String
+  +value : String
+  +valueformat : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +contextid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "customfield_field" {
+  +id : Integer
+  +shortname : String
+  +name : String
+  +type : String
+  +description : String
+  +descriptionformat : Integer
+  +sortorder : Integer
+  +categoryid : Integer
+  +configdata : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "customfield_shared" {
+  +id : Integer
+  +categoryid : Integer
+  +component : String
+  +area : String
+  +itemid : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "data" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +comments : Integer
+  +timeavailablefrom : Integer
+  +timeavailableto : Integer
+  +timeviewfrom : Integer
+  +timeviewto : Integer
+  +requiredentries : Integer
+  +requiredentriestoview : Integer
+  +maxentries : Integer
+  +rssarticles : Integer
+  +singletemplate : String
+  +listtemplate : String
+  +listtemplateheader : String
+  +listtemplatefooter : String
+  +addtemplate : String
+  +rsstemplate : String
+  +rsstitletemplate : String
+  +csstemplate : String
+  +jstemplate : String
+  +asearchtemplate : String
+  +approval : Integer
+  +manageapproved : Integer
+  +scale : Integer
+  +assessed : Integer
+  +assesstimestart : Integer
+  +assesstimefinish : Integer
+  +defaultsort : Integer
+  +defaultsortdir : Integer
+  +editany : Integer
+  +notification : Integer
+  +timemodified : Integer
+  +config : String
+  +completionentries : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "data_content" {
+  +id : Integer
+  +fieldid : Integer
+  +recordid : Integer
+  +content : String
+  +content1 : String
+  +content2 : String
+  +content3 : String
+  +content4 : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "data_fields" {
+  +id : Integer
+  +dataid : Integer
+  +type : String
+  +name : String
+  +description : String
+  +required : Integer
+  +param1 : String
+  +param2 : String
+  +param3 : String
+  +param4 : String
+  +param5 : String
+  +param6 : String
+  +param7 : String
+  +param8 : String
+  +param9 : String
+  +param10 : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "data_records" {
+  +id : Integer
+  +userid : Integer
+  +groupid : Integer
+  +dataid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +approved : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "editor_atto_autosave" {
+  +id : Integer
+  +elementid : String
+  +contextid : Integer
+  +pagehash : String
+  +userid : Integer
+  +drafttext : String
+  +draftid : Integer
+  +pageinstance : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "external_functions" {
+  +id : Integer
+  +name : String
+  +classname : String
+  +methodname : String
+  +classpath : String
+  +component : String
+  +capabilities : String
+  +services : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "external_services" {
+  +id : Integer
+  +name : String
+  +enabled : Integer
+  +requiredcapability : String
+  +restrictedusers : Integer
+  +component : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +shortname : String
+  +downloadfiles : Integer
+  +uploadfiles : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "external_services_functions" {
+  +id : Integer
+  +externalserviceid : Integer
+  +functionname : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "external_services_users" {
+  +id : Integer
+  +externalserviceid : Integer
+  +userid : Integer
+  +iprestriction : String
+  +validuntil : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "external_tokens" {
+  +id : Integer
+  +token : String
+  +privatetoken : String
+  +tokentype : Integer
+  +userid : Integer
+  +externalserviceid : Integer
+  +sid : String
+  +contextid : Integer
+  +creatorid : Integer
+  +iprestriction : String
+  +validuntil : Integer
+  +timecreated : Integer
+  +lastaccess : Integer
+  +name : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "failed_jobs" {
+  +id : Integer
+  +uuid : String
+  +connection : String
+  +queue : String
+  +payload : String
+  +exception : String
+  +failed_at : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "favourite" {
+  +id : Integer
+  +component : String
+  +itemtype : String
+  +itemid : Integer
+  +contextid : Integer
+  +userid : Integer
+  +ordering : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "filter_active" {
+  +id : Integer
+  +filter : Integer
+  +contextid : Integer
+  +active : Integer
+  +sortorder : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "filter_config" {
+  +id : Integer
+  +filter : Integer
+  +contextid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "folder" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +revision : Integer
+  +timemodified : Integer
+  +display : Integer
+  +showexpanded : Integer
+  +showdownloadfolder : Integer
+  +forcedownload : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grading_areas" {
+  +id : Integer
+  +contextid : Integer
+  +component : String
+  +areaname : String
+  +activemethod : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grading_definitions" {
+  +id : Integer
+  +areaid : Integer
+  +method : String
+  +name : String
+  +description : String
+  +descriptionformat : Integer
+  +status : Integer
+  +copiedfromid : Integer
+  +timecreated : Integer
+  +usercreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +timecopied : Integer
+  +options : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grading_instances" {
+  +id : Integer
+  +definitionid : Integer
+  +raterid : Integer
+  +itemid : Integer
+  +rawgrade : Float
+  +status : Integer
+  +feedback : String
+  +feedbackformat : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "gradingform_guide_comments" {
+  +id : Integer
+  +definitionid : Integer
+  +sortorder : Integer
+  +description : String
+  +descriptionformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "gradingform_guide_criteria" {
+  +id : Integer
+  +definitionid : Integer
+  +sortorder : Integer
+  +shortname : String
+  +description : String
+  +descriptionformat : Integer
+  +descriptionmarkers : String
+  +descriptionmarkersformat : Integer
+  +maxscore : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "gradingform_guide_fillings" {
+  +id : Integer
+  +instanceid : Integer
+  +criterionid : Integer
+  +remark : String
+  +remarkformat : Integer
+  +score : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "gradingform_rubric_criteria" {
+  +id : Integer
+  +definitionid : Integer
+  +sortorder : Integer
+  +description : String
+  +descriptionformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "gradingform_rubric_fillings" {
+  +id : Integer
+  +instanceid : Integer
+  +criterionid : Integer
+  +levelid : Integer
+  +remark : String
+  +remarkformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "gradingform_rubric_levels" {
+  +id : Integer
+  +criterionid : Integer
+  +score : Float
+  +definition : String
+  +definitionformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "groupings" {
+  +id : Integer
+  +courseid : Integer
+  +name : String
+  +idnumber : String
+  +description : String
+  +descriptionformat : Integer
+  +configdata : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "groupings_groups" {
+  +id : Integer
+  +groupingid : Integer
+  +groupid : Integer
+  +timeadded : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "imscp" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +revision : Integer
+  +keepold : Integer
+  +structure : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "infected_files" {
+  +id : Integer
+  +filename : String
+  +quarantinedfile : String
+  +userid : Integer
+  +reason : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "job_batches" {
+  +id : String
+  +name : String
+  +total_jobs : Integer
+  +pending_jobs : Integer
+  +failed_jobs : Integer
+  +failed_job_ids : String
+  +options : String
+  +cancelled_at : Integer
+  +created_at : Integer
+  +finished_at : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "jobs" {
+  +id : Integer
+  +queue : String
+  +payload : String
+  +attempts : Integer
+  +reserved_at : Integer
+  +available_at : Integer
+  +created_at : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "label" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "license" {
+  +id : Integer
+  +shortname : String
+  +fullname : String
+  +source : String
+  +enabled : Integer
+  +version : Integer
+  +custom : Integer
+  +sortorder : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lock_db" {
+  +id : Integer
+  +resourcekey : String
+  +expires : Integer
+  +owner : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "log" {
+  +id : Integer
+  +time : Integer
+  +userid : Integer
+  +ip : String
+  +course : Integer
+  +module : String
+  +cmid : Integer
+  +action : String
+  +url : String
+  +info : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "log_display" {
+  +id : Integer
+  +module : String
+  +action : String
+  +mtable : String
+  +field : String
+  +component : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "log_queries" {
+  +id : Integer
+  +qtype : Integer
+  +sqltext : String
+  +sqlparams : String
+  +error : Integer
+  +info : String
+  +backtrace : String
+  +exectime : Float
+  +timelogged : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "logstore_standard_log" {
+  +id : Integer
+  +eventname : String
+  +component : String
+  +action : String
+  +target : String
+  +objecttable : String
+  +objectid : Integer
+  +crud : String
+  +edulevel : Integer
+  +contextid : Integer
+  +contextlevel : Integer
+  +contextinstanceid : Integer
+  +userid : Integer
+  +courseid : Integer
+  +relateduserid : Integer
+  +anonymous : Integer
+  +other : String
+  +timecreated : Integer
+  +origin : String
+  +ip : String
+  +realuserid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "matrix_room" {
+  +id : Integer
+  +commid : Integer
+  +roomid : String
+  +topic : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "migrations" {
+  +id : Integer
+  +migration : String
+  +batch : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "moodle_sessions" {
+  +id : Integer
+  +state : Integer
+  +sid : String
+  +userid : Integer
+  +sessdata : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +firstip : String
+  +lastip : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "moodlenet_share_progress" {
+  +id : Integer
+  +type : Integer
+  +courseid : Integer
+  +cmid : Integer
+  +userid : Integer
+  +timecreated : Integer
+  +resourceurl : String
+  +status : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "password_reset_tokens" {
+  +email : String
+  +token : String
+  +created_at : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "paygw_paypal" {
+  +id : Integer
+  +paymentid : Integer
+  +pp_orderid : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "personal_access_tokens" {
+  +id : Integer
+  +tokenable_type : String
+  +tokenable_id : Integer
+  +name : String
+  +token : String
+  +abilities : String
+  +last_used_at : String
+  +expires_at : String
+  +created_at : String
+  +updated_at : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "profiling" {
+  +id : Integer
+  +runid : String
+  +url : String
+  +data : String
+  +totalexecutiontime : Integer
+  +totalcputime : Integer
+  +totalcalls : Integer
+  +totalmemory : Integer
+  +runreference : Integer
+  +runcomment : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qbank" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +intro : String
+  +introformat : Integer
+  +type : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "registration_hubs" {
+  +id : Integer
+  +token : String
+  +hubname : String
+  +huburl : String
+  +confirmed : Integer
+  +secret : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scale" {
+  +id : Integer
+  +courseid : Integer
+  +userid : Integer
+  +name : String
+  +scale : String
+  +description : String
+  +descriptionformat : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "scale_history" {
+  +id : Integer
+  +action : Integer
+  +oldid : Integer
+  +source : String
+  +timemodified : Integer
+  +loggeduser : Integer
+  +courseid : Integer
+  +userid : Integer
+  +name : String
+  +scale : String
+  +description : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "shortlink" {
+  +id : Integer
+  +shortcode : String
+  +userid : Integer
+  +component : String
+  +linktype : String
+  +identifier : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "sms_gateways" {
+  +id : Integer
+  +name : String
+  +gateway : String
+  +enabled : Integer
+  +config : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "sms_messages" {
+  +id : Integer
+  +recipientnumber : String
+  +content : String
+  +component : String
+  +messagetype : String
+  +recipientuserid : Integer
+  +issensitive : Integer
+  +gatewayid : Integer
+  +status : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "stats_daily" {
+  +id : Integer
+  +courseid : Integer
+  +timeend : Integer
+  +roleid : Integer
+  +stattype : String
+  +stat1 : Integer
+  +stat2 : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "stats_monthly" {
+  +id : Integer
+  +courseid : Integer
+  +timeend : Integer
+  +roleid : Integer
+  +stattype : String
+  +stat1 : Integer
+  +stat2 : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "stats_user_daily" {
+  +id : Integer
+  +courseid : Integer
+  +userid : Integer
+  +roleid : Integer
+  +timeend : Integer
+  +statsreads : Integer
+  +statswrites : Integer
+  +stattype : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "stats_user_monthly" {
+  +id : Integer
+  +courseid : Integer
+  +userid : Integer
+  +roleid : Integer
+  +timeend : Integer
+  +statsreads : Integer
+  +statswrites : Integer
+  +stattype : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "stats_user_weekly" {
+  +id : Integer
+  +courseid : Integer
+  +userid : Integer
+  +roleid : Integer
+  +timeend : Integer
+  +statsreads : Integer
+  +statswrites : Integer
+  +stattype : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "stats_weekly" {
+  +id : Integer
+  +courseid : Integer
+  +timeend : Integer
+  +roleid : Integer
+  +stattype : String
+  +stat1 : Integer
+  +stat2 : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "stored_progress" {
+  +id : Integer
+  +idnumber : String
+  +timestart : Integer
+  +lastupdate : Integer
+  +percentcompleted : Float
+  +message : String
+  +haserrored : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "subsection" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tiny_autosave" {
+  +id : Integer
+  +elementid : String
+  +contextid : Integer
+  +pagehash : String
+  +userid : Integer
+  +drafttext : String
+  +draftid : Integer
+  +pageinstance : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "xapi_states" {
+  +id : Integer
+  +component : String
+  +userid : Integer
+  +itemid : Integer
+  +stateid : String
+  +statedata : String
+  +registration : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "groups" <<External>> {
+}
+
+class "post" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"ai_action_register" "*" --> "1" "users" : userid
+"ai_policy_register" "*" --> "1" "users" : userid
+"bigbluebuttonbn_recordings" "*" --> "1" "bigbluebuttonbn" : bigbluebuttonbnid
+"bigbluebuttonbn_recordings" "*" --> "1" "users" : usermodified
+"blog_association" "*" --> "1" "post" : blogid
+"blog_association" "*" --> "1" "context" : contextid
+"blog_external" "*" --> "1" "users" : userid
+"cohort" "*" --> "1" "context" : contextid
+"cohort_members" "*" --> "1" "cohort" : cohortid
+"cohort_members" "*" --> "1" "users" : userid
+"comments" "*" --> "1" "users" : userid
+"communication" "*" --> "1" "context" : contextid
+"communication_customlink" "*" --> "1" "communication" : commid
+"communication_user" "*" --> "1" "communication" : commid
+"communication_user" "*" --> "1" "users" : userid
+"config_log" "*" --> "1" "users" : userid
+"contentbank_content" "*" --> "1" "context" : contextid
+"contentbank_content" "*" --> "1" "users" : usercreated
+"contentbank_content" "*" --> "1" "users" : usermodified
+"customfield_category" "*" --> "1" "context" : contextid
+"customfield_data" "*" --> "1" "context" : contextid
+"customfield_data" "*" --> "1" "customfield_field" : fieldid
+"customfield_field" "*" --> "1" "customfield_category" : categoryid
+"customfield_shared" "*" --> "1" "customfield_category" : categoryid
+"customfield_shared" "*" --> "1" "users" : usermodified
+"data_content" "*" --> "1" "data_fields" : fieldid
+"data_content" "*" --> "1" "data_records" : recordid
+"data_fields" "*" --> "1" "data" : dataid
+"data_records" "*" --> "1" "data" : dataid
+"data_records" "*" --> "1" "users" : userid
+"external_services_functions" "*" --> "1" "external_services" : externalserviceid
+"external_services_users" "*" --> "1" "external_services" : externalserviceid
+"external_services_users" "*" --> "1" "users" : userid
+"external_tokens" "*" --> "1" "context" : contextid
+"external_tokens" "*" --> "1" "users" : creatorid
+"external_tokens" "*" --> "1" "external_services" : externalserviceid
+"external_tokens" "*" --> "1" "users" : userid
+"favourite" "*" --> "1" "context" : contextid
+"favourite" "*" --> "1" "users" : userid
+"filter_active" "*" --> "1" "context" : contextid
+"filter_config" "*" --> "1" "context" : contextid
+"grading_areas" "*" --> "1" "context" : contextid
+"grading_definitions" "*" --> "1" "grading_areas" : areaid
+"grading_definitions" "*" --> "1" "users" : usercreated
+"grading_definitions" "*" --> "1" "users" : usermodified
+"grading_instances" "*" --> "1" "grading_definitions" : definitionid
+"grading_instances" "*" --> "1" "users" : raterid
+"gradingform_guide_comments" "*" --> "1" "grading_definitions" : definitionid
+"gradingform_guide_criteria" "*" --> "1" "grading_definitions" : definitionid
+"gradingform_guide_fillings" "*" --> "1" "gradingform_guide_criteria" : criterionid
+"gradingform_guide_fillings" "*" --> "1" "grading_instances" : instanceid
+"gradingform_rubric_criteria" "*" --> "1" "grading_definitions" : definitionid
+"gradingform_rubric_fillings" "*" --> "1" "gradingform_rubric_criteria" : criterionid
+"gradingform_rubric_fillings" "*" --> "1" "grading_instances" : instanceid
+"gradingform_rubric_levels" "*" --> "1" "gradingform_rubric_criteria" : criterionid
+"groupings" "*" --> "1" "course" : courseid
+"groupings_groups" "*" --> "1" "groups" : groupid
+"groupings_groups" "*" --> "1" "groupings" : groupingid
+"infected_files" "*" --> "1" "users" : userid
+"logstore_standard_log" "*" --> "1" "context" : contextid
+"logstore_standard_log" "*" --> "1" "course" : courseid
+"logstore_standard_log" "*" --> "1" "users" : realuserid
+"logstore_standard_log" "*" --> "1" "users" : relateduserid
+"logstore_standard_log" "*" --> "1" "users" : userid
+"matrix_room" "*" --> "1" "communication" : commid
+"moodle_sessions" "*" --> "1" "users" : userid
+"scale" "*" --> "1" "users" : userid
+"scale_history" "*" --> "1" "course" : courseid
+"scale_history" "*" --> "1" "users" : loggeduser
+"scale_history" "*" --> "1" "scale" : oldid
+"scale_history" "*" --> "1" "users" : userid
+"shortlink" "*" --> "1" "users" : userid
+"sms_messages" "*" --> "1" "sms_gateways" : gatewayid
+@enduml

@@ -1,0 +1,37 @@
+@startuml LocalizationAccessibility
+left to right direction
+
+actor "User" as user
+actor "System" as system
+actor "Translator" as translator
+actor "Screen Reader" as screen_reader
+actor "Administrator" as admin
+
+rectangle "Localization & Accessibility System" {
+  usecase "Set Language Preference" as UC1701
+  usecase "Update User Profile" as update_profile
+  usecase "Apply RTL Layout" as UC1702
+  usecase "Render Page" as render_page
+  usecase "Provide ARIA Labels" as UC1703
+  usecase "Validate Accessibility" as validate_accessibility
+  usecase "Load Translation" as UC1704
+  usecase "Cache Strings" as cache_strings
+  usecase "Manage Translations" as UC1705
+}
+
+' Actor Associations
+user --> UC1701 : **Association**
+system --> UC1702 : **Association**
+system --> UC1703 : **Association**
+system --> UC1704 : **Association**
+admin --> UC1705 : **Association**
+translator --> UC1705 : **Association**
+screen_reader --> UC1703 : **Association**
+
+' Use Case Relationships
+UC1701 ..> update_profile : **<<include>>**
+UC1702 ..> render_page : **<<extend>>**
+UC1703 ..> validate_accessibility : **<<include>>**
+UC1704 ..> cache_strings : **<<include>>**
+
+@enduml

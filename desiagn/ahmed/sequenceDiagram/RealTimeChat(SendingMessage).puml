@@ -1,0 +1,41 @@
+@startuml
+autonumber
+    participant Sender
+    participant "ChatBox (Sender)" as SenderChat
+    participant MessageController
+    participant Database
+    participant "Pusher/Reverb" as WebSocket
+    participant "ChatBox (Recipient)" as RecipientChat
+    participant Recipient
+
+    Sender -> SenderChat: Type "Hello" + Press Enter
+    
+    SenderChat -> SenderChat: Optimistic UI Update (Append message locally)
+    SenderChat -> SenderChat: Show "Sending..." status
+    
+    SenderChat -> MessageController: POST /api/messages {recipient_id, content, timestamp}
+    
+    MessageController -> MessageController: Validate Sender ≠ Recipient
+    MessageController -> Database: INSERT INTO messages (sender_id, recipient_id, content, status)
+    
+    Database --> MessageController: Return message_id=456
+    Database -> Database: Update conversation_last_activity
+    
+    MessageController -> WebSocket: Broadcast MessageSent Event (channel: private-user-{recipient_id})
+    WebSocket --> MessageController: Acknowledge Broadcast
+    
+    MessageController --> SenderChat: Return 201 Created {message_id: 456}
+    SenderChat -> SenderChat: Update Status: "Delivered"
+    SenderChat --> Sender: Remove "Sending..." indicator
+    
+    note over WebSocket,RecipientChat: Real-Time Push
+    
+    WebSocket -> RecipientChat: Push Event via WebSocket
+    RecipientChat -> RecipientChat: Decode Payload & Validate
+    
+    RecipientChat -> RecipientChat: Render New Message Bubble
+    RecipientChat --> Recipient: Display Message + Notification Badge
+    
+    note over RecipientChat,Database: Async Read Receipt
+    RecipientChat -> MessageController: PUT /api/messages/{id}/read (Optional)
+@enduml

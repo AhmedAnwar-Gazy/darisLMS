@@ -1,0 +1,88 @@
+@startuml
+autonumber
+    participant Student
+    participant SCORMPlayer
+    participant "SCORM 1.2 API" as ScormApiJS
+    participant ScormController
+    participant Database
+    participant GradebookService
+
+    Student -> SCORMPlayer: Click "Launch SCORM Package"
+    
+    SCORMPlayer -> SCORMPlayer: Load content/index.html in iFrame
+    
+    note over SCORMPlayer,ScormApiJS: SCORM Runtime Initialization
+    
+    SCORMPlayer -> ScormApiJS: LMSInitialize("")
+    
+    ScormApiJS -> ScormController: POST /api/scorm/init {sco_id, user_id, attempt}
+    
+    ScormController -> Database: SELECT * FROM scorm_scoes_track WHERE scoid=? AND userid=?
+    Database --> ScormController: Return Existing Attempt or Create New
+    
+    alt New Attempt
+        ScormController -> Database: INSERT INTO scorm_scoes_track (attempt, element, value)
+        Database --> ScormController: Attempt Created (attempt_id=3)
+    end
+    
+    ScormController -> ScormController: Return SCORM-compliant response
+    
+    ScormController --> ScormApiJS: Return "true" (SCORM success code)
+    ScormApiJS --> SCORMPlayer: LMSInitialize = "true"
+    
+    note over Student,ScormApiJS: Student Interaction Phase
+    
+    Student -> SCORMPlayer: Navigate through content
+    
+    SCORMPlayer -> ScormApiJS: LMSSetValue("cmi.core.lesson_location", "page_3")
+    ScormApiJS -> ScormController: POST /api/scorm/setvalue {element: "lesson_location", value: "page_3"}
+    ScormController -> Database: UPDATE scorm_scoes_track SET value=? WHERE element=?
+    Database --> ScormController: Update Successful
+    ScormController --> ScormApiJS: Return "true"
+    ScormApiJS --> SCORMPlayer: LMSSetValue = "true"
+    
+    Student -> SCORMPlayer: Complete Quiz (Score: 85/100)
+    
+    SCORMPlayer -> ScormApiJS: LMSSetValue("cmi.core.score.raw", "85")
+    ScormApiJS -> ScormController: POST /api/scorm/setvalue {element: "score.raw", value: "85"}
+    ScormController -> Database: Update Score
+    
+    SCORMPlayer -> ScormApiJS: LMSSetValue("cmi.core.score.max", "100")
+    
+    SCORMPlayer -> ScormApiJS: LMSSetValue("cmi.core.lesson_status", "completed")
+    
+    SCORMPlayer -> ScormApiJS: LMSCommit("") [Save all pending data]
+    
+    ScormApiJS -> ScormController: POST /api/scorm/commit {attempt_id, data_package}
+    
+    par Parallel Processing
+        ScormController -> Database: Batch update all tracked values
+        Database --> ScormController: All Updates Committed
+        
+        ScormController -> ScormController: Check Completion Criteria
+        alt Score >= Mastery Score (80%)
+            ScormController -> Database: UPDATE scorm_scoes_track SET lesson_status="passed"
+            ScormController -> GradebookService: updateGrade(user_id, scorm_id, 85)
+            GradebookService -> Database: Update grade_grades
+        else Score < Mastery Score
+            ScormController -> Database: UPDATE scorm_scoes_track SET lesson_status="failed"
+        end
+    end
+    
+    ScormController --> ScormApiJS: Return "true"
+    ScormApiJS --> SCORMPlayer: LMSCommit = "true"
+    
+    Student -> SCORMPlayer: Click "Exit"
+    
+    SCORMPlayer -> ScormApiJS: LMSFinish("") [Terminate session]
+    
+    ScormApiJS -> ScormController: POST /api/scorm/finish {attempt_id, total_time}
+    
+    ScormController -> Database: UPDATE scorm_scoes_track SET timemodified=NOW(), session_time=?
+    Database --> ScormController: Session Closed
+    
+    ScormController --> ScormApiJS: Return "true"
+    ScormApiJS --> SCORMPlayer: LMSFinish = "true"
+    
+    SCORMPlayer -> Student: Close iFrame / Return to Course
+@enduml

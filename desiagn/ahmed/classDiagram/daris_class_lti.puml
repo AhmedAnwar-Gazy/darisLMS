@@ -1,0 +1,196 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "lti" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : Integer
+  +introformat : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +typeid : Integer
+  +toolurl : String
+  +securetoolurl : String
+  +instructorchoicesendname : Integer
+  +instructorchoicesendemailaddr : Integer
+  +instructorchoiceallowroster : Integer
+  +instructorchoiceallowsetting : Integer
+  +instructorcustomparameters : String
+  +instructorchoiceacceptgrades : Integer
+  +grade : Integer
+  +launchcontainer : Integer
+  +resourcekey : String
+  +password : String
+  +debuglaunch : Integer
+  +showtitlelaunch : Integer
+  +showdescriptionlaunch : Integer
+  +servicesalt : String
+  +icon : String
+  +secureicon : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lti_access_tokens" {
+  +id : Integer
+  +typeid : Integer
+  +scope : String
+  +token : String
+  +validuntil : Integer
+  +timecreated : Integer
+  +lastaccess : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lti_coursevisible" {
+  +id : Integer
+  +typeid : Integer
+  +courseid : Integer
+  +coursevisible : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lti_submission" {
+  +id : Integer
+  +ltiid : Integer
+  +userid : Integer
+  +datesubmitted : Integer
+  +dateupdated : Integer
+  +gradepercent : Float
+  +originalgrade : Float
+  +launchid : Integer
+  +state : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lti_tool_proxies" {
+  +id : Integer
+  +name : String
+  +regurl : String
+  +state : Integer
+  +guid : String
+  +secret : String
+  +vendorcode : String
+  +capabilityoffered : String
+  +serviceoffered : String
+  +toolproxy : String
+  +createdby : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lti_tool_settings" {
+  +id : Integer
+  +toolproxyid : Integer
+  +typeid : Integer
+  +course : Integer
+  +coursemoduleid : Integer
+  +settings : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lti_types" {
+  +id : Integer
+  +name : String
+  +baseurl : String
+  +tooldomain : String
+  +state : Integer
+  +course : Integer
+  +coursevisible : Integer
+  +ltiversion : String
+  +clientid : String
+  +toolproxyid : Integer
+  +enabledcapability : String
+  +parameter : String
+  +icon : String
+  +secureicon : String
+  +createdby : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +description : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lti_types_categories" {
+  +id : Integer
+  +typeid : Integer
+  +categoryid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "lti_types_config" {
+  +id : Integer
+  +typeid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "ltiservice_gradebookservices" {
+  +id : Integer
+  +gradeitemid : Integer
+  +courseid : Integer
+  +toolproxyid : Integer
+  +typeid : Integer
+  +baseurl : String
+  +ltilinkid : Integer
+  +resourceid : String
+  +tag : String
+  +subreviewurl : String
+  +subreviewparams : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_categories" <<External>> {
+}
+
+class "grade_items" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"lti_access_tokens" "*" --> "1" "lti_types" : typeid
+"lti_tool_settings" "*" --> "1" "course" : course
+"lti_tool_settings" "*" --> "1" "lti" : coursemoduleid
+"lti_tool_settings" "*" --> "1" "lti_tool_proxies" : toolproxyid
+"lti_tool_settings" "*" --> "1" "lti_types" : typeid
+"lti_types_categories" "*" --> "1" "course_categories" : categoryid
+"lti_types_categories" "*" --> "1" "lti_types" : typeid
+"ltiservice_gradebookservices" "*" --> "1" "grade_items" : gradeitemid
+"ltiservice_gradebookservices" "*" --> "1" "lti" : ltilinkid
+@enduml

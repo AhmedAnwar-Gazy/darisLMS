@@ -1,0 +1,48 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**backup_controllers**" as backup_controllers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  backupid : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'unique id of the backup' 
+  operation : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'backup' COMMENT 'Type of operation (backup/restore)' 
+  type : varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Type of the backup (activity/section/course)' 
+  itemid : int NOT NULL COMMENT 'id of the module/section/activity being backup' 
+  format : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'format of the backup (moodle/imscc...)' 
+  interactive : smallint NOT NULL COMMENT 'is the backup interactive (1-yes/0-no)' 
+  purpose : smallint NOT NULL COMMENT 'purpose (target) of the backup (general 
+  userid : bigint unsigned NOT NULL COMMENT 'user that owns/performs the backup' (FK)
+  status : smallint NOT NULL COMMENT 'current status of the backup (configured 
+  execution : smallint NOT NULL COMMENT 'type of execution (immediate/delayed)' 
+  executiontime : int NOT NULL COMMENT 'epoch secs when the backup should be executed (for delayed backups only)' 
+  checksum : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'checksum of the backup_controller object' 
+  timecreated : int NOT NULL COMMENT 'time the controller was created' 
+  timemodified : int NOT NULL COMMENT 'last time the controller was modified' 
+  progress : decimal(15 
+  controller : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'serialised backup_controller object' 
+}
+
+entity "**backup_courses**" as backup_courses {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL DEFAULT '0' 
+  laststarttime : int NOT NULL DEFAULT '0' 
+  lastendtime : int NOT NULL DEFAULT '0' 
+  laststatus : varchar(1) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '5' 
+  nextstarttime : int NOT NULL DEFAULT '0' 
+}
+
+entity "**backup_logs**" as backup_logs {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  backupid : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'backupid the log record belongs to' (FK)
+  loglevel : smallint NOT NULL COMMENT 'level of the log (debug...error)' 
+  message : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'text logged' 
+  timecreated : int NOT NULL COMMENT 'timestamp this log entry was created' 
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+backup_controllers }|--|| users
+backup_logs }|--|| backup_controllers
+@enduml

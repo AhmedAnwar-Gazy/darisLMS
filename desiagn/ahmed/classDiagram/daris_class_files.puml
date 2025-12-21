@@ -1,0 +1,78 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "file_conversion" {
+  +id : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +sourcefileid : Integer
+  +targetformat : String
+  +status : Integer
+  +statusmessage : String
+  +converter : String
+  +destfileid : Integer
+  +data : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "files" {
+  +id : Integer
+  +contenthash : String
+  +pathnamehash : String
+  +contextid : Integer
+  +component : String
+  +filearea : String
+  +itemid : Integer
+  +filepath : String
+  +filename : String
+  +userid : Integer
+  +filesize : Integer
+  +mimetype : String
+  +status : Integer
+  +source : String
+  +author : String
+  +license : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +sortorder : Integer
+  +referencefileid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "files_reference" {
+  +id : Integer
+  +repositoryid : Integer
+  +lastsync : Integer
+  +reference : Integer
+  +referencehash : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "repository_instances" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+"file_conversion" "*" --> "1" "files" : destfileid
+"file_conversion" "*" --> "1" "files" : sourcefileid
+"file_conversion" "*" --> "1" "users" : usermodified
+"files" "*" --> "1" "context" : contextid
+"files" "*" --> "1" "files_reference" : referencefileid
+"files" "*" --> "1" "users" : userid
+"files_reference" "*" --> "1" "repository_instances" : repositoryid
+@enduml

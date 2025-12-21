@@ -1,0 +1,183 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**scorm**" as scorm {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  scormtype : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'local' COMMENT 'local 
+  reference : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  version : varchar(9) COLLATE utf8mb4_unicode_ci NOT NULL 
+  maxgrade : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' 
+  grademethod : tinyint NOT NULL DEFAULT '0' 
+  whatgrade : int NOT NULL DEFAULT '0' 
+  maxattempt : int NOT NULL DEFAULT '1' 
+  forcecompleted : tinyint(1) NOT NULL DEFAULT '0' 
+  forcenewattempt : tinyint(1) NOT NULL DEFAULT '0' 
+  lastattemptlock : tinyint(1) NOT NULL DEFAULT '0' 
+  masteryoverride : tinyint(1) NOT NULL DEFAULT '1' 
+  displayattemptstatus : tinyint(1) NOT NULL DEFAULT '1' 
+  displaycoursestructure : tinyint(1) NOT NULL DEFAULT '0' 
+  updatefreq : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Define when the package must be automatically update' 
+  sha1hash : varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'package content or ext path hash' 
+  md5hash : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'MD5 Hash of package file' 
+  revision : int NOT NULL DEFAULT '0' COMMENT 'revison number' 
+  launch : int NOT NULL DEFAULT '0' 
+  skipview : tinyint(1) NOT NULL DEFAULT '1' 
+  hidebrowse : tinyint(1) NOT NULL DEFAULT '0' 
+  hidetoc : tinyint(1) NOT NULL DEFAULT '0' 
+  nav : tinyint(1) NOT NULL DEFAULT '1' 
+  navpositionleft : int DEFAULT '-100' 
+  navpositiontop : int DEFAULT '-100' 
+  auto : tinyint(1) NOT NULL DEFAULT '0' 
+  popup : tinyint(1) NOT NULL DEFAULT '0' 
+  options : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  width : int NOT NULL DEFAULT '100' 
+  height : int NOT NULL DEFAULT '600' 
+  timeopen : int NOT NULL DEFAULT '0' 
+  timeclose : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  completionstatusrequired : tinyint(1) DEFAULT NULL 
+  completionscorerequired : int DEFAULT NULL 
+  completionstatusallscos : tinyint(1) DEFAULT NULL 
+  autocommit : tinyint(1) NOT NULL DEFAULT '0' 
+}
+
+entity "**scorm_aicc_session**" as scorm_aicc_session {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'id from user table' (FK)
+  scormid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'id from scorm table' (FK)
+  hacpsession : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'sessionid used to authenticate AICC HACP communication' 
+  scoid : int DEFAULT '0' COMMENT 'id from scorm_scoes table' 
+  scormmode : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  scormstatus : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  attempt : int DEFAULT NULL 
+  lessonstatus : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  sessiontime : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'time this session was created' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'time this session was last used' 
+}
+
+entity "**scorm_attempt**" as scorm_attempt {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  scormid : bigint unsigned NOT NULL COMMENT 'The id of the scorm table' (FK)
+  attempt : int NOT NULL DEFAULT '1' COMMENT 'The attempt number' 
+}
+
+entity "**scorm_element**" as scorm_element {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  element : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name of SCORM element' 
+}
+
+entity "**scorm_scoes**" as scorm_scoes {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  scorm : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  manifest : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  organization : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  parent : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  identifier : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  launch : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  scormtype : varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL 
+  title : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  sortorder : int NOT NULL DEFAULT '0' COMMENT 'order of scoes' 
+}
+
+entity "**scorm_scoes_data**" as scorm_scoes_data {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  scoid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**scorm_scoes_value**" as scorm_scoes_value {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  scoid : bigint unsigned NOT NULL COMMENT 'The id of the scorm_scoes table' (FK)
+  attemptid : bigint unsigned NOT NULL COMMENT 'id from scorm_attempt' (FK)
+  elementid : bigint unsigned NOT NULL COMMENT 'id from scorm_element' (FK)
+  value : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Value passed from SCORM package' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'Time value last changed.' 
+}
+
+entity "**scorm_seq_mapinfo**" as scorm_seq_mapinfo {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  scoid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  objectiveid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  targetobjectiveid : int NOT NULL DEFAULT '0' 
+  readsatisfiedstatus : tinyint(1) NOT NULL DEFAULT '1' 
+  readnormalizedmeasure : tinyint(1) NOT NULL DEFAULT '1' 
+  writesatisfiedstatus : tinyint(1) NOT NULL DEFAULT '0' 
+  writenormalizedmeasure : tinyint(1) NOT NULL DEFAULT '0' 
+}
+
+entity "**scorm_seq_objective**" as scorm_seq_objective {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  scoid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  primaryobj : tinyint(1) NOT NULL DEFAULT '0' 
+  objectiveid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  satisfiedbymeasure : tinyint(1) NOT NULL DEFAULT '1' 
+  minnormalizedmeasure : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' 
+}
+
+entity "**scorm_seq_rolluprule**" as scorm_seq_rolluprule {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  scoid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  childactivityset : varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL 
+  minimumcount : int NOT NULL DEFAULT '0' 
+  minimumpercent : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' 
+  conditioncombination : varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'all' 
+  action : varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**scorm_seq_rolluprulecond**" as scorm_seq_rolluprulecond {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  scoid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  rollupruleid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  operator : varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'noOp' 
+  cond : varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**scorm_seq_rulecond**" as scorm_seq_rulecond {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  scoid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  ruleconditionsid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  refrencedobjective : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  measurethreshold : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' 
+  operator : varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'noOp' 
+  cond : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'always' 
+}
+
+entity "**scorm_seq_ruleconds**" as scorm_seq_ruleconds {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  scoid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  conditioncombination : varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'all' 
+  ruletype : tinyint NOT NULL DEFAULT '0' 
+  action : varchar(25) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+scorm_aicc_session }|--|| scorm
+scorm_aicc_session }|--|| users
+scorm_attempt }|--|| scorm
+scorm_attempt }|--|| users
+scorm_scoes }|--|| scorm
+scorm_scoes_data }|--|| scorm_scoes
+scorm_scoes_value }|--|| scorm_attempt
+scorm_scoes_value }|--|| scorm_element
+scorm_scoes_value }|--|| scorm_scoes
+scorm_seq_mapinfo }|--|| scorm_seq_objective
+scorm_seq_mapinfo }|--|| scorm_scoes
+scorm_seq_objective }|--|| scorm_scoes
+scorm_seq_rolluprule }|--|| scorm_scoes
+scorm_seq_rolluprulecond }|--|| scorm_seq_rolluprule
+scorm_seq_rolluprulecond }|--|| scorm_scoes
+scorm_seq_rulecond }|--|| scorm_seq_ruleconds
+scorm_seq_rulecond }|--|| scorm_scoes
+scorm_seq_ruleconds }|--|| scorm_scoes
+@enduml

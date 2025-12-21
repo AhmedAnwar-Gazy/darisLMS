@@ -1,0 +1,34 @@
+@startuml APIIntegrationLayer
+left to right direction
+
+actor "Frontend Application" as frontend
+actor "External System" as external_system
+actor "Mobile App" as mobile_app
+actor "System" as system
+
+rectangle "API & Integration Layer" {
+  usecase "Call REST API" as UC1001
+  usecase "Validate Token" as validate_token
+  usecase "Check Permissions" as check_permissions
+  usecase "Send Webhook" as UC1002
+  usecase "Format Payload" as format_payload
+  usecase "Receive Webhook" as receive_webhook
+  usecase "Validate Integration" as UC1003
+  usecase "Handle LTI Integration" as UC1004
+  usecase "Version API" as UC1005
+}
+
+' Actor Associations
+frontend --> UC1001 : **Association**
+external_system --> receive_webhook : **Association**
+mobile_app --> UC1001 : **Association**
+system --> validate_token : **Association**
+system --> UC1002 : **Association**
+system --> UC1004 : **Association**
+
+' Use Case Relationships
+UC1001 ..> validate_token : **<<include>>**
+UC1001 ..> check_permissions : **<<include>>**
+UC1002 ..> format_payload : **<<include>>**
+
+@enduml

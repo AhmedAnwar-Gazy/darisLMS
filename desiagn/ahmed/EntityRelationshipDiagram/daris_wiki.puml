@@ -1,0 +1,79 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**wiki**" as wiki {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' COMMENT 'Course wiki activity belongs to' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Wiki' COMMENT 'name field for moodle instances' 
+  intro : text COLLATE utf8mb4_unicode_ci COMMENT 'General introduction of the wiki activity' 
+  introformat : smallint NOT NULL DEFAULT '0' COMMENT 'Format of the intro field (MOODLE 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  firstpagetitle : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'First Page' COMMENT 'Wiki first page''s name' 
+  wikimode : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'collaborative' COMMENT 'Wiki mode (individual 
+  defaultformat : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'creole' COMMENT 'Wiki''s default editor' 
+  forceformat : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Forces the default editor' 
+  editbegin : int NOT NULL DEFAULT '0' COMMENT 'editbegin' 
+  editend : int DEFAULT '0' COMMENT 'editend' 
+}
+
+entity "**wiki_links**" as wiki_links {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  subwikiid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Subwiki instance' (FK)
+  frompageid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Page id with a link' (FK)
+  topageid : int NOT NULL DEFAULT '0' COMMENT 'Page id that recives a link' 
+  tomissingpage : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'link to a nonexistent page' 
+}
+
+entity "**wiki_locks**" as wiki_locks {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  pageid : int NOT NULL DEFAULT '0' COMMENT 'Locked page' 
+  sectionname : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'locked page section' 
+  userid : int NOT NULL DEFAULT '0' COMMENT 'Locking user' 
+  lockedat : int NOT NULL DEFAULT '0' COMMENT 'timestamp' 
+}
+
+entity "**wiki_pages**" as wiki_pages {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  subwikiid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Subwiki instance of this page' (FK)
+  title : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'title' COMMENT 'Page name' 
+  cachedcontent : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Cache wiki content' 
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'Wiki page creation timestamp' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'page edition timestamp' 
+  timerendered : int NOT NULL DEFAULT '0' COMMENT 'Last render timestamp' 
+  userid : int NOT NULL DEFAULT '0' COMMENT 'Edition author' 
+  pageviews : int NOT NULL DEFAULT '0' COMMENT 'Number of page views' 
+  readonly : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Read only flag' 
+}
+
+entity "**wiki_subwikis**" as wiki_subwikis {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  wikiid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Wiki activity' (FK)
+  groupid : int NOT NULL DEFAULT '0' COMMENT 'Group that owns this wiki' 
+  userid : int NOT NULL DEFAULT '0' COMMENT 'Owner of that subwiki' 
+}
+
+entity "**wiki_synonyms**" as wiki_synonyms {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  subwikiid : int NOT NULL DEFAULT '0' COMMENT 'Subwiki instance' 
+  pageid : int NOT NULL DEFAULT '0' COMMENT 'Original page' 
+  pagesynonym : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Pagesynonym' COMMENT 'Page name synonym' 
+}
+
+entity "**wiki_versions**" as wiki_versions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  pageid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'Page id' (FK)
+  content : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Not parsed wiki content' 
+  contentformat : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'creole' COMMENT 'Markup used to write content' 
+  version : smallint NOT NULL DEFAULT '0' COMMENT 'Wiki page version' 
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'Page edition timestamp' 
+  userid : int NOT NULL DEFAULT '0' COMMENT 'Edition autor' 
+}
+
+wiki_links }|--|| wiki_pages
+wiki_links }|--|| wiki_subwikis
+wiki_pages }|--|| wiki_subwikis
+wiki_subwikis }|--|| wiki
+wiki_versions }|--|| wiki_pages
+@enduml

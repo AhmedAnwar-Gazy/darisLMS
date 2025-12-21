@@ -1,0 +1,14 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**modules**" as modules {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL 
+  cron : int NOT NULL DEFAULT '0' 
+  lastcron : int NOT NULL DEFAULT '0' 
+  search : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  visible : tinyint(1) NOT NULL DEFAULT '1' 
+}
+
+@enduml

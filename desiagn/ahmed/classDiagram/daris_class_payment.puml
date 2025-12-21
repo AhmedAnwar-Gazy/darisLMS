@@ -1,0 +1,62 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "payment_accounts" {
+  +id : Integer
+  +name : String
+  +idnumber : String
+  +contextid : Integer
+  +enabled : Integer
+  +archived : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "payment_gateways" {
+  +id : Integer
+  +accountid : Integer
+  +gateway : String
+  +enabled : Integer
+  +config : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "payments" {
+  +id : Integer
+  +component : String
+  +paymentarea : String
+  +itemid : Integer
+  +userid : Integer
+  +amount : String
+  +currency : String
+  +accountid : Integer
+  +gateway : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+"payment_accounts" "*" --> "1" "context" : contextid
+"payment_gateways" "*" --> "1" "payment_accounts" : accountid
+"payments" "*" --> "1" "payment_accounts" : accountid
+"payments" "*" --> "1" "users" : userid
+@enduml

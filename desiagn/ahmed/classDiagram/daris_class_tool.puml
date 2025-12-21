@@ -1,0 +1,625 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "tool_brickfield_areas" {
+  +id : Integer
+  +type : Integer
+  +contextid : Integer
+  +component : String
+  +tablename : String
+  +fieldorarea : String
+  +itemid : Integer
+  +filename : String
+  +reftable : String
+  +refid : Integer
+  +cmid : Integer
+  +courseid : Integer
+  +categoryid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_brickfield_cache_acts" {
+  +id : Integer
+  +courseid : Integer
+  +status : Integer
+  +component : String
+  +totalactivities : Integer
+  +failedactivities : Integer
+  +passedactivities : Integer
+  +errorcount : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_brickfield_cache_check" {
+  +id : Integer
+  +courseid : Integer
+  +status : Integer
+  +checkid : Integer
+  +checkcount : Integer
+  +errorcount : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_brickfield_checks" {
+  +id : Integer
+  +checktype : String
+  +shortname : String
+  +checkgroup : Integer
+  +status : Integer
+  +severity : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_brickfield_content" {
+  +id : Integer
+  +areaid : Integer
+  +contenthash : String
+  +iscurrent : Integer
+  +status : Integer
+  +timecreated : Integer
+  +timechecked : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_brickfield_errors" {
+  +id : Integer
+  +resultid : Integer
+  +linenumber : Integer
+  +errordata : String
+  +htmlcode : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_brickfield_process" {
+  +id : Integer
+  +courseid : Integer
+  +item : String
+  +contextid : Integer
+  +innercontextid : Integer
+  +timecreated : Integer
+  +timecompleted : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_brickfield_results" {
+  +id : Integer
+  +contentid : Integer
+  +checkid : Integer
+  +errorcount : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_brickfield_schedule" {
+  +id : Integer
+  +contextlevel : Integer
+  +instanceid : Integer
+  +contextid : Integer
+  +status : Integer
+  +timeanalyzed : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_brickfield_summary" {
+  +id : Integer
+  +courseid : Integer
+  +status : Integer
+  +activities : Integer
+  +activitiespassed : Integer
+  +activitiesfailed : Integer
+  +errorschecktype1 : Integer
+  +errorschecktype2 : Integer
+  +errorschecktype3 : Integer
+  +errorschecktype4 : Integer
+  +errorschecktype5 : Integer
+  +errorschecktype6 : Integer
+  +errorschecktype7 : Integer
+  +failedchecktype1 : Integer
+  +failedchecktype2 : Integer
+  +failedchecktype3 : Integer
+  +failedchecktype4 : Integer
+  +failedchecktype5 : Integer
+  +failedchecktype6 : Integer
+  +failedchecktype7 : Integer
+  +percentchecktype1 : Integer
+  +percentchecktype2 : Integer
+  +percentchecktype3 : Integer
+  +percentchecktype4 : Integer
+  +percentchecktype5 : Integer
+  +percentchecktype6 : Integer
+  +percentchecktype7 : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_cohortroles" {
+  +id : Integer
+  +cohortid : Integer
+  +roleid : Integer
+  +userid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_customlang" {
+  +id : Integer
+  +lang : String
+  +componentid : Integer
+  +stringid : String
+  +original : String
+  +master : String
+  +local : String
+  +timemodified : Integer
+  +timecustomized : Integer
+  +outdated : Integer
+  +modified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_customlang_components" {
+  +id : Integer
+  +name : String
+  +version : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_category" {
+  +id : Integer
+  +name : String
+  +description : String
+  +descriptionformat : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_contextlist" {
+  +id : Integer
+  +component : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_ctxexpired" {
+  +id : Integer
+  +contextid : Integer
+  +unexpiredroles : String
+  +expiredroles : String
+  +defaultexpired : Integer
+  +status : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_ctxinstance" {
+  +id : Integer
+  +contextid : Integer
+  +purposeid : Integer
+  +categoryid : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_ctxlevel" {
+  +id : Integer
+  +contextlevel : Integer
+  +purposeid : Integer
+  +categoryid : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_ctxlst_ctx" {
+  +id : Integer
+  +contextid : Integer
+  +contextlistid : Integer
+  +status : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_purpose" {
+  +id : Integer
+  +name : String
+  +description : String
+  +descriptionformat : Integer
+  +lawfulbases : String
+  +sensitivedatareasons : String
+  +retentionperiod : String
+  +protected : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_purposerole" {
+  +id : Integer
+  +purposeid : Integer
+  +roleid : Integer
+  +lawfulbases : String
+  +sensitivedatareasons : String
+  +retentionperiod : String
+  +protected : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_request" {
+  +id : Integer
+  +type : Integer
+  +comments : String
+  +commentsformat : Integer
+  +userid : Integer
+  +requestedby : Integer
+  +status : Integer
+  +dpo : Integer
+  +dpocomment : String
+  +dpocommentformat : Integer
+  +systemapproved : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +creationmethod : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_dataprivacy_rqst_ctxlst" {
+  +id : Integer
+  +requestid : Integer
+  +contextlistid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_mfa" {
+  +id : Integer
+  +userid : Integer
+  +factor : String
+  +secret : String
+  +label : String
+  +timecreated : Integer
+  +createdfromip : String
+  +timemodified : Integer
+  +lastverified : Integer
+  +revoked : Integer
+  +lockcounter : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_mfa_auth" {
+  +id : Integer
+  +userid : Integer
+  +lastverified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_mfa_secrets" {
+  +id : Integer
+  +userid : Integer
+  +factor : String
+  +secret : String
+  +timecreated : Integer
+  +expiry : Integer
+  +revoked : Integer
+  +sessionid : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_monitor_events" {
+  +id : Integer
+  +eventname : String
+  +contextid : Integer
+  +contextlevel : Integer
+  +contextinstanceid : Integer
+  +link : String
+  +courseid : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_monitor_history" {
+  +id : Integer
+  +sid : Integer
+  +userid : Integer
+  +timesent : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_monitor_rules" {
+  +id : Integer
+  +description : String
+  +descriptionformat : Integer
+  +name : String
+  +userid : Integer
+  +courseid : Integer
+  +plugin : String
+  +eventname : String
+  +template : String
+  +templateformat : Integer
+  +frequency : Integer
+  +timewindow : Integer
+  +timemodified : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_monitor_subscriptions" {
+  +id : Integer
+  +courseid : Integer
+  +ruleid : Integer
+  +cmid : Integer
+  +userid : Integer
+  +timecreated : Integer
+  +lastnotificationsent : Integer
+  +inactivedate : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_policy" {
+  +id : Integer
+  +sortorder : Integer
+  +currentversionid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_policy_acceptances" {
+  +id : Integer
+  +policyversionid : Integer
+  +userid : Integer
+  +status : Integer
+  +lang : String
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +note : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_policy_versions" {
+  +id : Integer
+  +name : String
+  +type : Integer
+  +audience : Integer
+  +archived : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +policyid : Integer
+  +agreementstyle : Integer
+  +optional : Integer
+  +revision : String
+  +summary : String
+  +summaryformat : Integer
+  +content : String
+  +contentformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_recyclebin_category" {
+  +id : Integer
+  +categoryid : Integer
+  +shortname : String
+  +fullname : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_recyclebin_course" {
+  +id : Integer
+  +courseid : Integer
+  +section : Integer
+  +module : Integer
+  +name : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_usertours_steps" {
+  +id : Integer
+  +tourid : Integer
+  +title : String
+  +content : String
+  +contentformat : Integer
+  +targettype : Integer
+  +targetvalue : String
+  +sortorder : Integer
+  +configdata : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "tool_usertours_tours" {
+  +id : Integer
+  +name : String
+  +description : String
+  +pathmatch : String
+  +enabled : Integer
+  +sortorder : Integer
+  +endtourlabel : String
+  +configdata : String
+  +displaystepnumbers : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_modules" <<External>> {
+}
+
+class "role" <<External>> {
+}
+
+class "users" <<External>> {
+}
+
+class "course_categories" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"tool_brickfield_areas" "*" --> "1" "course_categories" : categoryid
+"tool_brickfield_areas" "*" --> "1" "course_modules" : cmid
+"tool_brickfield_areas" "*" --> "1" "context" : contextid
+"tool_brickfield_areas" "*" --> "1" "course" : courseid
+"tool_brickfield_cache_acts" "*" --> "1" "course" : courseid
+"tool_brickfield_cache_check" "*" --> "1" "course" : courseid
+"tool_brickfield_content" "*" --> "1" "tool_brickfield_areas" : areaid
+"tool_brickfield_errors" "*" --> "1" "tool_brickfield_results" : resultid
+"tool_brickfield_results" "*" --> "1" "tool_brickfield_checks" : checkid
+"tool_brickfield_results" "*" --> "1" "tool_brickfield_content" : contentid
+"tool_brickfield_summary" "*" --> "1" "course" : courseid
+"tool_customlang" "*" --> "1" "tool_customlang_components" : componentid
+"tool_dataprivacy_ctxinstance" "*" --> "1" "tool_dataprivacy_category" : categoryid
+"tool_dataprivacy_ctxinstance" "*" --> "1" "tool_dataprivacy_purpose" : purposeid
+"tool_dataprivacy_ctxlevel" "*" --> "1" "tool_dataprivacy_category" : categoryid
+"tool_dataprivacy_ctxlevel" "*" --> "1" "tool_dataprivacy_purpose" : purposeid
+"tool_dataprivacy_ctxlst_ctx" "*" --> "1" "tool_dataprivacy_contextlist" : contextlistid
+"tool_dataprivacy_purposerole" "*" --> "1" "tool_dataprivacy_purpose" : purposeid
+"tool_dataprivacy_purposerole" "*" --> "1" "role" : roleid
+"tool_dataprivacy_purposerole" "*" --> "1" "users" : usermodified
+"tool_dataprivacy_request" "*" --> "1" "users" : dpo
+"tool_dataprivacy_request" "*" --> "1" "users" : requestedby
+"tool_dataprivacy_request" "*" --> "1" "users" : userid
+"tool_dataprivacy_request" "*" --> "1" "users" : usermodified
+"tool_dataprivacy_rqst_ctxlst" "*" --> "1" "tool_dataprivacy_contextlist" : contextlistid
+"tool_dataprivacy_rqst_ctxlst" "*" --> "1" "tool_dataprivacy_request" : requestid
+"tool_mfa_auth" "*" --> "1" "users" : userid
+"tool_mfa_secrets" "*" --> "1" "users" : userid
+"tool_monitor_events" "*" --> "1" "context" : contextid
+"tool_monitor_events" "*" --> "1" "course" : courseid
+"tool_monitor_history" "*" --> "1" "tool_monitor_subscriptions" : sid
+"tool_monitor_subscriptions" "*" --> "1" "tool_monitor_rules" : ruleid
+"tool_policy_acceptances" "*" --> "1" "tool_policy_versions" : policyversionid
+"tool_policy_acceptances" "*" --> "1" "users" : userid
+"tool_policy_acceptances" "*" --> "1" "users" : usermodified
+"tool_policy_versions" "*" --> "1" "tool_policy" : policyid
+"tool_policy_versions" "*" --> "1" "users" : usermodified
+"tool_recyclebin_category" "*" --> "1" "course_categories" : categoryid
+"tool_recyclebin_course" "*" --> "1" "course" : courseid
+"tool_usertours_steps" "*" --> "1" "tool_usertours_tours" : tourid
+@enduml

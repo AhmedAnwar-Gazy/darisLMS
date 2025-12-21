@@ -1,0 +1,37 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**search_index_requests**" as search_index_requests {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : bigint unsigned NOT NULL COMMENT 'Context ID that has been requested for reindexing.' (FK)
+  searcharea : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Set (e.g. ''forum-post'') if a specific area is to be reindexed. Blank indicates all areas.' 
+  timerequested : int NOT NULL COMMENT 'Time at which this index update was requested.' 
+  partialarea : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'If processing of this context partially completed 
+  partialtime : int NOT NULL COMMENT 'If processing partially completed 
+  indexpriority : int NOT NULL COMMENT 'Priority value so that important requests can be dealt with first; higher numbers are processed first' 
+}
+
+entity "**search_simpledb_index**" as search_simpledb_index {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  docid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  itemid : int NOT NULL 
+  title : text COLLATE utf8mb4_unicode_ci 
+  content : text COLLATE utf8mb4_unicode_ci 
+  contextid : int NOT NULL 
+  areaid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  type : tinyint(1) NOT NULL 
+  courseid : int NOT NULL 
+  owneruserid : int DEFAULT NULL 
+  modified : int NOT NULL 
+  userid : int DEFAULT NULL 
+  description1 : text COLLATE utf8mb4_unicode_ci 
+  description2 : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+search_index_requests }|--|| context
+@enduml

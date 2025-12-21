@@ -1,0 +1,286 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "message" {
+  +id : Integer
+  +useridfrom : Integer
+  +useridto : Integer
+  +subject : String
+  +fullmessage : String
+  +fullmessageformat : Integer
+  +fullmessagehtml : String
+  +smallmessage : String
+  +notification : Integer
+  +contexturl : String
+  +contexturlname : String
+  +timecreated : Integer
+  +timeuserfromdeleted : Integer
+  +timeusertodeleted : Integer
+  +component : String
+  +eventtype : String
+  +customdata : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_airnotifier_devices" {
+  +id : Integer
+  +userdeviceid : Integer
+  +enable : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_contact_requests" {
+  +id : Integer
+  +userid : Integer
+  +requesteduserid : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_contacts" {
+  +id : Integer
+  +userid : Integer
+  +contactid : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_conversation_actions" {
+  +id : Integer
+  +userid : Integer
+  +conversationid : Integer
+  +action : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_conversation_members" {
+  +id : Integer
+  +conversationid : Integer
+  +userid : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_conversations" {
+  +id : Integer
+  +type : Integer
+  +name : String
+  +convhash : String
+  +component : String
+  +itemtype : String
+  +itemid : Integer
+  +contextid : Integer
+  +enabled : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_email_messages" {
+  +id : Integer
+  +useridto : Integer
+  +conversationid : Integer
+  +messageid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_popup" {
+  +id : Integer
+  +messageid : Integer
+  +isread : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_popup_notifications" {
+  +id : Integer
+  +notificationid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_processors" {
+  +id : Integer
+  +name : String
+  +enabled : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_providers" {
+  +id : Integer
+  +name : String
+  +component : String
+  +capability : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_read" {
+  +id : Integer
+  +useridfrom : Integer
+  +useridto : Integer
+  +subject : String
+  +fullmessage : String
+  +fullmessageformat : Integer
+  +fullmessagehtml : String
+  +smallmessage : String
+  +notification : Integer
+  +contexturl : String
+  +contexturlname : String
+  +timecreated : Integer
+  +timeread : Integer
+  +timeuserfromdeleted : Integer
+  +timeusertodeleted : Integer
+  +component : String
+  +eventtype : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_user_actions" {
+  +id : Integer
+  +userid : Integer
+  +messageid : Integer
+  +action : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "message_users_blocked" {
+  +id : Integer
+  +userid : Integer
+  +blockeduserid : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "messageinbound_datakeys" {
+  +id : Integer
+  +handler : Integer
+  +datavalue : Integer
+  +datakey : String
+  +timecreated : Integer
+  +expires : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "messageinbound_handlers" {
+  +id : Integer
+  +component : String
+  +classname : String
+  +defaultexpiration : Integer
+  +validateaddress : Integer
+  +enabled : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "messageinbound_messagelist" {
+  +id : Integer
+  +messageid : String
+  +userid : Integer
+  +address : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "messages" {
+  +id : Integer
+  +useridfrom : Integer
+  +conversationid : Integer
+  +subject : String
+  +fullmessage : String
+  +fullmessageformat : Integer
+  +fullmessagehtml : String
+  +smallmessage : String
+  +timecreated : Integer
+  +fullmessagetrust : Integer
+  +customdata : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+class "notifications" <<External>> {
+}
+
+"message_contact_requests" "*" --> "1" "users" : requesteduserid
+"message_contact_requests" "*" --> "1" "users" : userid
+"message_contacts" "*" --> "1" "users" : contactid
+"message_contacts" "*" --> "1" "users" : userid
+"message_conversation_actions" "*" --> "1" "message_conversations" : conversationid
+"message_conversation_actions" "*" --> "1" "users" : userid
+"message_conversation_members" "*" --> "1" "message_conversations" : conversationid
+"message_conversation_members" "*" --> "1" "users" : userid
+"message_conversations" "*" --> "1" "context" : contextid
+"message_email_messages" "*" --> "1" "message_conversations" : conversationid
+"message_email_messages" "*" --> "1" "messages" : messageid
+"message_email_messages" "*" --> "1" "users" : useridto
+"message_popup_notifications" "*" --> "1" "notifications" : notificationid
+"message_user_actions" "*" --> "1" "messages" : messageid
+"message_user_actions" "*" --> "1" "users" : userid
+"message_users_blocked" "*" --> "1" "users" : blockeduserid
+"message_users_blocked" "*" --> "1" "users" : userid
+"messageinbound_datakeys" "*" --> "1" "messageinbound_handlers" : handler
+"messageinbound_messagelist" "*" --> "1" "users" : userid
+"messages" "*" --> "1" "message_conversations" : conversationid
+"messages" "*" --> "1" "users" : useridfrom
+@enduml

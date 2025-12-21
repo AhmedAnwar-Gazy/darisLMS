@@ -1,0 +1,213 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**message**" as message {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  useridfrom : int NOT NULL DEFAULT '0' 
+  useridto : int NOT NULL DEFAULT '0' 
+  subject : text COLLATE utf8mb4_unicode_ci COMMENT 'The message subject' 
+  fullmessage : text COLLATE utf8mb4_unicode_ci 
+  fullmessageformat : smallint DEFAULT '0' COMMENT 'The format of the full message' 
+  fullmessagehtml : text COLLATE utf8mb4_unicode_ci COMMENT 'html format of message' 
+  smallmessage : text COLLATE utf8mb4_unicode_ci COMMENT 'Smal version of message (eg sms)' 
+  notification : tinyint(1) DEFAULT '0' 
+  contexturl : text COLLATE utf8mb4_unicode_ci COMMENT 'If this message is a notification of an event contexturl should contain a link to view this event. For example if its a notification of a forum post contexturl should contain a link to the forum post.' 
+  contexturlname : text COLLATE utf8mb4_unicode_ci COMMENT 'Display text for the contexturl' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timeuserfromdeleted : int NOT NULL DEFAULT '0' 
+  timeusertodeleted : int NOT NULL DEFAULT '0' 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  eventtype : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  customdata : text COLLATE utf8mb4_unicode_ci COMMENT 'Custom data to be passed to the message processor. Must be serialisable using json_encode()' 
+}
+
+entity "**message_airnotifier_devices**" as message_airnotifier_devices {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userdeviceid : int NOT NULL COMMENT 'The user device id in the user_devices table' 
+  enable : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'The user can enable/disable his devices' 
+}
+
+entity "**message_contact_requests**" as message_contact_requests {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  requesteduserid : bigint unsigned NOT NULL (FK)
+  timecreated : int NOT NULL 
+}
+
+entity "**message_contacts**" as message_contacts {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  contactid : bigint unsigned NOT NULL (FK)
+  timecreated : int DEFAULT NULL 
+}
+
+entity "**message_conversation_actions**" as message_conversation_actions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  conversationid : bigint unsigned NOT NULL (FK)
+  action : int NOT NULL 
+  timecreated : int NOT NULL 
+}
+
+entity "**message_conversation_members**" as message_conversation_members {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  conversationid : bigint unsigned NOT NULL (FK)
+  userid : bigint unsigned NOT NULL (FK)
+  timecreated : int NOT NULL 
+}
+
+entity "**message_conversations**" as message_conversations {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  type : int NOT NULL DEFAULT '1' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  convhash : varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Defines the Moodle component which the area was added to' 
+  itemtype : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  itemid : int DEFAULT NULL 
+  contextid : bigint unsigned DEFAULT NULL COMMENT 'The context id of the itemid or course of the itemtype was added' (FK)
+  enabled : tinyint(1) NOT NULL DEFAULT '0' 
+  timecreated : int NOT NULL 
+  timemodified : int DEFAULT NULL 
+}
+
+entity "**message_email_messages**" as message_email_messages {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  useridto : bigint unsigned NOT NULL (FK)
+  conversationid : bigint unsigned NOT NULL (FK)
+  messageid : bigint unsigned NOT NULL (FK)
+}
+
+entity "**message_popup**" as message_popup {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  messageid : int NOT NULL 
+  isread : tinyint(1) NOT NULL DEFAULT '0' 
+}
+
+entity "**message_popup_notifications**" as message_popup_notifications {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  notificationid : bigint unsigned NOT NULL (FK)
+}
+
+entity "**message_processors**" as message_processors {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(166) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name of the message processor' 
+  enabled : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Defines if processor is enabled' 
+}
+
+entity "**message_providers**" as message_providers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The full name of the message provider in standard form' 
+  component : varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The name of the component that produces these messages' 
+  capability : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Optional: permission that is required on the user''s setting screen to see this message provider.' 
+}
+
+entity "**message_read**" as message_read {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  useridfrom : int NOT NULL DEFAULT '0' 
+  useridto : int NOT NULL DEFAULT '0' 
+  subject : text COLLATE utf8mb4_unicode_ci COMMENT 'The message subject' 
+  fullmessage : text COLLATE utf8mb4_unicode_ci 
+  fullmessageformat : smallint DEFAULT '0' COMMENT 'The format of the full message' 
+  fullmessagehtml : text COLLATE utf8mb4_unicode_ci COMMENT 'html format of message' 
+  smallmessage : text COLLATE utf8mb4_unicode_ci COMMENT 'Smal version of message (eg sms)' 
+  notification : tinyint(1) DEFAULT '0' 
+  contexturl : text COLLATE utf8mb4_unicode_ci COMMENT 'If this message is a notification of an event contexturl should contain a link to view this event. For example if its a notification of a forum post contexturl should contain a link to the forum post.' 
+  contexturlname : text COLLATE utf8mb4_unicode_ci COMMENT 'Display text for the contexturl' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timeread : int NOT NULL DEFAULT '0' 
+  timeuserfromdeleted : int NOT NULL DEFAULT '0' 
+  timeusertodeleted : int NOT NULL DEFAULT '0' 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  eventtype : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**message_user_actions**" as message_user_actions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  messageid : bigint unsigned NOT NULL (FK)
+  action : int NOT NULL 
+  timecreated : int NOT NULL 
+}
+
+entity "**message_users_blocked**" as message_users_blocked {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  blockeduserid : bigint unsigned NOT NULL (FK)
+  timecreated : int DEFAULT NULL 
+}
+
+entity "**messageinbound_datakeys**" as messageinbound_datakeys {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  handler : bigint unsigned NOT NULL COMMENT 'The handler that this key belongs to.' (FK)
+  datavalue : int NOT NULL COMMENT 'The integer value of the data item that this key belongs to.' 
+  datakey : varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The secret key for this data item.' 
+  timecreated : int NOT NULL COMMENT 'The time that the data key was created.' 
+  expires : int DEFAULT NULL COMMENT 'The expiry time of this key.' 
+}
+
+entity "**messageinbound_handlers**" as messageinbound_handlers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The component this handler belongs to.' 
+  classname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The class defining the Inbound Message handler to be called.' 
+  defaultexpiration : int NOT NULL DEFAULT '86400' COMMENT 'The default expiration period to use when creating a new key' 
+  validateaddress : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Whether to validate the sender address against the user record.' 
+  enabled : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Whether this handler is currently enabled.' 
+}
+
+entity "**messageinbound_messagelist**" as messageinbound_messagelist {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  messageid : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  userid : bigint unsigned NOT NULL (FK)
+  address : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The Inbound Message address that the message was originally sent to' 
+  timecreated : int NOT NULL 
+}
+
+entity "**messages**" as messages {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  useridfrom : bigint unsigned NOT NULL (FK)
+  conversationid : bigint unsigned NOT NULL (FK)
+  subject : text COLLATE utf8mb4_unicode_ci 
+  fullmessage : text COLLATE utf8mb4_unicode_ci 
+  fullmessageformat : tinyint(1) NOT NULL DEFAULT '0' 
+  fullmessagehtml : text COLLATE utf8mb4_unicode_ci 
+  smallmessage : text COLLATE utf8mb4_unicode_ci 
+  timecreated : int NOT NULL 
+  fullmessagetrust : tinyint NOT NULL DEFAULT '0' 
+  customdata : text COLLATE utf8mb4_unicode_ci COMMENT 'Custom data to be passed to the message processor. Must be serialisable using json_encode()' 
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+entity "**notifications**" as notifications <<External>> {
+  --
+}
+
+message_contact_requests }|--|| users
+message_contact_requests }|--|| users
+message_contacts }|--|| users
+message_contacts }|--|| users
+message_conversation_actions }|--|| message_conversations
+message_conversation_actions }|--|| users
+message_conversation_members }|--|| message_conversations
+message_conversation_members }|--|| users
+message_conversations }|--|| context
+message_email_messages }|--|| message_conversations
+message_email_messages }|--|| messages
+message_email_messages }|--|| users
+message_popup_notifications }|--|| notifications
+message_user_actions }|--|| messages
+message_user_actions }|--|| users
+message_users_blocked }|--|| users
+message_users_blocked }|--|| users
+messageinbound_datakeys }|--|| messageinbound_handlers
+messageinbound_messagelist }|--|| users
+messages }|--|| message_conversations
+messages }|--|| users
+@enduml

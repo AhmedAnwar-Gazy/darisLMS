@@ -1,0 +1,153 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "h5p" {
+  +id : Integer
+  +jsoncontent : String
+  +mainlibraryid : Integer
+  +displayoptions : Integer
+  +pathnamehash : String
+  +contenthash : String
+  +filtered : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "h5p_contents_libraries" {
+  +id : Integer
+  +h5pid : Integer
+  +libraryid : Integer
+  +dependencytype : String
+  +dropcss : Integer
+  +weight : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "h5p_libraries" {
+  +id : Integer
+  +machinename : String
+  +title : String
+  +majorversion : Integer
+  +minorversion : Integer
+  +patchversion : Integer
+  +runnable : Integer
+  +fullscreen : Integer
+  +embedtypes : String
+  +preloadedjs : String
+  +preloadedcss : String
+  +droplibrarycss : String
+  +semantics : String
+  +addto : String
+  +coremajor : Integer
+  +coreminor : Integer
+  +metadatasettings : String
+  +tutorial : String
+  +example : String
+  +enabled : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "h5p_libraries_cachedassets" {
+  +id : Integer
+  +libraryid : Integer
+  +hash : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "h5p_library_dependencies" {
+  +id : Integer
+  +libraryid : Integer
+  +requiredlibraryid : Integer
+  +dependencytype : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "h5pactivity" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +intro : String
+  +introformat : Integer
+  +grade : Integer
+  +displayoptions : Integer
+  +enabletracking : Integer
+  +grademethod : Integer
+  +reviewmode : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "h5pactivity_attempts" {
+  +id : Integer
+  +h5pactivityid : Integer
+  +userid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +attempt : Integer
+  +rawscore : Integer
+  +maxscore : Integer
+  +scaled : Float
+  +duration : Integer
+  +completion : Integer
+  +success : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "h5pactivity_attempts_results" {
+  +id : Integer
+  +attemptid : Integer
+  +subcontent : String
+  +timecreated : Integer
+  +interactiontype : String
+  +description : String
+  +correctpattern : String
+  +response : String
+  +additionals : String
+  +rawscore : Integer
+  +maxscore : Integer
+  +duration : Integer
+  +completion : Integer
+  +success : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course" <<External>> {
+}
+
+"h5p" "*" --> "1" "h5p_libraries" : mainlibraryid
+"h5p_contents_libraries" "*" --> "1" "h5p" : h5pid
+"h5p_contents_libraries" "*" --> "1" "h5p_libraries" : libraryid
+"h5p_libraries_cachedassets" "*" --> "1" "h5p_libraries" : libraryid
+"h5p_library_dependencies" "*" --> "1" "h5p_libraries" : libraryid
+"h5p_library_dependencies" "*" --> "1" "h5p_libraries" : requiredlibraryid
+"h5pactivity" "*" --> "1" "course" : course
+"h5pactivity_attempts" "*" --> "1" "h5pactivity" : h5pactivityid
+"h5pactivity_attempts_results" "*" --> "1" "h5pactivity_attempts" : attemptid
+@enduml

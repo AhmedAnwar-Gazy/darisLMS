@@ -1,0 +1,43 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "post" {
+  +id : Integer
+  +module : String
+  +userid : Integer
+  +courseid : Integer
+  +groupid : Integer
+  +moduleid : Integer
+  +coursemoduleid : Integer
+  +subject : String
+  +summary : String
+  +content : String
+  +uniquehash : String
+  +rating : Integer
+  +format : Integer
+  +summaryformat : Integer
+  +attachment : String
+  +publishstate : String
+  +lastmodified : Integer
+  +created : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_modules" <<External>> {
+}
+
+class "users" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"post" "*" --> "1" "course" : courseid
+"post" "*" --> "1" "course_modules" : coursemoduleid
+"post" "*" --> "1" "users" : usermodified
+@enduml

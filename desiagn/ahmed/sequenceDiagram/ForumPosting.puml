@@ -1,0 +1,48 @@
+@startuml
+autonumber
+    participant Student
+    participant ForumView
+    participant ForumController
+    participant Database
+    participant "Redis Queue" as NotificationQueue
+    participant NotificationService
+    participant "Email Server" as SMTP
+
+    Student -> ForumView: Type Reply + Click "Post Reply"
+    
+    ForumView -> ForumController: POST /api/forums/{forum_id}/posts {message, parent_id}
+    
+    ForumController -> ForumController: validate(request) + checkPermissions(user, forum)
+    
+    alt No Permission
+        ForumController --> ForumView: Return 403 Forbidden
+        ForumView --> Student: Show "Access Denied"
+    else Has Permission
+        ForumController -> Database: INSERT INTO forum_posts (forum_id, user_id, message, parent_id)
+        Database --> ForumController: Return post_id=789
+        
+        ForumController -> Database: SELECT user_id FROM forum_subscriptions WHERE forum_id=?
+        Database --> ForumController: Return [user_1, user_2, user_3]
+        
+        ForumController -> NotificationQueue: dispatch(SendForumNotification::class, [post_id, subscriber_ids])
+        NotificationQueue --> ForumController: Job Queued Successfully
+        
+        ForumController --> ForumView: Return 201 Created {post: {...}}
+        
+        ForumView -> ForumView: Update Thread UI (Optimistic)
+        ForumView --> Student: Show "Posted Successfully"
+        
+        note over NotificationQueue,SMTP: Async Processing
+        
+        NotificationQueue -> NotificationService: Process Job
+        NotificationService -> Database: Get Post Details + Subscriber Emails
+        Database --> NotificationService: Return Data
+        
+        loop For Each Subscriber
+            NotificationService -> SMTP: Send Email "New Reply in [Forum]"
+            SMTP --> NotificationService: Email Sent
+        end
+        
+        NotificationService -> Database: Update notifications_sent count
+    end
+@enduml

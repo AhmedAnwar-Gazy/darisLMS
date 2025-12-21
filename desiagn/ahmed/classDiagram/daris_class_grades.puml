@@ -1,0 +1,351 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "grade_categories" {
+  +id : Integer
+  +courseid : Integer
+  +parent : Integer
+  +depth : Integer
+  +path : String
+  +fullname : String
+  +aggregation : Integer
+  +keephigh : Integer
+  +droplow : Integer
+  +aggregateonlygraded : Integer
+  +aggregateoutcomes : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +hidden : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_categories_history" {
+  +id : Integer
+  +action : Integer
+  +oldid : Integer
+  +source : String
+  +timemodified : Integer
+  +loggeduser : Integer
+  +courseid : Integer
+  +parent : Integer
+  +depth : Integer
+  +path : String
+  +fullname : String
+  +aggregation : Integer
+  +keephigh : Integer
+  +droplow : Integer
+  +aggregateonlygraded : Integer
+  +aggregateoutcomes : Integer
+  +aggregatesubcats : Integer
+  +hidden : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_grades" {
+  +id : Integer
+  +itemid : Integer
+  +userid : Integer
+  +rawgrade : Float
+  +rawgrademax : Float
+  +rawgrademin : Float
+  +rawscaleid : Integer
+  +usermodified : Integer
+  +finalgrade : Float
+  +hidden : Integer
+  +locked : Integer
+  +locktime : Integer
+  +exported : Integer
+  +overridden : Integer
+  +excluded : Integer
+  +feedback : String
+  +feedbackformat : Integer
+  +information : String
+  +informationformat : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +aggregationstatus : String
+  +aggregationweight : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_grades_history" {
+  +id : Integer
+  +action : Integer
+  +oldid : Integer
+  +source : String
+  +timemodified : Integer
+  +loggeduser : Integer
+  +itemid : Integer
+  +userid : Integer
+  +rawgrade : Float
+  +rawgrademax : Float
+  +rawgrademin : Float
+  +rawscaleid : Integer
+  +usermodified : Integer
+  +finalgrade : Float
+  +hidden : Integer
+  +locked : Integer
+  +locktime : Integer
+  +exported : Integer
+  +overridden : Integer
+  +excluded : Integer
+  +feedback : String
+  +feedbackformat : Integer
+  +information : String
+  +informationformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_import_newitem" {
+  +id : Integer
+  +itemname : String
+  +importcode : Integer
+  +importer : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_import_values" {
+  +id : Integer
+  +itemid : Integer
+  +newgradeitem : Integer
+  +userid : Integer
+  +finalgrade : Float
+  +feedback : String
+  +importcode : Integer
+  +importer : Integer
+  +importonlyfeedback : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_items" {
+  +id : Integer
+  +courseid : Integer
+  +categoryid : Integer
+  +itemname : String
+  +itemtype : String
+  +itemmodule : String
+  +iteminstance : Integer
+  +itemnumber : Integer
+  +iteminfo : String
+  +idnumber : String
+  +calculation : String
+  +gradetype : Integer
+  +grademax : Float
+  +grademin : Float
+  +scaleid : Integer
+  +outcomeid : Integer
+  +gradepass : Float
+  +multfactor : Float
+  +plusfactor : Float
+  +aggregationcoef : Float
+  +aggregationcoef2 : Float
+  +sortorder : Integer
+  +display : Integer
+  +decimals : Integer
+  +hidden : Integer
+  +locked : Integer
+  +locktime : Integer
+  +needsupdate : Integer
+  +weightoverride : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_items_history" {
+  +id : Integer
+  +action : Integer
+  +oldid : Integer
+  +source : String
+  +timemodified : Integer
+  +loggeduser : Integer
+  +courseid : Integer
+  +categoryid : Integer
+  +itemname : String
+  +itemtype : String
+  +itemmodule : String
+  +iteminstance : Integer
+  +itemnumber : Integer
+  +iteminfo : String
+  +idnumber : String
+  +calculation : String
+  +gradetype : Integer
+  +grademax : Float
+  +grademin : Float
+  +scaleid : Integer
+  +outcomeid : Integer
+  +gradepass : Float
+  +multfactor : Float
+  +plusfactor : Float
+  +aggregationcoef : Float
+  +aggregationcoef2 : Float
+  +sortorder : Integer
+  +hidden : Integer
+  +locked : Integer
+  +locktime : Integer
+  +needsupdate : Integer
+  +display : Integer
+  +decimals : Integer
+  +weightoverride : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_letters" {
+  +id : Integer
+  +contextid : Integer
+  +lowerboundary : Float
+  +letter : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_outcomes" {
+  +id : Integer
+  +courseid : Integer
+  +shortname : String
+  +fullname : String
+  +scaleid : Integer
+  +description : String
+  +descriptionformat : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_outcomes_courses" {
+  +id : Integer
+  +courseid : Integer
+  +outcomeid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_outcomes_history" {
+  +id : Integer
+  +action : Integer
+  +oldid : Integer
+  +source : String
+  +timemodified : Integer
+  +loggeduser : Integer
+  +courseid : Integer
+  +shortname : String
+  +fullname : String
+  +scaleid : Integer
+  +description : String
+  +descriptionformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "grade_settings" {
+  +id : Integer
+  +courseid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "gradepenalty_duedate_rule" {
+  +id : Integer
+  +contextid : Integer
+  +sortorder : Integer
+  +overdueby : Integer
+  +penalty : Float
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "scale" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"grade_categories" "*" --> "1" "course" : courseid
+"grade_categories" "*" --> "1" "grade_categories" : parent
+"grade_categories_history" "*" --> "1" "course" : courseid
+"grade_categories_history" "*" --> "1" "users" : loggeduser
+"grade_categories_history" "*" --> "1" "grade_categories" : oldid
+"grade_categories_history" "*" --> "1" "grade_categories" : parent
+"grade_grades" "*" --> "1" "grade_items" : itemid
+"grade_grades" "*" --> "1" "scale" : rawscaleid
+"grade_grades" "*" --> "1" "users" : userid
+"grade_grades" "*" --> "1" "users" : usermodified
+"grade_grades_history" "*" --> "1" "grade_items" : itemid
+"grade_grades_history" "*" --> "1" "users" : loggeduser
+"grade_grades_history" "*" --> "1" "grade_grades" : oldid
+"grade_grades_history" "*" --> "1" "scale" : rawscaleid
+"grade_grades_history" "*" --> "1" "users" : userid
+"grade_grades_history" "*" --> "1" "users" : usermodified
+"grade_import_newitem" "*" --> "1" "users" : importer
+"grade_import_values" "*" --> "1" "users" : importer
+"grade_import_values" "*" --> "1" "grade_items" : itemid
+"grade_import_values" "*" --> "1" "grade_import_newitem" : newgradeitem
+"grade_import_values" "*" --> "1" "users" : userid
+"grade_items" "*" --> "1" "grade_categories" : categoryid
+"grade_items" "*" --> "1" "course" : courseid
+"grade_items" "*" --> "1" "grade_outcomes" : outcomeid
+"grade_items" "*" --> "1" "scale" : scaleid
+"grade_items_history" "*" --> "1" "grade_categories" : categoryid
+"grade_items_history" "*" --> "1" "course" : courseid
+"grade_items_history" "*" --> "1" "users" : loggeduser
+"grade_items_history" "*" --> "1" "grade_items" : oldid
+"grade_items_history" "*" --> "1" "grade_outcomes" : outcomeid
+"grade_items_history" "*" --> "1" "scale" : scaleid
+"grade_outcomes" "*" --> "1" "course" : courseid
+"grade_outcomes" "*" --> "1" "scale" : scaleid
+"grade_outcomes" "*" --> "1" "users" : usermodified
+"grade_outcomes_courses" "*" --> "1" "course" : courseid
+"grade_outcomes_courses" "*" --> "1" "grade_outcomes" : outcomeid
+"grade_outcomes_history" "*" --> "1" "course" : courseid
+"grade_outcomes_history" "*" --> "1" "users" : loggeduser
+"grade_outcomes_history" "*" --> "1" "grade_outcomes" : oldid
+"grade_outcomes_history" "*" --> "1" "scale" : scaleid
+"grade_settings" "*" --> "1" "course" : courseid
+@enduml

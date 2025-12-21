@@ -1,0 +1,49 @@
+@startuml StudentEnrollmentStatus
+title Student Enrollment Status (SMD-03)
+hide empty description
+
+state "Null" as enrollment_null
+state "Pending" as pending
+state "Active" as enrollment_active
+state "Suspended" as enrollment_suspended
+state "Expired" as expired
+state "Completed" as completed
+state "Unenrolled" as unenrolled
+
+[*] --> enrollment_null
+
+enrollment_null --> pending : Request Access() \n(for private course)
+enrollment_null --> enrollment_active : Self Enroll \n(Public Course)
+pending --> enrollment_active : Instructor Approves()
+enrollment_active --> enrollment_suspended : Admin Suspends()
+enrollment_suspended --> enrollment_active : Admin Unsuspends()
+enrollment_active --> expired : Time Limit Reached()
+expired --> enrollment_active : Extend/Renew()
+enrollment_active --> completed : Requirements Met()
+
+pending --> unenrolled : Drop Course()
+enrollment_active --> unenrolled : Drop Course()
+enrollment_suspended --> unenrolled : Drop Course()
+expired --> unenrolled : Drop Course()
+completed --> unenrolled : Drop Course()
+
+unenrolled --> [*]
+
+note right of pending
+  Content access denied
+  Waiting for approval
+end note
+
+note right of enrollment_active
+  Full access to content
+  Can submit assignments
+  Receive grades
+end note
+
+note right of completed
+  Read-only access to
+  certificate and content
+  Course requirements met
+end note
+
+@enduml

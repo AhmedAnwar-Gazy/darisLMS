@@ -1,0 +1,27 @@
+@startuml
+autonumber
+    participant User
+    participant "SearchBar Component" as SearchBar
+    participant SearchController
+    participant "Laravel Scout" as ScoutEngine
+    participant TypeSense
+    participant Database
+
+    User -> SearchBar: Type "Biology" (300ms debounce)
+    SearchBar -> SearchController: GET /api/search?q=Biology
+    
+    SearchController -> ScoutEngine: Course::search('Biology')
+    ScoutEngine -> TypeSense: HTTP GET /collections/courses/documents/search?q=Biology
+    
+    TypeSense -> TypeSense: Execute Search & Rank Results
+    TypeSense --> ScoutEngine: Return Document IDs [101, 205]
+    
+    ScoutEngine -> Database: SELECT * FROM courses WHERE id IN (101, 205)
+    Database --> ScoutEngine: Return Course Records
+    
+    ScoutEngine --> SearchController: Return Eloquent Collection
+    SearchController --> SearchBar: Return 200 OK {results: [...]}
+    
+    SearchBar -> SearchBar: Render Dropdown List
+    SearchBar --> User: Display Search Results
+@enduml

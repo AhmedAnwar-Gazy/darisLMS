@@ -1,0 +1,373 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "enrol" {
+  +id : Integer
+  +enrol : String
+  +status : Integer
+  +courseid : Integer
+  +sortorder : Integer
+  +name : String
+  +enrolperiod : Integer
+  +enrolstartdate : Integer
+  +enrolenddate : Integer
+  +expirynotify : Integer
+  +expirythreshold : Integer
+  +notifyall : Integer
+  +password : String
+  +cost : String
+  +currency : String
+  +roleid : Integer
+  +customint1 : Integer
+  +customint2 : Integer
+  +customint3 : Integer
+  +customint4 : Integer
+  +customint5 : Integer
+  +customint6 : Integer
+  +customint7 : Integer
+  +customint8 : Integer
+  +customchar1 : String
+  +customchar2 : String
+  +customchar3 : String
+  +customdec1 : Float
+  +customdec2 : Float
+  +customtext1 : String
+  +customtext2 : String
+  +customtext3 : String
+  +customtext4 : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_flatfile" {
+  +id : Integer
+  +action : String
+  +roleid : Integer
+  +userid : Integer
+  +courseid : Integer
+  +timestart : Integer
+  +timeend : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_app_registration" {
+  +id : Integer
+  +name : String
+  +platformid : String
+  +clientid : String
+  +uniqueid : String
+  +platformclienthash : String
+  +platformuniqueidhash : String
+  +authenticationrequesturl : Integer
+  +jwksurl : String
+  +accesstokenurl : String
+  +status : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_context" {
+  +id : Integer
+  +contextid : String
+  +ltideploymentid : Integer
+  +type : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_deployment" {
+  +id : Integer
+  +name : String
+  +deploymentid : String
+  +platformid : Integer
+  +legacyconsumerkey : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_lti2_consumer" {
+  +id : Integer
+  +name : String
+  +consumerkey256 : String
+  +consumerkey : String
+  +secret : String
+  +ltiversion : String
+  +consumername : String
+  +consumerversion : String
+  +consumerguid : String
+  +profile : String
+  +toolproxy : String
+  +settings : String
+  +protected : Integer
+  +enabled : Integer
+  +enablefrom : Integer
+  +enableuntil : Integer
+  +lastaccess : Integer
+  +created : Integer
+  +updated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_lti2_context" {
+  +id : Integer
+  +consumerid : Integer
+  +lticontextkey : String
+  +type : String
+  +settings : String
+  +created : Integer
+  +updated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_lti2_nonce" {
+  +id : Integer
+  +consumerid : Integer
+  +value : String
+  +expires : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_lti2_resource_link" {
+  +id : Integer
+  +contextid : Integer
+  +consumerid : Integer
+  +ltiresourcelinkkey : String
+  +settings : String
+  +primaryresourcelinkid : Integer
+  +shareapproved : Integer
+  +created : Integer
+  +updated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_lti2_share_key" {
+  +id : Integer
+  +sharekey : String
+  +resourcelinkid : Integer
+  +autoapprove : Integer
+  +expires : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_lti2_tool_proxy" {
+  +id : Integer
+  +toolproxykey : String
+  +consumerid : Integer
+  +toolproxy : String
+  +created : Integer
+  +updated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_lti2_user_result" {
+  +id : Integer
+  +resourcelinkid : Integer
+  +ltiuserkey : String
+  +ltiresultsourcedid : String
+  +created : Integer
+  +updated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_resource_link" {
+  +id : Integer
+  +resourcelinkid : String
+  +ltideploymentid : Integer
+  +resourceid : Integer
+  +lticontextid : Integer
+  +lineitemsservice : String
+  +lineitemservice : String
+  +lineitemscope : String
+  +resultscope : String
+  +scorescope : String
+  +contextmembershipsurl : String
+  +nrpsserviceversions : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_tool_consumer_map" {
+  +id : Integer
+  +toolid : Integer
+  +consumerid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_tools" {
+  +id : Integer
+  +enrolid : Integer
+  +contextid : Integer
+  +ltiversion : String
+  +institution : String
+  +lang : String
+  +timezone : String
+  +maxenrolled : Integer
+  +maildisplay : Integer
+  +city : String
+  +country : String
+  +gradesync : Integer
+  +gradesynccompletion : Integer
+  +membersync : Integer
+  +membersyncmode : Integer
+  +roleinstructor : Integer
+  +rolelearner : Integer
+  +secret : String
+  +uuid : String
+  +provisioningmodelearner : Integer
+  +provisioningmodeinstructor : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_user_resource_link" {
+  +id : Integer
+  +ltiuserid : Integer
+  +resourcelinkid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_lti_users" {
+  +id : Integer
+  +userid : Integer
+  +toolid : Integer
+  +serviceurl : String
+  +sourceid : String
+  +ltideploymentid : Integer
+  +consumerkey : String
+  +consumersecret : String
+  +membershipsurl : String
+  +membershipsid : String
+  +lastgrade : Float
+  +lastaccess : Integer
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "enrol_paypal" {
+  +id : Integer
+  +business : String
+  +receiver_email : String
+  +receiver_id : String
+  +item_name : String
+  +courseid : Integer
+  +userid : Integer
+  +instanceid : Integer
+  +memo : String
+  +tax : String
+  +option_name1 : String
+  +option_selection1_x : String
+  +option_name2 : String
+  +option_selection2_x : String
+  +payment_status : String
+  +pending_reason : String
+  +reason_code : String
+  +txn_id : String
+  +parent_txn_id : String
+  +payment_type : String
+  +timeupdated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "role" <<External>> {
+}
+
+class "users" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"enrol" "*" --> "1" "course" : courseid
+"enrol" "*" --> "1" "role" : roleid
+"enrol_flatfile" "*" --> "1" "course" : courseid
+"enrol_flatfile" "*" --> "1" "role" : roleid
+"enrol_flatfile" "*" --> "1" "users" : userid
+"enrol_lti_context" "*" --> "1" "enrol_lti_deployment" : ltideploymentid
+"enrol_lti_deployment" "*" --> "1" "enrol_lti_app_registration" : platformid
+"enrol_lti_lti2_context" "*" --> "1" "enrol_lti_lti2_consumer" : consumerid
+"enrol_lti_lti2_nonce" "*" --> "1" "enrol_lti_lti2_consumer" : consumerid
+"enrol_lti_lti2_resource_link" "*" --> "1" "enrol_lti_lti2_consumer" : consumerid
+"enrol_lti_lti2_resource_link" "*" --> "1" "enrol_lti_lti2_context" : contextid
+"enrol_lti_lti2_resource_link" "*" --> "1" "enrol_lti_lti2_resource_link" : primaryresourcelinkid
+"enrol_lti_lti2_tool_proxy" "*" --> "1" "enrol_lti_lti2_consumer" : consumerid
+"enrol_lti_lti2_user_result" "*" --> "1" "enrol_lti_lti2_resource_link" : resourcelinkid
+"enrol_lti_resource_link" "*" --> "1" "enrol_lti_context" : lticontextid
+"enrol_lti_resource_link" "*" --> "1" "enrol_lti_deployment" : ltideploymentid
+"enrol_lti_tool_consumer_map" "*" --> "1" "enrol_lti_lti2_consumer" : consumerid
+"enrol_lti_tool_consumer_map" "*" --> "1" "enrol_lti_tools" : toolid
+"enrol_lti_tools" "*" --> "1" "context" : contextid
+"enrol_lti_tools" "*" --> "1" "enrol" : enrolid
+"enrol_lti_user_resource_link" "*" --> "1" "enrol_lti_users" : ltiuserid
+"enrol_lti_user_resource_link" "*" --> "1" "enrol_lti_resource_link" : resourcelinkid
+"enrol_lti_users" "*" --> "1" "enrol_lti_deployment" : ltideploymentid
+"enrol_lti_users" "*" --> "1" "enrol_lti_tools" : toolid
+"enrol_lti_users" "*" --> "1" "users" : userid
+"enrol_paypal" "*" --> "1" "course" : courseid
+"enrol_paypal" "*" --> "1" "enrol" : instanceid
+"enrol_paypal" "*" --> "1" "users" : userid
+@enduml

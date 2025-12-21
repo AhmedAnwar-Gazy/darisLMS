@@ -1,0 +1,33 @@
+@startuml SecurityCompliance
+left to right direction
+
+actor "User" as user
+actor "System" as system
+actor "Administrator" as admin
+
+rectangle "Security & Compliance System" {
+  usecase "Expire Session" as UC1301
+  usecase "Clear Tokens" as clear_tokens
+  usecase "Revoke Tokens" as UC1302
+  usecase "Hash Password" as UC1303
+  usecase "Generate Salt" as generate_salt
+  usecase "Export Personal Data" as UC1304
+  usecase "Anonymize Data" as anonymize_data
+  usecase "Deactivate Account" as UC1305
+  usecase "Configure Retention" as configure_retention
+}
+
+' Actor Associations
+system --> UC1301 : **Association**
+user --> UC1302 : **Association**
+system --> UC1303 : **Association**
+user --> UC1304 : **Association**
+user --> UC1305 : **Association**
+admin --> configure_retention : **Association**
+
+' Use Case Relationships
+UC1301 ..> clear_tokens : **<<include>>**
+UC1303 ..> generate_salt : **<<include>>**
+UC1304 ..> anonymize_data : **<<include>>**
+
+@enduml

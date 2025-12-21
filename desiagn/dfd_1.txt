@@ -1,0 +1,198 @@
+A Data Flow Diagram (DFD) Level 1 breaks down the single "System" node from the Level 0 Context Diagram into its major functional sub-processes. It shows how data moves between these internal processes and the data stores (database tables).
+Here is the list of the major processes (bubbles) included in the DarisLMS Level 1 DFD, followed by the detailed breakdown for each.
+List of Processes (Level 1 Nodes)
+1.	Process 1.0: Manage Users & Authentication
+2.	Process 2.0: Manage Courses & Content
+3.	Process 3.0: Manage Enrollments
+4.	Process 4.0: Assessments & Grading
+5.	Process 5.0: Communication & Notifications
+6.	Process 6.0: Search & Discovery
+________________________________________
+Detailed Data Flow Descriptions
+Here is the step-by-step description of the flows for each process.
+Process 1.0: Manage Users & Authentication
+Handles registration, login, and profile updates.
+•	Inputs:
+o	Login Credentials (Email/Password) from User 
+o	        →\rightarrow→
+      
+Process 1.0.
+o	Registration Data (Name, Email) from Guest 
+o	        →\rightarrow→
+      
+Process 1.0.
+o	User Data (for verification) from D1: Users Table.
+•	Outputs:
+o	Auth Token (Sanctum) 
+o	        →\rightarrow→
+      
+to User.
+o	Profile Data (View) 
+o	        →\rightarrow→
+      
+to User.
+o	New User Record 
+o	        →\rightarrow→
+      
+stored in D1: Users Table.
+o	Password Reset Token 
+o	        →\rightarrow→
+      
+to Email Service.
+•	Data Stores Accessed:
+o	D1: Users Table (user, role_assignments)
+Process 2.0: Manage Courses & Content
+Handles the creation and organization of learning materials.
+•	Inputs:
+o	Course Metadata (Title, Category) from Instructor 
+o	        →\rightarrow→
+      
+Process 2.0.
+o	Lesson Content/Files from Instructor 
+o	        →\rightarrow→
+      
+Process 2.0.
+o	File URL from Cloud Storage 
+o	        →\rightarrow→
+      
+Process 2.0.
+•	Outputs:
+o	Course Details (View) 
+o	        →\rightarrow→
+      
+to Student.
+o	File Binary 
+o	        →\rightarrow→
+      
+uploaded to Cloud Storage.
+o	Course Record 
+o	        →\rightarrow→
+      
+stored in D2: Courses Table.
+o	File Metadata 
+o	        →\rightarrow→
+      
+stored in D3: Files Table.
+•	Data Stores Accessed:
+o	D2: Courses Table (course, course_categories, course_modules)
+o	D3: Files Table (files, files_reference)
+Process 3.0: Manage Enrollments
+Handles linking users to courses and checking permissions.
+•	Inputs:
+o	Enrollment Request from Student 
+o	        →\rightarrow→
+      
+Process 3.0.
+o	Manual Enrollment from Instructor/Admin 
+o	        →\rightarrow→
+      
+Process 3.0.
+o	Course Visibility Status from D2: Courses Table (Check if public).
+•	Outputs:
+o	Access Granted/Denied 
+o	        →\rightarrow→
+      
+to Student.
+o	Enrollment Record 
+o	        →\rightarrow→
+      
+stored in D4: Enrollments Table.
+•	Data Stores Accessed:
+o	D4: Enrollments Table (enrol, user_enrolments)
+o	D2: Courses Table
+Process 4.0: Assessments & Grading
+Handles assignments, quizzes, and grade calculations.
+•	Inputs:
+o	Assignment/Quiz Setup from Instructor 
+o	        →\rightarrow→
+      
+Process 4.0.
+o	Submission (File/Text) from Student 
+o	        →\rightarrow→
+      
+Process 4.0.
+o	Grade & Feedback from Instructor 
+o	        →\rightarrow→
+      
+Process 4.0.
+•	Outputs:
+o	Submission Receipt 
+o	        →\rightarrow→
+      
+to Student.
+o	Gradebook View 
+o	        →\rightarrow→
+      
+to Student/Instructor.
+o	Assignment Record 
+o	        →\rightarrow→
+      
+stored in D5: Activities Table.
+o	Grade Record 
+o	        →\rightarrow→
+      
+stored in D6: Grades Table.
+•	Data Stores Accessed:
+o	D5: Activities Table (assign, quiz, question)
+o	D6: Grades Table (grade_grades, assign_grades)
+Process 5.0: Communication & Notifications
+Handles forums, messages, and system alerts.
+•	Inputs:
+o	Forum Post/Reply from Student/Instructor 
+o	        →\rightarrow→
+      
+Process 5.0.
+o	Private Message from User 
+o	        →\rightarrow→
+      
+Process 5.0.
+o	Event Trigger (e.g., Grade Posted) from Process 4.0 
+o	        →\rightarrow→
+      
+Process 5.0.
+•	Outputs:
+o	Notification (In-App) 
+o	        →\rightarrow→
+      
+to User.
+o	Email Alert Payload 
+o	        →\rightarrow→
+      
+to Email Service.
+o	Message Record 
+o	        →\rightarrow→
+      
+stored in D7: Communication Table.
+•	Data Stores Accessed:
+o	D7: Communication Table (messages, notifications, forum_posts)
+Process 6.0: Search & Discovery
+Handles querying TypeSense and filtering results.
+•	Inputs:
+o	Search Query (Keywords) from User 
+o	        →\rightarrow→
+      
+Process 6.0.
+o	Indexed Data from D2: Courses Table and D1: Users Table.
+•	Outputs:
+o	Search Results List (Ranked) 
+o	        →\rightarrow→
+      
+to User.
+o	Index Updates 
+o	        →\rightarrow→
+      
+to TypeSense Engine (External).
+•	Data Stores Accessed:
+o	D1: Users Table
+o	D2: Courses Table
+o	External Store: TypeSense Index
+________________________________________
+Visual Guide for Drawing DFD Level 1
+If you are drawing this diagram, follow this layout:
+1.	Center: Arrange the 6 circular Processes (1.0 to 6.0) in the middle.
+2.	Left Side: Place External Entities Student and Guest.
+3.	Right Side: Place External Entities Instructor and Admin.
+4.	Bottom: Place External Entities Cloud Storage, Email Service, and TypeSense.
+5.	Center/Between Processes: Place the Open-Ended Rectangles for Data Stores (D1 to D7).
+6.	Connect: Draw arrows based on the inputs and outputs listed above. For example, draw an arrow from Student to Process 4.0 labeled "Submission," then an arrow from Process 4.0 to D6: Grades Table labeled "Save Grade."
+

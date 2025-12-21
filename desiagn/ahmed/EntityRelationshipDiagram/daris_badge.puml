@@ -1,0 +1,197 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**badge**" as badge {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  usercreated : bigint unsigned NOT NULL (FK)
+  usermodified : bigint unsigned NOT NULL (FK)
+  issuername : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  issuerurl : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  issuercontact : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  expiredate : int DEFAULT NULL 
+  expireperiod : int DEFAULT NULL 
+  type : tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 = site 
+  courseid : bigint unsigned DEFAULT NULL (FK)
+  message : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  messagesubject : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  attachment : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Attach baked badge for download' 
+  notification : tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Message when badge is awarded' 
+  status : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Badge status: 0 = inactive 
+  nextcron : int DEFAULT NULL 
+  version : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  language : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  imageauthorname : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  imageauthoremail : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  imageauthorurl : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  imagecaption : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**badge_alignment**" as badge_alignment {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  badgeid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  targetname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  targeturl : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  targetdescription : text COLLATE utf8mb4_unicode_ci 
+  targetframework : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  targetcode : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**badge_backpack**" as badge_backpack {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  email : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  backpackuid : int NOT NULL 
+  autosync : tinyint(1) NOT NULL DEFAULT '0' 
+  password : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  externalbackpackid : bigint unsigned DEFAULT NULL (FK)
+}
+
+entity "**badge_backpack_oauth2**" as badge_backpack_oauth2 {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  userid : bigint unsigned NOT NULL (FK)
+  issuerid : bigint unsigned NOT NULL (FK)
+  externalbackpackid : bigint unsigned NOT NULL (FK)
+  token : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  refreshtoken : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  expires : int DEFAULT NULL 
+  scope : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**badge_criteria**" as badge_criteria {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  badgeid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  criteriatype : int DEFAULT NULL COMMENT 'The criteria type we are aggregating' 
+  method : tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 = all 
+  description : text COLLATE utf8mb4_unicode_ci 
+  descriptionformat : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**badge_criteria_met**" as badge_criteria_met {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  issuedid : bigint unsigned DEFAULT NULL (FK)
+  critid : bigint unsigned NOT NULL (FK)
+  userid : bigint unsigned NOT NULL (FK)
+  datemet : int NOT NULL 
+}
+
+entity "**badge_criteria_param**" as badge_criteria_param {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  critid : bigint unsigned NOT NULL (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  value : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**badge_endorsement**" as badge_endorsement {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  badgeid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  issuername : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  issuerurl : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  issueremail : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  claimid : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  claimcomment : text COLLATE utf8mb4_unicode_ci 
+  dateissued : int NOT NULL DEFAULT '0' 
+}
+
+entity "**badge_external**" as badge_external {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  backpackid : bigint unsigned NOT NULL COMMENT 'ID of a backpack' (FK)
+  collectionid : int NOT NULL COMMENT 'Badge collection id in the backpack' 
+  entityid : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  assertion : text COLLATE utf8mb4_unicode_ci COMMENT 'Assertion of external badge' 
+}
+
+entity "**badge_external_backpack**" as badge_external_backpack {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  backpackapiurl : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  backpackweburl : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  apiversion : varchar(12) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1' 
+  sortorder : int NOT NULL DEFAULT '0' 
+  oauth2_issuerid : bigint unsigned DEFAULT NULL COMMENT 'OAuth 2 Issuer' (FK)
+}
+
+entity "**badge_external_identifier**" as badge_external_identifier {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  sitebackpackid : bigint unsigned NOT NULL COMMENT 'ID of a site backpack' (FK)
+  internalid : varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL 
+  externalid : varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL 
+  type : varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**badge_issued**" as badge_issued {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  badgeid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  uniquehash : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  dateissued : int NOT NULL DEFAULT '0' 
+  dateexpire : int DEFAULT NULL 
+  visible : tinyint(1) NOT NULL DEFAULT '0' 
+  issuernotified : int DEFAULT NULL 
+}
+
+entity "**badge_manual_award**" as badge_manual_award {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  badgeid : bigint unsigned NOT NULL (FK)
+  recipientid : bigint unsigned NOT NULL (FK)
+  issuerid : bigint unsigned NOT NULL (FK)
+  issuerrole : bigint unsigned NOT NULL (FK)
+  datemet : int NOT NULL 
+}
+
+entity "**badge_related**" as badge_related {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  badgeid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  relatedbadgeid : bigint unsigned DEFAULT NULL (FK)
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**oauth2_issuer**" as oauth2_issuer <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+entity "**role**" as role <<External>> {
+  --
+}
+
+badge }|--|| course
+badge }|--|| users
+badge }|--|| users
+badge_alignment }|--|| badge
+badge_backpack }|--|| badge_external_backpack
+badge_backpack }|--|| users
+badge_backpack_oauth2 }|--|| badge_external_backpack
+badge_backpack_oauth2 }|--|| oauth2_issuer
+badge_backpack_oauth2 }|--|| users
+badge_backpack_oauth2 }|--|| users
+badge_criteria }|--|| badge
+badge_criteria_met }|--|| badge_criteria
+badge_criteria_met }|--|| badge_issued
+badge_criteria_met }|--|| users
+badge_criteria_param }|--|| badge_criteria
+badge_endorsement }|--|| badge
+badge_external }|--|| badge_backpack
+badge_external_backpack }|--|| oauth2_issuer
+badge_external_identifier }|--|| badge_backpack
+badge_issued }|--|| badge
+badge_issued }|--|| users
+badge_manual_award }|--|| badge
+badge_manual_award }|--|| users
+badge_manual_award }|--|| role
+badge_manual_award }|--|| users
+badge_related }|--|| badge
+badge_related }|--|| badge
+@enduml

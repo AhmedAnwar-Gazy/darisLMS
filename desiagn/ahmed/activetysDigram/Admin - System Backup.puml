@@ -1,0 +1,61 @@
+@startuml
+title Admin - System Backup Process
+skinparam activityBackgroundColor #E0FFFF
+skinparam activityBorderColor #008B8B
+
+|Administrator|
+start
+:Navigate to Admin Panel → System → Backups;
+:Configure Backup Settings\n(Type, Retention, Compression);
+:Click "Start Backup Now";
+
+|Frontend|
+:Send POST /api/admin/backup\nwith configuration;
+
+|Backup Service|
+:Queue Backup Job\n(to prevent timeout);
+:Return 202 Accepted Immediately;
+
+partition "Background Processing" {
+  :Enter Maintenance Mode\n(Optional);
+  
+  fork
+    :Dump MySQL Database\n(mysqldump --all-databases);
+    :Compress SQL Dump\n(.gz format);
+  fork again
+    :Archive Uploaded Files\n(/storage/app/public);
+    :Include Configuration Files;
+  fork again
+    :Export System Logs\n(for audit trail);
+  end fork
+  
+  :Create Backup Manifest\n(JSON metadata);
+  :Package All Files\n(.tar.gz or .zip);
+  :Encrypt Package\n(Optional, with GPG);
+}
+
+:Upload to Cloud Storage\n(AWS S3 / Backblaze);
+
+|Cloud Storage|
+:Confirm Upload Success;
+-back->
+
+|Backup Service|
+:Verify Backup Integrity\n(Checksum validation);
+:Update Backup Logs;
+
+|Database|
+:INSERT INTO backup_logs\n(path, size, status, admin_id);
+:Clean Old Backups\n(Per retention policy);
+-back->
+
+|Backup Service|
+:Exit Maintenance Mode;
+:Send Completion Notification;
+
+|Administrator|
+:Receive Email Notification;
+:Verify Backup in Admin Panel;
+:Optionally Download for Local Archive;
+stop
+@enduml

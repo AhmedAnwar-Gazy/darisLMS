@@ -1,0 +1,105 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**feedback**" as feedback {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  anonymous : tinyint(1) NOT NULL DEFAULT '1' 
+  email_notification : tinyint(1) NOT NULL DEFAULT '1' 
+  multiple_submit : tinyint(1) NOT NULL DEFAULT '1' 
+  autonumbering : tinyint(1) NOT NULL DEFAULT '1' 
+  site_after_submit : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  page_after_submit : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  page_after_submitformat : tinyint NOT NULL DEFAULT '0' 
+  publish_stats : tinyint(1) NOT NULL DEFAULT '0' 
+  timeopen : int NOT NULL DEFAULT '0' 
+  timeclose : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  completionsubmit : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'If this field is set to 1 
+}
+
+entity "**feedback_completed**" as feedback_completed {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  feedback : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  random_response : int NOT NULL DEFAULT '0' 
+  anonymous_response : tinyint(1) NOT NULL DEFAULT '0' 
+  courseid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+}
+
+entity "**feedback_completedtmp**" as feedback_completedtmp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  feedback : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  guestid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timemodified : int NOT NULL DEFAULT '0' 
+  random_response : int NOT NULL DEFAULT '0' 
+  anonymous_response : tinyint(1) NOT NULL DEFAULT '0' 
+  courseid : int NOT NULL DEFAULT '0' 
+}
+
+entity "**feedback_item**" as feedback_item {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  feedback : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  template : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  label : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  presentation : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  typ : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  hasvalue : tinyint(1) NOT NULL DEFAULT '0' 
+  position : tinyint NOT NULL DEFAULT '0' 
+  required : tinyint(1) NOT NULL DEFAULT '0' 
+  dependitem : int NOT NULL DEFAULT '0' 
+  dependvalue : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  options : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**feedback_sitecourse_map**" as feedback_sitecourse_map {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  feedbackid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  courseid : int NOT NULL DEFAULT '0' 
+}
+
+entity "**feedback_template**" as feedback_template {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  ispublic : tinyint(1) NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**feedback_value**" as feedback_value {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course_id : int NOT NULL DEFAULT '0' 
+  item : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  completed : int NOT NULL DEFAULT '0' 
+  tmp_completed : int NOT NULL DEFAULT '0' 
+  value : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**feedback_valuetmp**" as feedback_valuetmp {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course_id : int NOT NULL DEFAULT '0' 
+  item : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  completed : int NOT NULL DEFAULT '0' 
+  tmp_completed : int NOT NULL DEFAULT '0' 
+  value : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+feedback_completed }|--|| course
+feedback_completed }|--|| feedback
+feedback_completedtmp }|--|| feedback
+feedback_item }|--|| feedback
+feedback_item }|--|| feedback_template
+feedback_sitecourse_map }|--|| feedback
+feedback_value }|--|| feedback_item
+feedback_valuetmp }|--|| feedback_item
+@enduml

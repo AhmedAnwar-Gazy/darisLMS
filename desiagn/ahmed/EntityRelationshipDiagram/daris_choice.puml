@@ -1,0 +1,46 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**choice**" as choice {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  course : int NOT NULL DEFAULT '0' 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  intro : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  introformat : smallint NOT NULL DEFAULT '0' 
+  publish : tinyint NOT NULL DEFAULT '0' 
+  showresults : tinyint NOT NULL DEFAULT '0' 
+  display : smallint NOT NULL DEFAULT '0' 
+  allowupdate : tinyint NOT NULL DEFAULT '0' 
+  allowmultiple : tinyint NOT NULL DEFAULT '0' 
+  showunanswered : tinyint NOT NULL DEFAULT '0' 
+  includeinactive : tinyint NOT NULL DEFAULT '1' 
+  limitanswers : tinyint NOT NULL DEFAULT '0' 
+  timeopen : int NOT NULL DEFAULT '0' 
+  timeclose : int NOT NULL DEFAULT '0' 
+  showpreview : tinyint NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+  completionsubmit : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'If this field is set to 1 
+  showavailable : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'If this field is set to 1 
+}
+
+entity "**choice_answers**" as choice_answers {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  choiceid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  userid : int NOT NULL DEFAULT '0' 
+  optionid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**choice_options**" as choice_options {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  choiceid : bigint unsigned NOT NULL DEFAULT '0' (FK)
+  text : text COLLATE utf8mb4_unicode_ci 
+  maxanswers : int DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+choice_answers }|--|| choice
+choice_answers }|--|| choice_options
+choice_options }|--|| choice
+@enduml

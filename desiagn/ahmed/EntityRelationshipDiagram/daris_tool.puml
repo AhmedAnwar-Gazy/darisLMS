@@ -1,0 +1,483 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**tool_brickfield_areas**" as tool_brickfield_areas {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  type : tinyint NOT NULL DEFAULT '0' 
+  contextid : bigint unsigned DEFAULT NULL (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  tablename : varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  fieldorarea : varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  itemid : int DEFAULT NULL 
+  filename : text COLLATE utf8mb4_unicode_ci 
+  reftable : varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  refid : int DEFAULT NULL 
+  cmid : bigint unsigned DEFAULT NULL (FK)
+  courseid : bigint unsigned DEFAULT NULL (FK)
+  categoryid : bigint unsigned DEFAULT NULL (FK)
+}
+
+entity "**tool_brickfield_cache_acts**" as tool_brickfield_cache_acts {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : bigint unsigned NOT NULL (FK)
+  status : tinyint(1) DEFAULT NULL 
+  component : varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  totalactivities : int DEFAULT NULL 
+  failedactivities : int DEFAULT NULL 
+  passedactivities : int DEFAULT NULL 
+  errorcount : int DEFAULT NULL 
+}
+
+entity "**tool_brickfield_cache_check**" as tool_brickfield_cache_check {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : bigint unsigned NOT NULL (FK)
+  status : tinyint(1) DEFAULT NULL 
+  checkid : int DEFAULT NULL 
+  checkcount : int DEFAULT NULL 
+  errorcount : int DEFAULT NULL 
+}
+
+entity "**tool_brickfield_checks**" as tool_brickfield_checks {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  checktype : varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  shortname : varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  checkgroup : bigint DEFAULT '0' COMMENT 'The group category identifier.' 
+  status : smallint NOT NULL 
+  severity : tinyint NOT NULL DEFAULT '0' 
+}
+
+entity "**tool_brickfield_content**" as tool_brickfield_content {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  areaid : bigint unsigned NOT NULL (FK)
+  contenthash : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL 
+  iscurrent : tinyint(1) NOT NULL DEFAULT '0' 
+  status : tinyint NOT NULL DEFAULT '0' COMMENT '0 - needs checking 
+  timecreated : int NOT NULL 
+  timechecked : int DEFAULT NULL 
+}
+
+entity "**tool_brickfield_errors**" as tool_brickfield_errors {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  resultid : bigint unsigned NOT NULL (FK)
+  linenumber : int NOT NULL DEFAULT '0' 
+  errordata : text COLLATE utf8mb4_unicode_ci 
+  htmlcode : text COLLATE utf8mb4_unicode_ci 
+}
+
+entity "**tool_brickfield_process**" as tool_brickfield_process {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL 
+  item : varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The item for process action.' 
+  contextid : int DEFAULT NULL 
+  innercontextid : int DEFAULT NULL 
+  timecreated : bigint DEFAULT NULL 
+  timecompleted : bigint DEFAULT NULL 
+}
+
+entity "**tool_brickfield_results**" as tool_brickfield_results {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contentid : bigint unsigned DEFAULT NULL (FK)
+  checkid : bigint unsigned NOT NULL (FK)
+  errorcount : int NOT NULL DEFAULT '0' 
+}
+
+entity "**tool_brickfield_schedule**" as tool_brickfield_schedule {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextlevel : int NOT NULL DEFAULT '50' COMMENT 'The context level for this item. Defaults to CONTEXT_COURSE.' 
+  instanceid : int NOT NULL COMMENT 'The id of the specific context instance. Course id for courses.' 
+  contextid : int DEFAULT NULL COMMENT 'Id of the specific context record.' 
+  status : tinyint NOT NULL DEFAULT '0' COMMENT 'The schedule status for this item. 0 = not requested; 1 = requested; 2 = analyzed.' 
+  timeanalyzed : int DEFAULT '0' COMMENT 'The most recent time the item was analyzed by scheduler.' 
+  timemodified : int DEFAULT '0' COMMENT 'Time stamp of the last record update.' 
+}
+
+entity "**tool_brickfield_summary**" as tool_brickfield_summary {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : bigint unsigned NOT NULL (FK)
+  status : tinyint(1) DEFAULT NULL 
+  activities : int DEFAULT NULL 
+  activitiespassed : int DEFAULT NULL 
+  activitiesfailed : int DEFAULT NULL 
+  errorschecktype1 : int DEFAULT NULL 
+  errorschecktype2 : int DEFAULT NULL 
+  errorschecktype3 : int DEFAULT NULL 
+  errorschecktype4 : int DEFAULT NULL 
+  errorschecktype5 : int DEFAULT NULL 
+  errorschecktype6 : int DEFAULT NULL 
+  errorschecktype7 : int DEFAULT NULL 
+  failedchecktype1 : int DEFAULT NULL 
+  failedchecktype2 : int DEFAULT NULL 
+  failedchecktype3 : int DEFAULT NULL 
+  failedchecktype4 : int DEFAULT NULL 
+  failedchecktype5 : int DEFAULT NULL 
+  failedchecktype6 : int DEFAULT NULL 
+  failedchecktype7 : int DEFAULT NULL 
+  percentchecktype1 : int DEFAULT NULL 
+  percentchecktype2 : int DEFAULT NULL 
+  percentchecktype3 : int DEFAULT NULL 
+  percentchecktype4 : int DEFAULT NULL 
+  percentchecktype5 : int DEFAULT NULL 
+  percentchecktype6 : int DEFAULT NULL 
+  percentchecktype7 : int DEFAULT NULL 
+}
+
+entity "**tool_cohortroles**" as tool_cohortroles {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  cohortid : int NOT NULL COMMENT 'The cohort to sync' 
+  roleid : int NOT NULL COMMENT 'The role to assign' 
+  userid : int NOT NULL COMMENT 'The user to sync' 
+  timecreated : int NOT NULL COMMENT 'The time this record was created' 
+  timemodified : int NOT NULL COMMENT 'The time this record was modified.' 
+  usermodified : int DEFAULT NULL COMMENT 'Who last modified this record?' 
+}
+
+entity "**tool_customlang**" as tool_customlang {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  lang : varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The code of the language this string belongs to. Like en 
+  componentid : bigint unsigned NOT NULL COMMENT 'The id of the component' (FK)
+  stringid : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The identifier of the string' 
+  original : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'English original of the string' 
+  master : text COLLATE utf8mb4_unicode_ci COMMENT 'Master translation of the string as is distributed in the official lang pack 
+  local : text COLLATE utf8mb4_unicode_ci COMMENT 'Local customization of the string 
+  timemodified : int NOT NULL COMMENT 'The timestamp of when the original or master was recently modified' 
+  timecustomized : int DEFAULT NULL COMMENT 'The timestamp of when the value of the local translation was recently modified 
+  outdated : tinyint DEFAULT '0' COMMENT 'Either the English original or the master translation changed and the customization may be outdated' 
+  modified : tinyint DEFAULT '0' COMMENT 'Has the string been modified via the translator?' 
+}
+
+entity "**tool_customlang_components**" as tool_customlang_components {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The normalized name of the plugin' 
+  version : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'The checked out version of the plugin 
+}
+
+entity "**tool_dataprivacy_category**" as tool_dataprivacy_category {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci 
+  descriptionformat : tinyint(1) DEFAULT NULL 
+  usermodified : int NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**tool_dataprivacy_contextlist**" as tool_dataprivacy_contextlist {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  component : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Frankenstyle component name' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**tool_dataprivacy_ctxexpired**" as tool_dataprivacy_ctxexpired {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : int NOT NULL 
+  unexpiredroles : text COLLATE utf8mb4_unicode_ci COMMENT 'Roles which have explicitly not expired yet.' 
+  expiredroles : text COLLATE utf8mb4_unicode_ci COMMENT 'Explicitly expires roles' 
+  defaultexpired : tinyint(1) NOT NULL COMMENT 'The default retention period has passed.' 
+  status : tinyint NOT NULL DEFAULT '0' 
+  usermodified : int NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**tool_dataprivacy_ctxinstance**" as tool_dataprivacy_ctxinstance {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : int NOT NULL 
+  purposeid : bigint unsigned DEFAULT NULL (FK)
+  categoryid : bigint unsigned DEFAULT NULL (FK)
+  usermodified : int NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**tool_dataprivacy_ctxlevel**" as tool_dataprivacy_ctxlevel {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextlevel : tinyint NOT NULL 
+  purposeid : bigint unsigned DEFAULT NULL (FK)
+  categoryid : bigint unsigned DEFAULT NULL (FK)
+  usermodified : int NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**tool_dataprivacy_ctxlst_ctx**" as tool_dataprivacy_ctxlst_ctx {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : int NOT NULL 
+  contextlistid : bigint unsigned NOT NULL (FK)
+  status : tinyint NOT NULL DEFAULT '0' COMMENT 'Approval status of the context item' 
+  timecreated : int NOT NULL DEFAULT '0' 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**tool_dataprivacy_purpose**" as tool_dataprivacy_purpose {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci 
+  descriptionformat : tinyint(1) DEFAULT NULL 
+  lawfulbases : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Comma-separated IDs matching records in tool_dataprivacy_lawfulbasis' 
+  sensitivedatareasons : text COLLATE utf8mb4_unicode_ci COMMENT 'Comma-separated IDs matching records in tool_dataprivacy_sensitive' 
+  retentionperiod : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  protected : tinyint(1) DEFAULT NULL 
+  usermodified : int NOT NULL 
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**tool_dataprivacy_purposerole**" as tool_dataprivacy_purposerole {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  purposeid : bigint unsigned NOT NULL (FK)
+  roleid : bigint unsigned NOT NULL (FK)
+  lawfulbases : text COLLATE utf8mb4_unicode_ci 
+  sensitivedatareasons : text COLLATE utf8mb4_unicode_ci 
+  retentionperiod : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  protected : tinyint(1) DEFAULT NULL 
+  usermodified : bigint unsigned NOT NULL (FK)
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**tool_dataprivacy_request**" as tool_dataprivacy_request {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  type : int NOT NULL DEFAULT '0' COMMENT 'Data request type' 
+  comments : text COLLATE utf8mb4_unicode_ci COMMENT 'More details about the request' 
+  commentsformat : tinyint NOT NULL DEFAULT '0' 
+  userid : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'The user ID the request is being made for' (FK)
+  requestedby : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'The user ID of the one making the request' (FK)
+  status : tinyint NOT NULL DEFAULT '0' COMMENT 'The current status of the data request' 
+  dpo : bigint unsigned DEFAULT '0' COMMENT 'The user ID of the Data Protection Officer who is reviewing th request' (FK)
+  dpocomment : text COLLATE utf8mb4_unicode_ci COMMENT 'DPO''s comments (e.g. reason for rejecting the request 
+  dpocommentformat : tinyint NOT NULL DEFAULT '0' 
+  systemapproved : smallint NOT NULL DEFAULT '0' 
+  usermodified : bigint unsigned NOT NULL DEFAULT '0' COMMENT 'The user who created/modified this request object' (FK)
+  timecreated : int NOT NULL DEFAULT '0' COMMENT 'The time this data request was created' 
+  timemodified : int NOT NULL DEFAULT '0' COMMENT 'The last time this data request was updated' 
+  creationmethod : int NOT NULL DEFAULT '0' COMMENT 'The type of the creation method of the data request' 
+}
+
+entity "**tool_dataprivacy_rqst_ctxlst**" as tool_dataprivacy_rqst_ctxlst {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  requestid : bigint unsigned NOT NULL (FK)
+  contextlistid : bigint unsigned NOT NULL (FK)
+}
+
+entity "**tool_mfa**" as tool_mfa {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL COMMENT 'User ID' 
+  factor : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Factor type' 
+  secret : text COLLATE utf8mb4_unicode_ci COMMENT 'Any secret data for factor' 
+  label : text COLLATE utf8mb4_unicode_ci COMMENT 'label for factor instance 
+  timecreated : bigint DEFAULT NULL COMMENT 'Time the factor instance was setup' 
+  createdfromip : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'IP that the factor was setup from' 
+  timemodified : bigint DEFAULT NULL COMMENT 'Time factor was last modified.' 
+  lastverified : bigint DEFAULT NULL COMMENT 'Time user was last verified with this factor.' 
+  revoked : tinyint(1) NOT NULL DEFAULT '0' 
+  lockcounter : smallint NOT NULL DEFAULT '0' COMMENT 'Counter of failed attempts' 
+}
+
+entity "**tool_mfa_auth**" as tool_mfa_auth {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL COMMENT 'User id' (FK)
+  lastverified : bigint NOT NULL DEFAULT '0' COMMENT 'Timestamp of last MFA verification.' 
+}
+
+entity "**tool_mfa_secrets**" as tool_mfa_secrets {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : bigint unsigned NOT NULL (FK)
+  factor : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  secret : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : bigint NOT NULL 
+  expiry : bigint NOT NULL 
+  revoked : tinyint(1) NOT NULL DEFAULT '0' 
+  sessionid : varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+}
+
+entity "**tool_monitor_events**" as tool_monitor_events {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  eventname : varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Event name' 
+  contextid : bigint unsigned NOT NULL COMMENT 'Context id' (FK)
+  contextlevel : int NOT NULL COMMENT 'Context level' 
+  contextinstanceid : bigint unsigned NOT NULL COMMENT 'Context instance id' 
+  link : varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Link to the event location' 
+  courseid : bigint unsigned NOT NULL COMMENT 'course id' (FK)
+  timecreated : int NOT NULL COMMENT 'Time created' 
+}
+
+entity "**tool_monitor_history**" as tool_monitor_history {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  sid : bigint unsigned NOT NULL COMMENT 'Subscription id' (FK)
+  userid : int NOT NULL COMMENT 'User to whom this notification was sent' 
+  timesent : int NOT NULL COMMENT 'Timestamp of when the message was sent.' 
+}
+
+entity "**tool_monitor_rules**" as tool_monitor_rules {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  description : text COLLATE utf8mb4_unicode_ci COMMENT 'Description of the rule' 
+  descriptionformat : tinyint(1) NOT NULL COMMENT 'Description format' 
+  name : varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name of the rule' 
+  userid : int NOT NULL COMMENT 'Id of user who created the rule' 
+  courseid : int NOT NULL COMMENT 'Id of course to which this rule belongs.' 
+  plugin : varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Frankenstlye name of the plguin' 
+  eventname : varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Fully qualified name of the event' 
+  template : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Message template' 
+  templateformat : tinyint(1) NOT NULL COMMENT 'Template format' 
+  frequency : smallint NOT NULL COMMENT 'Frequency' 
+  timewindow : smallint NOT NULL COMMENT 'Time window in seconds' 
+  timemodified : int NOT NULL COMMENT 'Timestamp when this rule was last modified' 
+  timecreated : int NOT NULL COMMENT 'Time stamp of when this rule was created' 
+}
+
+entity "**tool_monitor_subscriptions**" as tool_monitor_subscriptions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL COMMENT 'Course id of the subscription' 
+  ruleid : bigint unsigned NOT NULL COMMENT 'Rule id' (FK)
+  cmid : int NOT NULL COMMENT 'Course module id' 
+  userid : int NOT NULL COMMENT 'User id of the subscriber' 
+  timecreated : int NOT NULL COMMENT 'Timestamp of when this subscription was created' 
+  lastnotificationsent : int NOT NULL DEFAULT '0' COMMENT 'Timestamp of the time when a notification was last sent for this subscription.' 
+  inactivedate : int NOT NULL DEFAULT '0' 
+}
+
+entity "**tool_policy**" as tool_policy {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  sortorder : smallint NOT NULL DEFAULT '999' COMMENT 'Defines the order in which policies should be presented to users' 
+  currentversionid : bigint unsigned DEFAULT NULL COMMENT 'ID of the current policy version that applies on the site 
+}
+
+entity "**tool_policy_acceptances**" as tool_policy_acceptances {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  policyversionid : bigint unsigned NOT NULL COMMENT 'ID of the policy document version' (FK)
+  userid : bigint unsigned NOT NULL COMMENT 'ID of the user this acceptance is relevant to' (FK)
+  status : tinyint(1) DEFAULT NULL COMMENT 'Acceptance status: 1 - accepted 
+  lang : varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Code of the language the user had when the policy document was displayed' 
+  usermodified : bigint unsigned NOT NULL COMMENT 'ID of the user who last modified the acceptance record' (FK)
+  timecreated : int NOT NULL COMMENT 'Timestamp of when the acceptance record was created' 
+  timemodified : int NOT NULL COMMENT 'Timestamp of when the acceptance record was last modified' 
+  note : text COLLATE utf8mb4_unicode_ci COMMENT 'Plain text note describing how the actual consent has been obtained if the policy has been accepted on other user''s behalf.' 
+}
+
+entity "**tool_policy_versions**" as tool_policy_versions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name of the policy document' 
+  type : tinyint NOT NULL DEFAULT '0' COMMENT 'Type of the policy: 0 - Site policy 
+  audience : tinyint NOT NULL DEFAULT '0' COMMENT 'Who is this policy targeted at: 0 - all users 
+  archived : tinyint NOT NULL DEFAULT '0' COMMENT 'Should the version be considered as archived. All non-archived 
+  usermodified : bigint unsigned NOT NULL COMMENT 'ID of the user who last edited this policy document version.' (FK)
+  timecreated : int NOT NULL COMMENT 'Timestamp of when the policy version was created.' 
+  timemodified : int NOT NULL COMMENT 'Timestamp of when the policy version was last modified.' 
+  policyid : bigint unsigned NOT NULL COMMENT 'ID of the policy document we are version of.' (FK)
+  agreementstyle : tinyint NOT NULL DEFAULT '0' COMMENT 'How this agreement should flow: 0 - on the consent page 
+  optional : tinyint NOT NULL DEFAULT '0' COMMENT '0 - the policy must be accepted to use the site 
+  revision : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Human readable version of the policy document' 
+  summary : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Policy text summary' 
+  summaryformat : tinyint NOT NULL COMMENT 'Format of the summary field' 
+  content : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Full policy text' 
+  contentformat : tinyint NOT NULL COMMENT 'Format of the content field' 
+}
+
+entity "**tool_recyclebin_category**" as tool_recyclebin_category {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  categoryid : bigint unsigned NOT NULL (FK)
+  shortname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  fullname : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timecreated : int NOT NULL 
+}
+
+entity "**tool_recyclebin_course**" as tool_recyclebin_course {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : bigint unsigned NOT NULL (FK)
+  section : int NOT NULL 
+  module : int NOT NULL 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  timecreated : int NOT NULL DEFAULT '0' 
+}
+
+entity "**tool_usertours_steps**" as tool_usertours_steps {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  tourid : bigint unsigned NOT NULL (FK)
+  title : text COLLATE utf8mb4_unicode_ci COMMENT 'Title of the step' 
+  content : text COLLATE utf8mb4_unicode_ci COMMENT 'Content of the user tour - allow for multilang tags' 
+  contentformat : smallint NOT NULL DEFAULT '0' 
+  targettype : tinyint NOT NULL COMMENT 'Type of the target (e.g. block 
+  targetvalue : text COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The value for the specified target type.' 
+  sortorder : int NOT NULL DEFAULT '0' 
+  configdata : text COLLATE utf8mb4_unicode_ci NOT NULL 
+}
+
+entity "**tool_usertours_tours**" as tool_usertours_tours {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Name of the user tour' 
+  description : text COLLATE utf8mb4_unicode_ci 
+  pathmatch : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL 
+  enabled : tinyint(1) NOT NULL DEFAULT '0' 
+  sortorder : int NOT NULL DEFAULT '0' 
+  endtourlabel : varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Custom label for the end tour button' 
+  configdata : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  displaystepnumbers : tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Setting to display step numbers of the tour' 
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**role**" as role <<External>> {
+  --
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**course_categories**" as course_categories <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+entity "**course_modules**" as course_modules <<External>> {
+  --
+}
+
+tool_brickfield_areas }|--|| course_categories
+tool_brickfield_areas }|--|| course_modules
+tool_brickfield_areas }|--|| context
+tool_brickfield_areas }|--|| course
+tool_brickfield_cache_acts }|--|| course
+tool_brickfield_cache_check }|--|| course
+tool_brickfield_content }|--|| tool_brickfield_areas
+tool_brickfield_errors }|--|| tool_brickfield_results
+tool_brickfield_results }|--|| tool_brickfield_checks
+tool_brickfield_results }|--|| tool_brickfield_content
+tool_brickfield_summary }|--|| course
+tool_customlang }|--|| tool_customlang_components
+tool_dataprivacy_ctxinstance }|--|| tool_dataprivacy_category
+tool_dataprivacy_ctxinstance }|--|| tool_dataprivacy_purpose
+tool_dataprivacy_ctxlevel }|--|| tool_dataprivacy_category
+tool_dataprivacy_ctxlevel }|--|| tool_dataprivacy_purpose
+tool_dataprivacy_ctxlst_ctx }|--|| tool_dataprivacy_contextlist
+tool_dataprivacy_purposerole }|--|| tool_dataprivacy_purpose
+tool_dataprivacy_purposerole }|--|| role
+tool_dataprivacy_purposerole }|--|| users
+tool_dataprivacy_request }|--|| users
+tool_dataprivacy_request }|--|| users
+tool_dataprivacy_request }|--|| users
+tool_dataprivacy_request }|--|| users
+tool_dataprivacy_rqst_ctxlst }|--|| tool_dataprivacy_contextlist
+tool_dataprivacy_rqst_ctxlst }|--|| tool_dataprivacy_request
+tool_mfa_auth }|--|| users
+tool_mfa_secrets }|--|| users
+tool_monitor_events }|--|| context
+tool_monitor_events }|--|| course
+tool_monitor_history }|--|| tool_monitor_subscriptions
+tool_monitor_subscriptions }|--|| tool_monitor_rules
+tool_policy_acceptances }|--|| tool_policy_versions
+tool_policy_acceptances }|--|| users
+tool_policy_acceptances }|--|| users
+tool_policy_versions }|--|| tool_policy
+tool_policy_versions }|--|| users
+tool_recyclebin_category }|--|| course_categories
+tool_recyclebin_course }|--|| course
+tool_usertours_steps }|--|| tool_usertours_tours
+@enduml

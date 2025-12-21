@@ -1,0 +1,918 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "qtype_ddimageortext" {
+  +id : Integer
+  +questionid : Integer
+  +shuffleanswers : Integer
+  +correctfeedback : String
+  +correctfeedbackformat : Integer
+  +partiallycorrectfeedback : String
+  +partiallycorrectfeedbackformat : Integer
+  +incorrectfeedback : String
+  +incorrectfeedbackformat : Integer
+  +shownumcorrect : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_ddimageortext_drags" {
+  +id : Integer
+  +questionid : Integer
+  +no : Integer
+  +draggroup : Integer
+  +infinite : Integer
+  +label : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_ddimageortext_drops" {
+  +id : Integer
+  +questionid : Integer
+  +no : Integer
+  +xleft : Integer
+  +ytop : Integer
+  +choice : Integer
+  +label : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_ddmarker" {
+  +id : Integer
+  +questionid : Integer
+  +shuffleanswers : Integer
+  +correctfeedback : String
+  +correctfeedbackformat : Integer
+  +partiallycorrectfeedback : String
+  +partiallycorrectfeedbackformat : Integer
+  +incorrectfeedback : String
+  +incorrectfeedbackformat : Integer
+  +shownumcorrect : Integer
+  +showmisplaced : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_ddmarker_drags" {
+  +id : Integer
+  +questionid : Integer
+  +no : Integer
+  +label : String
+  +infinite : Integer
+  +noofdrags : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_ddmarker_drops" {
+  +id : Integer
+  +questionid : Integer
+  +no : Integer
+  +shape : String
+  +coords : String
+  +choice : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_essay_options" {
+  +id : Integer
+  +questionid : Integer
+  +responseformat : String
+  +responserequired : Integer
+  +responsefieldlines : Integer
+  +minwordlimit : Integer
+  +maxwordlimit : Integer
+  +attachments : Integer
+  +attachmentsrequired : Integer
+  +graderinfo : String
+  +graderinfoformat : Integer
+  +responsetemplate : String
+  +responsetemplateformat : Integer
+  +maxbytes : Integer
+  +filetypeslist : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_match_options" {
+  +id : Integer
+  +questionid : Integer
+  +shuffleanswers : Integer
+  +correctfeedback : String
+  +correctfeedbackformat : Integer
+  +partiallycorrectfeedback : String
+  +partiallycorrectfeedbackformat : Integer
+  +incorrectfeedback : String
+  +incorrectfeedbackformat : Integer
+  +shownumcorrect : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_match_subquestions" {
+  +id : Integer
+  +questionid : Integer
+  +questiontext : String
+  +questiontextformat : Integer
+  +answertext : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_multichoice_options" {
+  +id : Integer
+  +questionid : Integer
+  +layout : Integer
+  +single : Integer
+  +shuffleanswers : Integer
+  +correctfeedback : String
+  +correctfeedbackformat : Integer
+  +partiallycorrectfeedback : String
+  +partiallycorrectfeedbackformat : Integer
+  +incorrectfeedback : String
+  +incorrectfeedbackformat : Integer
+  +answernumbering : String
+  +shownumcorrect : Integer
+  +showstandardinstruction : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_ordering_options" {
+  +id : Integer
+  +questionid : Integer
+  +layouttype : Integer
+  +selecttype : Integer
+  +selectcount : Integer
+  +gradingtype : Integer
+  +showgrading : Integer
+  +numberingstyle : String
+  +correctfeedback : String
+  +correctfeedbackformat : Integer
+  +incorrectfeedback : String
+  +incorrectfeedbackformat : Integer
+  +partiallycorrectfeedback : String
+  +partiallycorrectfeedbackformat : Integer
+  +shownumcorrect : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_randomsamatch_options" {
+  +id : Integer
+  +questionid : Integer
+  +choose : Integer
+  +subcats : Integer
+  +correctfeedback : String
+  +correctfeedbackformat : Integer
+  +partiallycorrectfeedback : String
+  +partiallycorrectfeedbackformat : Integer
+  +incorrectfeedback : String
+  +incorrectfeedbackformat : Integer
+  +shownumcorrect : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "qtype_shortanswer_options" {
+  +id : Integer
+  +questionid : Integer
+  +usecase : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question" {
+  +id : Integer
+  +parent : Integer
+  +name : String
+  +questiontext : String
+  +questiontextformat : Integer
+  +generalfeedback : String
+  +generalfeedbackformat : Integer
+  +defaultmark : Float
+  +penalty : Float
+  +qtype : String
+  +length : Integer
+  +stamp : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +createdby : Integer
+  +modifiedby : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_answers" {
+  +id : Integer
+  +question : Integer
+  +answer : String
+  +answerformat : Integer
+  +fraction : Float
+  +feedback : String
+  +feedbackformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_attempt_step_data" {
+  +id : Integer
+  +attemptstepid : Integer
+  +name : String
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_attempt_steps" {
+  +id : Integer
+  +questionattemptid : Integer
+  +sequencenumber : Integer
+  +state : String
+  +fraction : Float
+  +timecreated : Integer
+  +userid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_attempts" {
+  +id : Integer
+  +questionusageid : Integer
+  +slot : Integer
+  +behaviour : String
+  +questionid : Integer
+  +variant : Integer
+  +maxmark : Float
+  +minfraction : Float
+  +maxfraction : Float
+  +flagged : Integer
+  +questionsummary : String
+  +rightanswer : String
+  +responsesummary : String
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_bank_entries" {
+  +id : Integer
+  +questioncategoryid : Integer
+  +idnumber : String
+  +ownerid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_calculated" {
+  +id : Integer
+  +question : Integer
+  +answer : Integer
+  +tolerance : String
+  +tolerancetype : Integer
+  +correctanswerlength : Integer
+  +correctanswerformat : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_calculated_options" {
+  +id : Integer
+  +question : Integer
+  +synchronize : Integer
+  +single : Integer
+  +shuffleanswers : Integer
+  +correctfeedback : String
+  +correctfeedbackformat : Integer
+  +partiallycorrectfeedback : String
+  +partiallycorrectfeedbackformat : Integer
+  +incorrectfeedback : String
+  +incorrectfeedbackformat : Integer
+  +answernumbering : String
+  +shownumcorrect : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_categories" {
+  +id : Integer
+  +name : String
+  +contextid : Integer
+  +info : String
+  +infoformat : Integer
+  +stamp : String
+  +parent : Integer
+  +sortorder : Integer
+  +idnumber : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_dataset_definitions" {
+  +id : Integer
+  +category : Integer
+  +name : String
+  +type : Integer
+  +options : String
+  +itemcount : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_dataset_items" {
+  +id : Integer
+  +definition : Integer
+  +itemnumber : Integer
+  +value : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_datasets" {
+  +id : Integer
+  +question : Integer
+  +datasetdefinition : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_ddwtos" {
+  +id : Integer
+  +questionid : Integer
+  +shuffleanswers : Integer
+  +correctfeedback : String
+  +correctfeedbackformat : Integer
+  +partiallycorrectfeedback : String
+  +partiallycorrectfeedbackformat : Integer
+  +incorrectfeedback : String
+  +incorrectfeedbackformat : Integer
+  +shownumcorrect : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_gapselect" {
+  +id : Integer
+  +questionid : Integer
+  +shuffleanswers : Integer
+  +correctfeedback : String
+  +correctfeedbackformat : Integer
+  +partiallycorrectfeedback : String
+  +partiallycorrectfeedbackformat : Integer
+  +incorrectfeedback : String
+  +incorrectfeedbackformat : Integer
+  +shownumcorrect : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_hints" {
+  +id : Integer
+  +questionid : Integer
+  +hint : String
+  +hintformat : Integer
+  +shownumcorrect : Integer
+  +clearwrong : Integer
+  +options : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_multianswer" {
+  +id : Integer
+  +question : Integer
+  +sequence : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_numerical" {
+  +id : Integer
+  +question : Integer
+  +answer : Integer
+  +tolerance : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_numerical_options" {
+  +id : Integer
+  +question : Integer
+  +showunits : Integer
+  +unitsleft : Integer
+  +unitgradingtype : Integer
+  +unitpenalty : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_numerical_units" {
+  +id : Integer
+  +question : Integer
+  +multiplier : Float
+  +unit : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_references" {
+  +id : Integer
+  +usingcontextid : Integer
+  +component : String
+  +questionarea : String
+  +itemid : Integer
+  +questionbankentryid : Integer
+  +version : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_response_analysis" {
+  +id : Integer
+  +hashcode : String
+  +whichtries : String
+  +timemodified : Integer
+  +questionid : Integer
+  +variant : Integer
+  +subqid : String
+  +aid : String
+  +response : String
+  +credit : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_response_count" {
+  +id : Integer
+  +analysisid : Integer
+  +try : Integer
+  +rcount : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_set_references" {
+  +id : Integer
+  +usingcontextid : Integer
+  +component : String
+  +questionarea : String
+  +itemid : Integer
+  +questionscontextid : Integer
+  +filtercondition : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_statistics" {
+  +id : Integer
+  +hashcode : String
+  +timemodified : Integer
+  +questionid : Integer
+  +slot : Integer
+  +subquestion : Integer
+  +variant : Integer
+  +s : Integer
+  +effectiveweight : Float
+  +negcovar : Integer
+  +discriminationindex : Float
+  +discriminativeefficiency : Float
+  +sd : Float
+  +facility : Float
+  +subquestions : String
+  +maxmark : Float
+  +positions : String
+  +randomguessscore : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_truefalse" {
+  +id : Integer
+  +question : Integer
+  +trueanswer : Integer
+  +falseanswer : Integer
+  +showstandardinstruction : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_usages" {
+  +id : Integer
+  +contextid : Integer
+  +component : String
+  +preferredbehaviour : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "question_versions" {
+  +id : Integer
+  +questionbankentryid : Integer
+  +version : Integer
+  +questionid : Integer
+  +status : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : Integer
+  +introformat : Integer
+  +timeopen : Integer
+  +timeclose : Integer
+  +timelimit : Integer
+  +overduehandling : String
+  +graceperiod : Integer
+  +preferredbehaviour : String
+  +canredoquestions : Integer
+  +attempts : Integer
+  +attemptonlast : Integer
+  +grademethod : Integer
+  +decimalpoints : Integer
+  +questiondecimalpoints : Integer
+  +reviewattempt : Integer
+  +reviewcorrectness : Integer
+  +reviewmaxmarks : Integer
+  +reviewmarks : Integer
+  +reviewspecificfeedback : Integer
+  +reviewgeneralfeedback : Integer
+  +reviewrightanswer : Integer
+  +reviewoverallfeedback : Integer
+  +questionsperpage : Integer
+  +navmethod : Integer
+  +shuffleanswers : Integer
+  +sumgrades : Float
+  +grade : Float
+  +timecreated : Integer
+  +timemodified : Integer
+  +password : String
+  +subnet : String
+  +browsersecurity : String
+  +delay1 : Integer
+  +delay2 : Integer
+  +showuserpicture : Integer
+  +showblocks : Integer
+  +completionattemptsexhausted : Integer
+  +completionminattempts : Integer
+  +allowofflineattempts : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_attempts" {
+  +id : Integer
+  +quiz : Integer
+  +userid : Integer
+  +attempt : Integer
+  +uniqueid : Integer
+  +layout : String
+  +currentpage : Integer
+  +preview : Integer
+  +state : String
+  +timestart : Integer
+  +timefinish : Integer
+  +timemodified : Integer
+  +timemodifiedoffline : Integer
+  +timecheckstate : Integer
+  +sumgrades : Float
+  +gradednotificationsenttime : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_feedback" {
+  +id : Integer
+  +quizid : Integer
+  +feedbacktext : String
+  +feedbacktextformat : Integer
+  +mingrade : Float
+  +maxgrade : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_grade_items" {
+  +id : Integer
+  +quizid : Integer
+  +sortorder : Integer
+  +name : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_grades" {
+  +id : Integer
+  +quiz : Integer
+  +userid : Integer
+  +grade : Float
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_overrides" {
+  +id : Integer
+  +quiz : Integer
+  +groupid : Integer
+  +userid : Integer
+  +timeopen : Integer
+  +timeclose : Integer
+  +timelimit : Integer
+  +attempts : Integer
+  +password : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_overview_regrades" {
+  +id : Integer
+  +questionusageid : Integer
+  +slot : Integer
+  +newfraction : Float
+  +oldfraction : Float
+  +regraded : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_reports" {
+  +id : Integer
+  +name : String
+  +displayorder : Integer
+  +capability : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_sections" {
+  +id : Integer
+  +quizid : Integer
+  +firstslot : Integer
+  +heading : String
+  +shufflequestions : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_slots" {
+  +id : Integer
+  +slot : Integer
+  +quizid : Integer
+  +page : Integer
+  +displaynumber : String
+  +requireprevious : Integer
+  +maxmark : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quiz_statistics" {
+  +id : Integer
+  +hashcode : String
+  +whichattempts : Integer
+  +timemodified : Integer
+  +firstattemptscount : Integer
+  +highestattemptscount : Integer
+  +lastattemptscount : Integer
+  +allattemptscount : Integer
+  +firstattemptsavg : Float
+  +highestattemptsavg : Float
+  +lastattemptsavg : Float
+  +allattemptsavg : Float
+  +median : Float
+  +standarddeviation : Float
+  +skewness : Float
+  +kurtosis : Float
+  +cic : Float
+  +errorratio : Float
+  +standarderror : Float
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quizaccess_seb_quizsettings" {
+  +id : Integer
+  +quizid : Integer
+  +cmid : Integer
+  +templateid : Integer
+  +requiresafeexambrowser : Integer
+  +showsebtaskbar : Integer
+  +showwificontrol : Integer
+  +showreloadbutton : Integer
+  +showtime : Integer
+  +showkeyboardlayout : Integer
+  +allowuserquitseb : Integer
+  +quitpassword : String
+  +linkquitseb : String
+  +userconfirmquit : Integer
+  +enableaudiocontrol : Integer
+  +muteonstartup : Integer
+  +allowspellchecking : Integer
+  +allowreloadinexam : Integer
+  +activateurlfiltering : Integer
+  +filterembeddedcontent : Integer
+  +expressionsallowed : String
+  +regexallowed : String
+  +expressionsblocked : String
+  +regexblocked : String
+  +allowedbrowserexamkeys : String
+  +showsebdownloadlink : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "quizaccess_seb_template" {
+  +id : Integer
+  +name : String
+  +description : String
+  +content : String
+  +enabled : Integer
+  +sortorder : Integer
+  +usermodified : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "groups" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+"qtype_ddimageortext" "*" --> "1" "question" : questionid
+"qtype_ddimageortext_drags" "*" --> "1" "question" : questionid
+"qtype_ddimageortext_drops" "*" --> "1" "question" : questionid
+"qtype_ddmarker" "*" --> "1" "question" : questionid
+"qtype_ddmarker_drags" "*" --> "1" "question" : questionid
+"qtype_ddmarker_drops" "*" --> "1" "question" : questionid
+"qtype_match_subquestions" "*" --> "1" "question" : questionid
+"question" "*" --> "1" "users" : createdby
+"question" "*" --> "1" "users" : modifiedby
+"question" "*" --> "1" "question" : parent
+"question_answers" "*" --> "1" "question" : question
+"question_attempt_step_data" "*" --> "1" "question_attempt_steps" : attemptstepid
+"question_attempt_steps" "*" --> "1" "question_attempts" : questionattemptid
+"question_attempt_steps" "*" --> "1" "users" : userid
+"question_attempts" "*" --> "1" "question" : questionid
+"question_attempts" "*" --> "1" "question_usages" : questionusageid
+"question_bank_entries" "*" --> "1" "users" : ownerid
+"question_bank_entries" "*" --> "1" "question_categories" : questioncategoryid
+"question_calculated" "*" --> "1" "question" : question
+"question_calculated_options" "*" --> "1" "question" : question
+"question_categories" "*" --> "1" "question_categories" : parent
+"question_dataset_definitions" "*" --> "1" "question_categories" : category
+"question_datasets" "*" --> "1" "question_dataset_definitions" : datasetdefinition
+"question_datasets" "*" --> "1" "question" : question
+"question_ddwtos" "*" --> "1" "question" : questionid
+"question_gapselect" "*" --> "1" "question" : questionid
+"question_hints" "*" --> "1" "question" : questionid
+"question_multianswer" "*" --> "1" "question" : question
+"question_numerical" "*" --> "1" "question" : question
+"question_numerical_options" "*" --> "1" "question" : question
+"question_numerical_units" "*" --> "1" "question" : question
+"question_references" "*" --> "1" "question_bank_entries" : questionbankentryid
+"question_references" "*" --> "1" "context" : usingcontextid
+"question_response_analysis" "*" --> "1" "question" : questionid
+"question_response_count" "*" --> "1" "question_response_analysis" : analysisid
+"question_set_references" "*" --> "1" "context" : questionscontextid
+"question_set_references" "*" --> "1" "context" : usingcontextid
+"question_statistics" "*" --> "1" "question" : questionid
+"question_truefalse" "*" --> "1" "question" : question
+"question_usages" "*" --> "1" "context" : contextid
+"question_versions" "*" --> "1" "question_bank_entries" : questionbankentryid
+"question_versions" "*" --> "1" "question" : questionid
+"quiz_attempts" "*" --> "1" "quiz" : quiz
+"quiz_attempts" "*" --> "1" "users" : userid
+"quiz_feedback" "*" --> "1" "quiz" : quizid
+"quiz_grades" "*" --> "1" "quiz" : quiz
+"quiz_overrides" "*" --> "1" "groups" : groupid
+"quiz_overrides" "*" --> "1" "quiz" : quiz
+"quiz_overrides" "*" --> "1" "users" : userid
+"quiz_sections" "*" --> "1" "quiz" : quizid
+"quiz_slots" "*" --> "1" "quiz" : quizid
+"quizaccess_seb_quizsettings" "*" --> "1" "quizaccess_seb_template" : templateid
+"quizaccess_seb_quizsettings" "*" --> "1" "users" : usermodified
+"quizaccess_seb_template" "*" --> "1" "users" : usermodified
+@enduml

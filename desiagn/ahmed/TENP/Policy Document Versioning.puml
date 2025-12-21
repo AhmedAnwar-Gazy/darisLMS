@@ -1,0 +1,47 @@
+@startuml PolicyDocumentVersioningClean
+title Policy Document Versioning (SMD-08) - Clean Version
+hide empty description
+
+state "Draft" as draft
+state "Active" as active
+state "Archived" as archived
+
+[*] --> draft
+
+draft --> draft : save()
+draft --> active : publish()\n/archivePreviousActiveVersion()
+active --> archived : newVersionPublished()
+active --> archived : manuallyRetire()
+
+archived --> [*]
+
+' State descriptions
+note left of draft
+  <<state>>
+  Being edited
+  Not visible to users
+end note
+
+note right of active
+  <<state>>
+  Enforceable
+  Users must consent
+  Only one active version
+  per policy type
+end note
+
+note bottom of archived
+  <<state>>
+  Historical record
+  Audit trail
+  Not for new consent
+end note
+
+' Constraint note
+note top of active
+  <b>Constraint</b>: Only one
+  version of a policy type
+  can be Active at any time.
+end note
+
+@enduml

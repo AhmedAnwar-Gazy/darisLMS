@@ -1,0 +1,57 @@
+@startuml
+title Forum Discussion Participation
+skinparam activityBackgroundColor #F0E68C
+skinparam activityBorderColor #BDB76B
+
+|User|
+start
+:Navigate to Course Forum;
+:Browse Discussion Threads;
+:Select Thread to View;
+:Click "Reply" Button;
+:Compose Post Content\n(Text, Links, Attachments);
+:Click "Post Reply";
+
+|Frontend|
+:Validate Post Content;
+:Check Posting Permissions;
+:Send POST /api/forums/{id}/posts;
+
+|Forum API|
+:Apply Posting Rules;
+if (Posting Allowed?) then (no)
+  :Return Error\n(Rate Limit, Blocked User);
+  stop
+else (yes)
+  :Create Post Record;
+endif
+
+|Database|
+:INSERT INTO forum_posts\n(forum_id, user_id, message, parent_id);
+:UPDATE forum_discussions\nSET timemodified=NOW();
+-back->
+
+|Forum API|
+:Check Subscription Settings;
+
+|Database|
+:SELECT user_id FROM forum_subscriptions\nWHERE forum_id=?;
+-back->
+
+|Forum API|
+:Queue Notifications for Subscribers;
+
+|Notification Queue|
+:Process Email Notifications;
+:Update User Dashboard Alerts;
+
+|Frontend|
+:Dynamically Update Thread View;
+:Show "Post Successful" Message;
+
+|Other Users|
+:Receive Notifications;
+:View New Post in Thread;
+:Optionally Reply;
+stop
+@enduml

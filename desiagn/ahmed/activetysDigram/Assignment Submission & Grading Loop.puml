@@ -1,0 +1,51 @@
+@startuml
+title Assignment Submission & Grading Loop
+skinparam activityBackgroundColor #FFF0F5
+skinparam activityBorderColor #C71585
+
+partition Student {
+  start
+  :Open Assignment Activity;
+  if (Before Due Date?) then (yes)
+    :Prepare Submission;
+    :Upload File / Type Text;
+    :Click "Submit";
+  else (no)
+    if (Late Submission Allowed?) then (yes)
+      :Submit with Late Penalty;
+    else (no)
+      :Submission Blocked;
+      stop
+    endif
+  endif
+}
+
+partition System {
+  :Validate Submission;
+  :Save to Storage (S3);
+  :Update assign_submission status;
+  :Notify Instructor;
+}
+
+partition Instructor {
+  :Receive Notification;
+  :Open Gradebook;
+  :Review Submission;
+  :Assign Grade (0-100);
+  :Add Feedback Comments;
+  :Click "Save Grade";
+}
+
+partition System {
+  :Update assign_grades;
+  :Calculate Course Average;
+  :Send Grade Notification;
+}
+
+partition Student {
+  :Receive Notification;
+  :View Grade & Feedback;
+  stop
+}
+
+@enduml

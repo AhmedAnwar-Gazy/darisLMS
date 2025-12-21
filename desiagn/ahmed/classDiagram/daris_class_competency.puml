@@ -1,0 +1,330 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "competency" {
+  +id : Integer
+  +shortname : String
+  +description : String
+  +descriptionformat : Integer
+  +idnumber : String
+  +competencyframeworkid : Integer
+  +parentid : Integer
+  +path : String
+  +sortorder : Integer
+  +ruletype : String
+  +ruleoutcome : Integer
+  +ruleconfig : String
+  +scaleid : Integer
+  +scaleconfiguration : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_coursecomp" {
+  +id : Integer
+  +courseid : Integer
+  +competencyid : Integer
+  +ruleoutcome : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +sortorder : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_coursecompsetting" {
+  +id : Integer
+  +courseid : Integer
+  +pushratingstouserplans : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_evidence" {
+  +id : Integer
+  +usercompetencyid : Integer
+  +contextid : Integer
+  +action : Integer
+  +actionuserid : Integer
+  +descidentifier : String
+  +desccomponent : String
+  +desca : String
+  +url : String
+  +grade : Integer
+  +note : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_framework" {
+  +id : Integer
+  +shortname : String
+  +contextid : Integer
+  +idnumber : String
+  +description : String
+  +descriptionformat : Integer
+  +scaleid : Integer
+  +scaleconfiguration : String
+  +visible : Integer
+  +taxonomies : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_modulecomp" {
+  +id : Integer
+  +cmid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +sortorder : Integer
+  +competencyid : Integer
+  +ruleoutcome : Integer
+  +overridegrade : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_plan" {
+  +id : Integer
+  +name : String
+  +description : String
+  +descriptionformat : Integer
+  +userid : Integer
+  +templateid : Integer
+  +origtemplateid : Integer
+  +status : Integer
+  +duedate : Integer
+  +reviewerid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_plancomp" {
+  +id : Integer
+  +planid : Integer
+  +competencyid : Integer
+  +sortorder : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_relatedcomp" {
+  +id : Integer
+  +competencyid : Integer
+  +relatedcompetencyid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_template" {
+  +id : Integer
+  +shortname : String
+  +contextid : Integer
+  +description : String
+  +descriptionformat : Integer
+  +visible : Integer
+  +duedate : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_templatecohort" {
+  +id : Integer
+  +templateid : Integer
+  +cohortid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_templatecomp" {
+  +id : Integer
+  +templateid : Integer
+  +competencyid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  +sortorder : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_usercomp" {
+  +id : Integer
+  +userid : Integer
+  +competencyid : Integer
+  +status : Integer
+  +reviewerid : Integer
+  +proficiency : Integer
+  +grade : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_usercompcourse" {
+  +id : Integer
+  +userid : Integer
+  +courseid : Integer
+  +competencyid : Integer
+  +proficiency : Integer
+  +grade : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_usercompplan" {
+  +id : Integer
+  +userid : Integer
+  +competencyid : Integer
+  +planid : Integer
+  +proficiency : Integer
+  +grade : Integer
+  +sortorder : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_userevidence" {
+  +id : Integer
+  +userid : Integer
+  +name : String
+  +description : String
+  +descriptionformat : Integer
+  +url : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "competency_userevidencecomp" {
+  +id : Integer
+  +userevidenceid : Integer
+  +competencyid : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "course_modules" <<External>> {
+}
+
+class "scale" <<External>> {
+}
+
+class "users" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+class "course" <<External>> {
+}
+
+"competency" "*" --> "1" "scale" : scaleid
+"competency" "*" --> "1" "users" : usermodified
+"competency_coursecomp" "*" --> "1" "competency" : competencyid
+"competency_coursecomp" "*" --> "1" "course" : courseid
+"competency_coursecomp" "*" --> "1" "users" : usermodified
+"competency_coursecompsetting" "*" --> "1" "users" : usermodified
+"competency_evidence" "*" --> "1" "users" : actionuserid
+"competency_evidence" "*" --> "1" "context" : contextid
+"competency_evidence" "*" --> "1" "users" : usermodified
+"competency_framework" "*" --> "1" "context" : contextid
+"competency_framework" "*" --> "1" "scale" : scaleid
+"competency_framework" "*" --> "1" "users" : usermodified
+"competency_modulecomp" "*" --> "1" "course_modules" : cmid
+"competency_modulecomp" "*" --> "1" "competency" : competencyid
+"competency_modulecomp" "*" --> "1" "users" : usermodified
+"competency_plan" "*" --> "1" "users" : usermodified
+"competency_plancomp" "*" --> "1" "users" : usermodified
+"competency_relatedcomp" "*" --> "1" "competency" : competencyid
+"competency_relatedcomp" "*" --> "1" "competency" : relatedcompetencyid
+"competency_relatedcomp" "*" --> "1" "users" : usermodified
+"competency_template" "*" --> "1" "context" : contextid
+"competency_template" "*" --> "1" "users" : usermodified
+"competency_templatecohort" "*" --> "1" "users" : usermodified
+"competency_templatecomp" "*" --> "1" "competency" : competencyid
+"competency_templatecomp" "*" --> "1" "competency_template" : templateid
+"competency_templatecomp" "*" --> "1" "users" : usermodified
+"competency_usercomp" "*" --> "1" "users" : usermodified
+"competency_usercompcourse" "*" --> "1" "users" : usermodified
+"competency_usercompplan" "*" --> "1" "users" : usermodified
+"competency_userevidence" "*" --> "1" "users" : usermodified
+"competency_userevidencecomp" "*" --> "1" "users" : usermodified
+@enduml

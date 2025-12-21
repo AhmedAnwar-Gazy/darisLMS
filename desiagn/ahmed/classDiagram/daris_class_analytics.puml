@@ -1,0 +1,165 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "analytics_indicator_calc" {
+  +id : Integer
+  +starttime : Integer
+  +endtime : Integer
+  +contextid : Integer
+  +sampleorigin : String
+  +sampleid : Integer
+  +indicator : String
+  +value : Float
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "analytics_models" {
+  +id : Integer
+  +enabled : Integer
+  +trained : Integer
+  +name : String
+  +target : String
+  +indicators : String
+  +timesplitting : String
+  +predictionsprocessor : String
+  +version : Integer
+  +contextids : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "analytics_models_log" {
+  +id : Integer
+  +modelid : Integer
+  +version : Integer
+  +evaluationmode : String
+  +target : String
+  +indicators : String
+  +timesplitting : String
+  +score : Float
+  +info : String
+  +dir : String
+  +timecreated : Integer
+  +usermodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "analytics_predict_samples" {
+  +id : Integer
+  +modelid : Integer
+  +analysableid : Integer
+  +timesplitting : String
+  +rangeindex : Integer
+  +sampleids : String
+  +timecreated : Integer
+  +timemodified : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "analytics_prediction_actions" {
+  +id : Integer
+  +predictionid : Integer
+  +userid : Integer
+  +actionname : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "analytics_predictions" {
+  +id : Integer
+  +modelid : Integer
+  +contextid : Integer
+  +sampleid : Integer
+  +rangeindex : Integer
+  +prediction : Float
+  +predictionscore : Float
+  +calculations : String
+  +timecreated : Integer
+  +timestart : Integer
+  +timeend : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "analytics_train_samples" {
+  +id : Integer
+  +modelid : Integer
+  +analysableid : Integer
+  +timesplitting : String
+  +sampleids : String
+  +timecreated : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "analytics_used_analysables" {
+  +id : Integer
+  +modelid : Integer
+  +action : String
+  +analysableid : Integer
+  +firstanalysis : Integer
+  +timeanalysed : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "analytics_used_files" {
+  +id : Integer
+  +modelid : Integer
+  +fileid : Integer
+  +action : String
+  +time : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+class "files" <<External>> {
+}
+
+class "context" <<External>> {
+}
+
+"analytics_indicator_calc" "*" --> "1" "context" : contextid
+"analytics_models" "*" --> "1" "users" : usermodified
+"analytics_models_log" "*" --> "1" "analytics_models" : modelid
+"analytics_models_log" "*" --> "1" "users" : usermodified
+"analytics_predict_samples" "*" --> "1" "analytics_models" : modelid
+"analytics_prediction_actions" "*" --> "1" "analytics_predictions" : predictionid
+"analytics_prediction_actions" "*" --> "1" "users" : userid
+"analytics_predictions" "*" --> "1" "context" : contextid
+"analytics_predictions" "*" --> "1" "analytics_models" : modelid
+"analytics_train_samples" "*" --> "1" "analytics_models" : modelid
+"analytics_used_analysables" "*" --> "1" "analytics_models" : modelid
+"analytics_used_files" "*" --> "1" "files" : fileid
+"analytics_used_files" "*" --> "1" "analytics_models" : modelid
+@enduml

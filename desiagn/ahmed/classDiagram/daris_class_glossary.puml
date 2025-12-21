@@ -1,0 +1,116 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "glossary" {
+  +id : Integer
+  +course : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +allowduplicatedentries : Integer
+  +displayformat : String
+  +mainglossary : Integer
+  +showspecial : Integer
+  +showalphabet : Integer
+  +showall : Integer
+  +allowcomments : Integer
+  +allowprintview : Integer
+  +usedynalink : Integer
+  +defaultapproval : Integer
+  +approvaldisplayformat : String
+  +globalglossary : Integer
+  +entbypage : Integer
+  +editalways : Integer
+  +rsstype : Integer
+  +rssarticles : Integer
+  +assessed : Integer
+  +assesstimestart : Integer
+  +assesstimefinish : Integer
+  +scale : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +completionentries : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "glossary_alias" {
+  +id : Integer
+  +entryid : Integer
+  +alias : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "glossary_categories" {
+  +id : Integer
+  +glossaryid : Integer
+  +name : String
+  +usedynalink : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "glossary_entries" {
+  +id : Integer
+  +glossaryid : Integer
+  +userid : Integer
+  +concept : String
+  +definition : String
+  +definitionformat : Integer
+  +definitiontrust : Integer
+  +attachment : String
+  +timecreated : Integer
+  +timemodified : Integer
+  +teacherentry : Integer
+  +sourceglossaryid : Integer
+  +usedynalink : Integer
+  +casesensitive : Integer
+  +fullmatch : Integer
+  +approved : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "glossary_entries_categories" {
+  +id : Integer
+  +categoryid : Integer
+  +entryid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "glossary_formats" {
+  +id : Integer
+  +name : String
+  +popupformatname : String
+  +visible : Integer
+  +showgroup : Integer
+  +showtabs : String
+  +defaultmode : String
+  +defaulthook : String
+  +sortkey : String
+  +sortorder : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+"glossary_alias" "*" --> "1" "glossary_entries" : entryid
+"glossary_categories" "*" --> "1" "glossary" : glossaryid
+"glossary_entries" "*" --> "1" "glossary" : glossaryid
+"glossary_entries_categories" "*" --> "1" "glossary_categories" : categoryid
+"glossary_entries_categories" "*" --> "1" "glossary_entries" : entryid
+@enduml

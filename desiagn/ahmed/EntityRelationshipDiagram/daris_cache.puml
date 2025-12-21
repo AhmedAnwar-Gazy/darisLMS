@@ -1,0 +1,29 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**cache_filters**" as cache_filters {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  filter : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL 
+  version : int NOT NULL DEFAULT '0' 
+  md5key : varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL 
+  rawtext : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  timemodified : int NOT NULL DEFAULT '0' 
+}
+
+entity "**cache_flags**" as cache_flags {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  flagtype : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  name : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  timemodified : int NOT NULL DEFAULT '0' 
+  value : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  expiry : int NOT NULL 
+}
+
+entity "**cache_locks**" as cache_locks {
+  *key : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  owner : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  expiration : int NOT NULL 
+}
+
+@enduml

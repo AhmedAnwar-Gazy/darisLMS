@@ -1,0 +1,33 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**rating**" as rating {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  contextid : bigint unsigned NOT NULL (FK)
+  component : varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL 
+  ratingarea : varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL 
+  itemid : int NOT NULL 
+  scaleid : bigint unsigned NOT NULL (FK)
+  rating : int NOT NULL 
+  userid : bigint unsigned NOT NULL (FK)
+  timecreated : int NOT NULL 
+  timemodified : int NOT NULL 
+}
+
+entity "**scale**" as scale <<External>> {
+  --
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+rating }|--|| context
+rating }|--|| scale
+rating }|--|| users
+@enduml

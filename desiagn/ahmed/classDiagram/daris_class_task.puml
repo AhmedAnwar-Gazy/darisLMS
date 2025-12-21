@@ -1,0 +1,73 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "task_adhoc" {
+  +id : Integer
+  +component : String
+  +classname : String
+  +nextruntime : Integer
+  +faildelay : Integer
+  +customdata : String
+  +userid : Integer
+  +blocking : Integer
+  +timecreated : Integer
+  +timestarted : Integer
+  +hostname : String
+  +pid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "task_log" {
+  +id : Integer
+  +type : Integer
+  +component : String
+  +classname : String
+  +userid : Integer
+  +timestart : Float
+  +timeend : Float
+  +dbreads : Integer
+  +dbwrites : Integer
+  +result : Integer
+  +output : String
+  +hostname : String
+  +pid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "task_scheduled" {
+  +id : Integer
+  +component : String
+  +classname : String
+  +lastruntime : Integer
+  +nextruntime : Integer
+  +blocking : Integer
+  +minute : String
+  +hour : String
+  +day : String
+  +month : String
+  +dayofweek : String
+  +faildelay : Integer
+  +customised : Integer
+  +disabled : Integer
+  +timestarted : Integer
+  +hostname : String
+  +pid : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "users" <<External>> {
+}
+
+"task_adhoc" "*" --> "1" "users" : userid
+"task_log" "*" --> "1" "users" : userid
+@enduml

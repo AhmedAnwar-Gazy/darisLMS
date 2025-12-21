@@ -1,0 +1,83 @@
+@startuml
+hide circle
+skinparam linetype ortho
+
+entity "**block_instances**" as block_instances {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  blockname : varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The type of block this is. Foreign key 
+  parentcontextid : bigint unsigned NOT NULL COMMENT 'The context within which this block appears. Foreign key (FK)
+  showinsubcontexts : smallint NOT NULL COMMENT 'If 1 
+  requiredbytheme : smallint NOT NULL DEFAULT '0' COMMENT 'If 1 
+  pagetypepattern : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The types of page this block appears on. Either an exact page type like mod-quiz-view 
+  subpagepattern : varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Further restrictions on where this block appears. In some places 
+  defaultregion : varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Which block region this block should appear in on each page 
+  defaultweight : int NOT NULL COMMENT 'Used to order the blocks within a block region. Again 
+  configdata : text COLLATE utf8mb4_unicode_ci COMMENT 'A serialized blob of configuration data for this block instance.' 
+  timecreated : int NOT NULL COMMENT 'Time at which this block instance was originally created' 
+  timemodified : int NOT NULL COMMENT 'Time at which block instance was last modified.' 
+}
+
+entity "**block_positions**" as block_positions {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  blockinstanceid : bigint unsigned NOT NULL COMMENT 'The block_instance this position relates to.' (FK)
+  contextid : bigint unsigned NOT NULL COMMENT 'With pagetype and subpage (FK)
+  pagetype : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'With contextid and subpage 
+  subpage : varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'With contextid and pagetype 
+  visible : smallint NOT NULL COMMENT 'Whether this block instance is visible on this page.' 
+  region : varchar(16) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Which block region on this page this block should appear in.' 
+  weight : int NOT NULL COMMENT 'Used to order the blocks within a block region.' 
+}
+
+entity "**block_recent_activity**" as block_recent_activity {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : int NOT NULL COMMENT 'Course id' 
+  cmid : int NOT NULL COMMENT 'Course module id' 
+  timecreated : int NOT NULL 
+  userid : int NOT NULL COMMENT 'User performing the action' 
+  action : tinyint(1) NOT NULL COMMENT '0 created 
+  modname : varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'module type name (for delete action)' 
+}
+
+entity "**block_recentlyaccesseditems**" as block_recentlyaccesseditems {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  courseid : bigint unsigned NOT NULL COMMENT 'Course id the item belongs to' (FK)
+  cmid : bigint unsigned NOT NULL COMMENT 'Item course module id' (FK)
+  userid : bigint unsigned NOT NULL COMMENT 'User id that accessed the item' (FK)
+  timeaccess : int NOT NULL COMMENT 'Time the user accessed the last time an item' 
+}
+
+entity "**block_rss_client**" as block_rss_client {
+  *id : bigint unsigned NOT NULL AUTO_INCREMENT 
+  userid : int NOT NULL DEFAULT '0' 
+  title : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  preferredtitle : varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL 
+  description : text COLLATE utf8mb4_unicode_ci NOT NULL 
+  shared : tinyint NOT NULL DEFAULT '0' 
+  url : varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL 
+  skiptime : int NOT NULL DEFAULT '0' COMMENT 'How many seconds skip this feed for (increases every time it fails 
+  skipuntil : int NOT NULL DEFAULT '0' COMMENT 'Do not query this RSS feed again until this time' 
+}
+
+entity "**course**" as course <<External>> {
+  --
+}
+
+entity "**context**" as context <<External>> {
+  --
+}
+
+entity "**users**" as users <<External>> {
+  --
+}
+
+entity "**course_modules**" as course_modules <<External>> {
+  --
+}
+
+block_instances }|--|| context
+block_positions }|--|| block_instances
+block_positions }|--|| context
+block_recentlyaccesseditems }|--|| course_modules
+block_recentlyaccesseditems }|--|| course
+block_recentlyaccesseditems }|--|| users
+@enduml

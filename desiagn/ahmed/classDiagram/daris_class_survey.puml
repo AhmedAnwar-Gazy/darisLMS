@@ -1,0 +1,65 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class "survey" {
+  +id : Integer
+  +course : Integer
+  +template : Integer
+  +days : Integer
+  +timecreated : Integer
+  +timemodified : Integer
+  +name : String
+  +intro : String
+  +introformat : Integer
+  +questions : String
+  +completionsubmit : Integer
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "survey_analysis" {
+  +id : Integer
+  +survey : Integer
+  +userid : Integer
+  +notes : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "survey_answers" {
+  +id : Integer
+  +userid : Integer
+  +survey : Integer
+  +question : Integer
+  +time : Integer
+  +answer1 : String
+  +answer2 : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+class "survey_questions" {
+  +id : Integer
+  +text : String
+  +shorttext : String
+  +multi : String
+  +intro : String
+  +type : Integer
+  +options : String
+  __
+  +create()
+  +update()
+  +delete()
+}
+
+"survey_analysis" "*" --> "1" "survey" : survey
+"survey_answers" "*" --> "1" "survey_questions" : question
+"survey_answers" "*" --> "1" "survey" : survey
+@enduml
