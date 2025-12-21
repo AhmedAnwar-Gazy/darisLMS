@@ -2,6 +2,23 @@
 title User Account Lifecycle (SMD-01)
 hide empty description
 
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    
+    ' State Diagram specific
+    StateBackgroundColor white
+    StateBorderColor #4C5FD5
+    StateStartColor #4C5FD5
+    StateEndColor #4C5FD5
+    
+    ' Notes
+    NoteBackgroundColor #FBBF24
+    NoteBorderColor #FBBF24
+}
+
+
 state "Pending Verification" as pending_verification
 note right of pending_verification
 The account is created, but the email 

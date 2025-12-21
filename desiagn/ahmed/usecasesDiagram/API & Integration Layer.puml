@@ -1,6 +1,21 @@
 @startuml APIIntegrationLayer
 left to right direction
 
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    ActorBorderColor #4C5FD5
+    ActorBackgroundColor #5AC8FA
+    UseCaseBorderColor #4C5FD5
+    UseCaseBackgroundColor white
+    RectangleBorderColor #4C5FD5
+    RectangleBackgroundColor white
+    NoteBackgroundColor #FBBF24
+    NoteBorderColor #FBBF24
+}
+
+
 actor "Frontend Application" as frontend
 actor "External System" as external_system
 actor "Mobile App" as mobile_app

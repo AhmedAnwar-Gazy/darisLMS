@@ -2,6 +2,23 @@
 title Course Visibility & Publishing Status (SMD-02)
 hide empty description
 
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    
+    ' State Diagram specific
+    StateBackgroundColor white
+    StateBorderColor #4C5FD5
+    StateStartColor #4C5FD5
+    StateEndColor #4C5FD5
+    
+    ' Notes
+    NoteBackgroundColor #FBBF24
+    NoteBorderColor #FBBF24
+}
+
+
 state "Draft" as draft
 note right of draft
 The course is being built. Content is 

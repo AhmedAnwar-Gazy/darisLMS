@@ -1,5 +1,23 @@
 @startuml
 hide circle
+
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    
+    ' Class Diagram specific
+    ClassBackgroundColor white
+    ClassBorderColor #4C5FD5
+    ClassHeaderBackgroundColor #5AC8FA
+    ClassAttributeFontColor black
+    ClassStereotypeFontColor black
+    
+    ' Notes
+    NoteBackgroundColor #FBBF24
+    NoteBorderColor #FBBF24
+}
+
 skinparam classAttributeIconSize 0
 
 class "sessions" {

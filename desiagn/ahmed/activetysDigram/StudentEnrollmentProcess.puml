@@ -1,4 +1,28 @@
 @startuml
+
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    
+    ' Activity Diagram specific
+    ActivityBackgroundColor white
+    ActivityBorderColor #4C5FD5
+    ActivityStartColor #4C5FD5
+    ActivityEndColor #4C5FD5
+    ActivityBarColor #4C5FD5
+    ActivityDiamondBackgroundColor white
+    ActivityDiamondBorderColor #4C5FD5
+    
+    ' Notes
+    NoteBackgroundColor #FBBF24
+    NoteBorderColor #FBBF24
+    
+    ' Error/Warning (custom styles if needed)
+    ' Error: #EF4444
+}
+
+
 title Student Enrollment Process
 skinparam activityBackgroundColor #F5FFFA
 skinparam activityBorderColor #2E8B57

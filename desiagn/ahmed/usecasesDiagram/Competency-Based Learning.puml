@@ -1,6 +1,21 @@
 @startuml CompetencyBasedLearning
 left to right direction
 
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    ActorBorderColor #4C5FD5
+    ActorBackgroundColor #5AC8FA
+    UseCaseBorderColor #4C5FD5
+    UseCaseBackgroundColor white
+    RectangleBorderColor #4C5FD5
+    RectangleBackgroundColor white
+    NoteBackgroundColor #FBBF24
+    NoteBorderColor #FBBF24
+}
+
+
 actor "Administrator" as admin
 actor "Instructor" as instructor
 actor "Student" as student

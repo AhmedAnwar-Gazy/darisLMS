@@ -2,6 +2,23 @@
 title Assignment Submission Workflow (SMD-04)
 hide empty description
 
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    
+    ' State Diagram specific
+    StateBackgroundColor white
+    StateBorderColor #4C5FD5
+    StateStartColor #4C5FD5
+    StateEndColor #4C5FD5
+    
+    ' Notes
+    NoteBackgroundColor #FBBF24
+    NoteBorderColor #FBBF24
+}
+
+
 state "New (Not Started)" as new_not_started
 note right of new_not_started
 No files have been uploaded, and no text 

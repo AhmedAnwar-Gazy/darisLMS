@@ -2,6 +2,23 @@
 hide circle
 skinparam linetype ortho
 
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    
+    ' Entity / Class Diagram specific
+    ClassBackgroundColor white
+    ClassBorderColor #4C5FD5
+    ClassHeaderBackgroundColor #5AC8FA
+    
+    ' Entity styling (PlantUML treats entities similar to classes often, but explicit keywords align with class styling)
+    ' If explicit entity styling is needed:
+    EntityBackgroundColor white
+    EntityBorderColor #4C5FD5
+}
+
+
 entity "**my_pages**" as my_pages {
   *id : bigint unsigned NOT NULL AUTO_INCREMENT 
   userid : int DEFAULT '0' COMMENT 'The user who owns this page or 0 for system defaults' 

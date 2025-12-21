@@ -1,6 +1,21 @@
 @startuml AdvancedLearningActivities
 left to right direction
 
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    ActorBorderColor #4C5FD5
+    ActorBackgroundColor #5AC8FA
+    UseCaseBorderColor #4C5FD5
+    UseCaseBackgroundColor white
+    RectangleBorderColor #4C5FD5
+    RectangleBackgroundColor white
+    NoteBackgroundColor #FBBF24
+    NoteBorderColor #FBBF24
+}
+
+
 actor "Instructor" as instructor
 actor "Student" as student
 actor "System" as system
@@ -30,10 +45,10 @@ system --> UC1906 : **Association**
 peer_reviewer --> UC1903 : **Association**
 
 ' Use Case Relationships
-UC1901 ..> set_permissions : **<<include>>**
-UC1902 ..> save_version : **<<include>>**
-UC1903 ..> apply_rubric : **<<include>>**
-UC1905 ..> track_progress : **<<include>>**
-UC1906 ..> update_gradebook : **<<include>>**
+UC1901 ..> set_permissions : <<include>>
+UC1902 ..> save_version : <<include>>
+UC1903 ..> apply_rubric : <<include>>
+UC1905 ..> track_progress : <<include>>
+UC1906 ..> update_gradebook : <<include>>
 
 @enduml

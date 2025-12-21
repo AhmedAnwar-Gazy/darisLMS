@@ -2,6 +2,23 @@
 title Quiz Attempt Lifecycle (SMD-05)
 hide empty description
 
+' Color Customization
+skinparam {
+    BackgroundColor white
+    ArrowColor #4C5FD5
+    
+    ' State Diagram specific
+    StateBackgroundColor white
+    StateBorderColor #4C5FD5
+    StateStartColor #4C5FD5
+    StateEndColor #4C5FD5
+    
+    ' Notes
+    NoteBackgroundColor #FBBF24
+    NoteBorderColor #FBBF24
+}
+
+
 state "In Progress" as in_progress
 note right of in_progress
 The timer is running. The student is 
